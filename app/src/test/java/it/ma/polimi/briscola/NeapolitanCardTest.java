@@ -14,10 +14,121 @@ import static org.junit.Assert.assertTrue;
 
 public class NeapolitanCardTest {
 
+    NeapolitanCard[] cardsCollection1 = {
+            new NeapolitanCard(NeapolitanCardNumbers.KING, NeapolitanCardSuit.GOLDS),
+            new NeapolitanCard(NeapolitanCardNumbers.ACE, NeapolitanCardSuit.CUPS),
+            new NeapolitanCard(NeapolitanCardNumbers.TWO, NeapolitanCardSuit.BATONS),
+            new NeapolitanCard(NeapolitanCardNumbers.THREE, NeapolitanCardSuit.SWORDS),
+            new NeapolitanCard(NeapolitanCardNumbers.FOUR, NeapolitanCardSuit.GOLDS),
+            new NeapolitanCard(NeapolitanCardNumbers.FIVE, NeapolitanCardSuit.CUPS),
+            new NeapolitanCard(NeapolitanCardNumbers.SIX, NeapolitanCardSuit.BATONS),
+            new NeapolitanCard(NeapolitanCardNumbers.SEVEN, NeapolitanCardSuit.SWORDS),
+            new NeapolitanCard(NeapolitanCardNumbers.HORSE, NeapolitanCardSuit.BATONS),
+            new NeapolitanCard(NeapolitanCardNumbers.JACK, NeapolitanCardSuit.SWORDS)
+
+    };
+
+
+    String[] cardsCollection1Stringified = {
+            "KG",
+            "1C",
+            "2B",
+            "3S",
+            "4G",
+            "5C",
+            "6B",
+            "7S",
+            "HB",
+            "JS"
+    };
+
+    NeapolitanCard[] cardsCollection1WithStrings = {
+            new NeapolitanCard("K","G"),
+            new NeapolitanCard("1", "C"),
+            new NeapolitanCard("2", "B"),
+            new NeapolitanCard("3", "S"),
+            new NeapolitanCard("4", "G"),
+            new NeapolitanCard("5", "C"),
+            new NeapolitanCard("6", "B"),
+            new NeapolitanCard("7", "S"),
+            new NeapolitanCard("H", "B"),
+            new NeapolitanCard("J", "S")
+
+    };
+
+    NeapolitanCard[] cardsCollection1WithChars = {
+            new NeapolitanCard('K','G'),
+            new NeapolitanCard('1', 'C'),
+            new NeapolitanCard('2', 'B'),
+            new NeapolitanCard('3', 'S'),
+            new NeapolitanCard('4', 'G'),
+            new NeapolitanCard('5', 'C'),
+            new NeapolitanCard('6', 'B'),
+            new NeapolitanCard('7', 'S'),
+            new NeapolitanCard('H', 'B'),
+            new NeapolitanCard('J', 'S')
+
+    };
+
     @Test
-    public void testCharConstructor(){
-        NeapolitanCard c = new NeapolitanCard('1','B');
-        assertTrue((new NeapolitanCard(NeapolitanCardNumbers.ACE, NeapolitanCardSuit.BATONS)).equalTo(c));
+    public void testGettersAndToStringAndConstructors(){
+
+        for(int i = 0; i < cardsCollection1.length; i++) {
+            System.out.println(i);
+            assertTrue(cardsCollection1[i].getCardNumber().equals(""+cardsCollection1Stringified[i].charAt(0)));
+            assertTrue(cardsCollection1[i].getCardSuit().equals(""+cardsCollection1Stringified[i].charAt(1)));
+            assertTrue(cardsCollection1[i].toString().equals(cardsCollection1Stringified[i]));
+
+            assertTrue(cardsCollection1WithStrings[i].getCardNumber().equals(""+cardsCollection1Stringified[i].charAt(0)));
+            assertTrue(cardsCollection1WithStrings[i].getCardSuit().equals(""+cardsCollection1Stringified[i].charAt(1)));
+            assertTrue(cardsCollection1WithStrings[i].toString().equals(cardsCollection1Stringified[i]));
+
+            assertTrue(cardsCollection1WithChars[i].getCardNumber().equals(""+cardsCollection1Stringified[i].charAt(0)));
+            assertTrue(cardsCollection1WithChars[i].getCardSuit().equals(""+cardsCollection1Stringified[i].charAt(1)));
+            assertTrue(cardsCollection1WithChars[i].toString().equals(cardsCollection1Stringified[i]));
+        }
+
+    }
+
+    @Test
+    public void testInvalidConfigsInConstructors(){
+        NeapolitanCard c;
+        //invalid configurations
+        try{
+            c = new NeapolitanCard("1","P");
+        }catch(Exception e){
+            assertTrue(e instanceof IllegalArgumentException);
+        }
+
+        try{
+            c = new NeapolitanCard("DA","G");
+        }catch(Exception e){
+            assertTrue(e instanceof IllegalArgumentException);
+        }
+
+        try{
+            c = new NeapolitanCard("P","1");
+        }catch(Exception e){
+            assertTrue(e instanceof IllegalArgumentException);
+        }
+        try{
+            c = new NeapolitanCard('1','P');
+        }catch(Exception e){
+            assertTrue(e instanceof IllegalArgumentException);
+        }
+
+        try{
+            c = new NeapolitanCard('D','G');
+        }catch(Exception e){
+            assertTrue(e instanceof IllegalArgumentException);
+        }
+
+        try{
+            c = new NeapolitanCard('P','1');
+        }catch(Exception e){
+            assertTrue(e instanceof IllegalArgumentException);
+        }
+
     }
 
     @Test
@@ -32,5 +143,14 @@ public class NeapolitanCardTest {
         assertTrue(!c1.equalTo(c3));
         assertTrue(!c1.equalTo(c4));
         assertTrue(!c1.equalTo(c5));
+
+        for(int i = 0; i < cardsCollection1.length; i++){
+            for(int j = 0; j < cardsCollection1.length;j++){
+                if(i == j)
+                    assertTrue(cardsCollection1[i].equalTo(cardsCollection1[j]));
+                else
+                    assertTrue(!cardsCollection1[i].equalTo(cardsCollection1[j]));
+            }
+        }
     }
 }

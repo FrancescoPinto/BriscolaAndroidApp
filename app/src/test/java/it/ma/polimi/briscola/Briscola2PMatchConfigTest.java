@@ -32,8 +32,8 @@ public class Briscola2PMatchConfigTest {
     public Briscola2PMatchConfig createEasyConfig(){
         Briscola2PMatchConfig easyConfig = new Briscola2PMatchConfig();
         easyConfig.setCurrentPlayer(0);
-        easyConfig.setBriscola(new NeapolitanCard('2','C'));
-        easyConfig.setDeck(new NeapolitanDeck("5S4G6S")); //todo prima quando hai sbagliato e gli hai infilato anche i primi due caratteri non ha fatto una piega, non va bene!
+        easyConfig.setBriscolaSuit("C");
+        easyConfig.setDeck(new NeapolitanDeck("5S4G6S2C")); //todo prima quando hai sbagliato e gli hai infilato anche i primi due caratteri non ha fatto una piega, non va bene!
         easyConfig.setSurface(new Briscola2PSurface("6G7G"));
         easyConfig.setHand(0,"JCKG2B");
         easyConfig.setHand(1,"1CKS3G");
@@ -45,8 +45,8 @@ public class Briscola2PMatchConfigTest {
     public Briscola2PMatchConfig createStartingConfig(){
         Briscola2PMatchConfig startingConfig = new Briscola2PMatchConfig();
         startingConfig.setCurrentPlayer(0);
-        startingConfig.setBriscola(new NeapolitanCard('5','B'));
-        startingConfig.setDeck(new NeapolitanDeck("5S4G6S2C5GKB7B6CHCHB1GKC5C4B1BHG7C6BJS6G7G4C3C7SJBHS2S3S4S1S2G3BJG"));
+        startingConfig.setBriscolaSuit("B");
+        startingConfig.setDeck(new NeapolitanDeck("5S4G6S2C5GKB7B6CHCHB1GKC5C4B1BHG7C6BJS6G7G4C3C7SJBHS2S3S4S1S2G3BJG5B"));
         startingConfig.setSurface(new Briscola2PSurface(""));
         startingConfig.setHand(0,"JCKG2B");
         startingConfig.setHand(1,"1CKS3G");
@@ -111,8 +111,8 @@ public class Briscola2PMatchConfigTest {
         config.initializeFirstPlayer();
         config.initializePlayersHands();
         config.initializeBriscola();
-        System.out.println(config.getBriscola() + " " + cards.get(6));
-        assertTrue(config.getBriscola().equalTo(cards.get(6)));
+        System.out.println(config.getBriscolaSuit() + " " + cards.get(6));
+        assertTrue(config.getBriscolaSuit().equals(cards.get(6).getCardSuit()));
     }
 
     @Test
@@ -380,6 +380,8 @@ public class Briscola2PMatchConfigTest {
 
     @Test
     public void toStringTest(){
+        System.out.println(createEasyConfig().toString());
+
         assertTrue(easyConfig0.equals(createEasyConfig().toString()));
         assertTrue(startingConfig.equals(createStartingConfig().toString()));
         assertTrue(config1.equals(new Briscola2PMatchConfig(config1).toString()));

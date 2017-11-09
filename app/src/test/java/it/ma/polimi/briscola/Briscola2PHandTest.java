@@ -23,11 +23,10 @@ public class Briscola2PHandTest {
             new NeapolitanCard("1","S"),
             new NeapolitanCard("2","B"),
             new NeapolitanCard("K","G"),
-            new NeapolitanCard("H","C")
     };
 
     String handS0 = "";
-    String handS1 = "1S2BKGHC";
+    String handS1 = "1S2BKG";
 
     //TODO check siano bastoni/coppe ecc. e numeri corretti, siano carte tutte
 
@@ -97,14 +96,13 @@ public class Briscola2PHandTest {
         assertTrue(equal);
 
         try {
-            hand.putCardInHand(hand1[3]);
+            hand.putCardInHand(hand1[2]);
         }catch(IllegalStateException e){
             assertTrue(e instanceof IllegalStateException);
         }
 
         equal = equalCardsList(hand.getHand(),hand1);
         assertTrue(equal);
-
 
     }
 
@@ -118,8 +116,8 @@ public class Briscola2PHandTest {
             try {
                 NeapolitanCard card = hand.removeCardFromHand(i);
                 assertTrue (card == null);
-                }catch(IndexOutOfBoundsException e){
-                assertTrue (e instanceof IndexOutOfBoundsException);
+                }catch(IndexOutOfBoundsException|IllegalArgumentException e){
+                assertTrue (e instanceof IndexOutOfBoundsException || e instanceof IllegalArgumentException);
                 }
         }
 
@@ -130,8 +128,8 @@ public class Briscola2PHandTest {
             try {
                 NeapolitanCard card = hand.removeCardFromHand(i);
                 assertTrue (card == null);
-            }catch(IndexOutOfBoundsException e){
-                assertTrue (e instanceof IndexOutOfBoundsException);
+            }catch(IndexOutOfBoundsException|IllegalArgumentException e){
+                assertTrue (e instanceof IndexOutOfBoundsException || e instanceof IllegalArgumentException);
             }
         }
 
@@ -143,8 +141,8 @@ public class Briscola2PHandTest {
             try {
                 NeapolitanCard card = hand.removeCardFromHand(i);
                 assertTrue (card == null);
-            }catch(IndexOutOfBoundsException e){
-                assertTrue (e instanceof IndexOutOfBoundsException);
+            }catch(IndexOutOfBoundsException|IllegalArgumentException e){
+                assertTrue (e instanceof IndexOutOfBoundsException || e instanceof IllegalArgumentException);
             }
         }
 
@@ -159,8 +157,8 @@ public class Briscola2PHandTest {
             try {
                 NeapolitanCard card = hand.removeCardFromHand(i);
                 assertTrue (card == null);
-            }catch(IndexOutOfBoundsException e){
-                assertTrue (e instanceof IndexOutOfBoundsException);
+            }catch(IndexOutOfBoundsException|IllegalArgumentException e){
+                assertTrue (e instanceof IndexOutOfBoundsException || e instanceof IllegalArgumentException);
             }
         }
 
@@ -179,8 +177,8 @@ public class Briscola2PHandTest {
             try {
                 NeapolitanCard card = hand.removeCardFromHand(i);
                 assertTrue (card == null);
-            }catch(IndexOutOfBoundsException e){
-                assertTrue (e instanceof IndexOutOfBoundsException);
+            }catch(IndexOutOfBoundsException|IllegalArgumentException e){
+                assertTrue (e instanceof IndexOutOfBoundsException || e instanceof IllegalArgumentException);
             }
         }
         assertTrue(card0.equalTo(hand1[0]));
@@ -198,8 +196,8 @@ public class Briscola2PHandTest {
             try {
                 NeapolitanCard card = hand.removeCardFromHand(i);
                 assertTrue (card == null);
-            }catch(IndexOutOfBoundsException e){
-                assertTrue (e instanceof IndexOutOfBoundsException);
+            }catch(IndexOutOfBoundsException|IllegalArgumentException e){
+                assertTrue (e instanceof IndexOutOfBoundsException || e instanceof IllegalArgumentException);
             }
         }
         assertTrue(card0.equalTo(hand1[2]));
@@ -217,8 +215,8 @@ public class Briscola2PHandTest {
             try {
                 NeapolitanCard card = hand.removeCardFromHand(i);
                 assertTrue (card == null);
-            }catch(IndexOutOfBoundsException e){
-                assertTrue (e instanceof IndexOutOfBoundsException);
+            }catch(IndexOutOfBoundsException|IllegalArgumentException e){
+                assertTrue (e instanceof IndexOutOfBoundsException || e instanceof IllegalArgumentException);
             }
         }
         assertTrue(card0.equalTo(hand1[1]));

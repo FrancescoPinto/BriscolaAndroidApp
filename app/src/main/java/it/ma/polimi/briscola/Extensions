@@ -1,0 +1,35 @@
+
+
+OBBLIGATORIO DA FARE:
+salvare statistiche sulle partite passate
+dice "must keep track of previous games and some statistics"
+AI stupida
+
+OPTIONAL PART:
+graphics and sounds: background music and sound fx (togglable), nicely designed graphical elements and animations (professional)
+using a server: login, play remotely (chiedi a De Bernardi per info)
+AI for H-C games: depending on how strong/clever the AI is (mandatory at least a stupid AI) <- playable via server
+Configurability: options o personalize
+- different playing modes (local vs AI, vs remote, AI vs remote ecc)
+- different graphical themes (e.g. different decks)
+- options for the gameplay (undo move, peeping at opponent's cards or deck ...)
+- options for previous games (replay game, statistics etc.)
+- variants of the briscola (vary rules, 4player game etc.)
+other ...
+
+Schema delle schermate:
+1. Menù principale
+    1.0 Login/Registrazione
+        1.1. Impostazioni (dell'applicazione e dell'utente, presumo farò setta undo/peeping, setta graphical themes, modifica dati utente, impostazioni audio etc.)
+        1.2. Inizia nuova partita
+            1.2.1 Imposta nuova partita (seleziona undo/peeping, scegli giocare vs AI o remote, difficoltà AI, quanti giocatori ecc.
+                1.2.1.1. Schermata della partita
+                    1.2.1.1.1 Schermata di pausa della partita (puoi impostare delle cose, però attento che se esci dal gioco perdi i dati, o li salvi?
+                    1.2.1.1.2 SChermata di fine partita (congratulazioni + statistiche)
+        1.3. Guarda statistiche partite precedenti
+
+Schermate su cui puoi lavorare senza preoccuparti della navigazione: la 1.2.1.1 e le sue figlie ... quelle sono e AMEN, qualunque cosa tu scelga di fare a più alto livello ... inizi da lì!
+Per la navigazione potresti:
+1) usare le tab per 1.1, 1.2 e 1.3 ... però non mi convince più di tanto
+2) usare il tipico menù dei videogiochi, ma  mi sembra troppo banale (e poi se metti un menù a scomparsa laterale diventa brutto e ridondante)
+3)

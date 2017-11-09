@@ -1,4 +1,4 @@
-package it.ma.polimi.briscola;
+package it.ma.polimi.briscola.junk;
 
 import org.junit.Test;
 
@@ -22,6 +22,7 @@ public class JavaTest {
     public void substringTest(){
         String gatto = "gatto";
         assert(gatto.substring(2,3).equals("tt"));
+        assert(gatto.substring(0,1).equals("g"));
     }
 
     @Test
@@ -40,4 +41,6 @@ public class JavaTest {
         }
 
     }
+
+
 }

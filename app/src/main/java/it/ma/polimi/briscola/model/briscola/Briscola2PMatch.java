@@ -1,4 +1,4 @@
-package it.ma.polimi.briscola.model.buttare;
+package it.ma.polimi.briscola.model.briscola;
 
 /**
  * Created by utente on 21/10/17.

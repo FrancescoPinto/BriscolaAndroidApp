@@ -6,6 +6,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
+import it.ma.polimi.briscola.model.deck.AbstractDeck;
 import it.ma.polimi.briscola.model.deck.Card;
 import it.ma.polimi.briscola.model.deck.Deck;
 import it.ma.polimi.briscola.model.deck.NeapolitanCard;
@@ -99,14 +100,10 @@ public class NeapolitanDeckTest {
     private NeapolitanCard[][] buildValidDeck = {buildValidDeck0,buildValidDeck1,buildValidDeck2};
     private String[] buildValidStrings = { "1SKGJC3B", "", "4C5B6S7SHG"}; //prova con qualcosa di più lungo o qualcosa di invalido
 
-    private String buildValidDeckStrings0 = "1SKGJC3B", buildValidDeckStrings1= "", buildValidDeckStrings2 ="4C5B6S7SHG";
-
-    String[] buildInvalidStrings = {};//@TODO per il buildFromString, usa stringhe non valide (carte non ben fatte, duplicati, al più 40 carte e se sono 40 carte devono essere il mazzo
-
     @Test
     public void briscola2PlayersDeckConstructorTest(){
         NeapolitanDeck nd = new NeapolitanDeck();
-        List<NeapolitanCard> cards = (List<NeapolitanCard>) nd.getCards();
+        List<NeapolitanCard> cards = nd.getCards();
 
         for(int i = 0; i < cards.size() && i < newDeck.length; i++){
             NeapolitanCard c1 = cards.get(i);
@@ -125,7 +122,7 @@ public class NeapolitanDeckTest {
     //di shuffle tutti uguali
     @Test
     public void shuffleDeckTest(){
-        List<NeapolitanDeck> b2pds = new ArrayList<>();
+        List<AbstractDeck> b2pds = new ArrayList<>();
         for(int i = 0; i < 10; i++) {
             b2pds.add(new NeapolitanDeck().shuffleDeck(new UniformProbabilityShuffler()));
             assertTrue(b2pds.get(i).getCards().size() == 40);
@@ -145,6 +142,8 @@ public class NeapolitanDeckTest {
                         correspondences++;
                 }
 
+                System.out.println(b2pds.get(i));
+
             }
 
             if (correspondences == 40)
@@ -161,22 +160,16 @@ public class NeapolitanDeckTest {
         NeapolitanDeck deck;
         NeapolitanCard card;
         for(int i = 0; i < buildValidDeck.length; i++){
-             deck = new NeapolitanDeck(buildValidStrings[i]);
-            List<NeapolitanCard> cards = (List<NeapolitanCard>) deck.getCards();
+            deck = new NeapolitanDeck(buildValidStrings[i]);
+            List<NeapolitanCard> cards = deck.getCards();
             for(int j = 0; j < buildValidDeck[i].length && j < deck.getCurrentDeckSize(); j++) {
                  card = cards.get(j);
                  assertTrue(card.getCardNumber().equals(buildValidDeck[i][j].getCardNumber()));
+                assertTrue(card.getCardSuit().equals(buildValidDeck[i][j].getCardSuit()));
+
             }
         }
 
-        /*deck = new NeapolitanDeck(buildValidDeckStrings0);
-        List<NeapolitanCard> cards = (List<NeapolitanCard>) deck.getCards();
-
-        for(int j = 0; j < buildValidDeck0.length && j < deck.getCurrentDeckSize(); j++) {
-            card = cards.get(j);
-            assertTrue(card.equalTo(buildValidDeck0[j]));
-        }*/
-        //buildValidDeck0
                 //test a parte per il newDeck
         String newDeckString = "";
         for(NeapolitanCardNumbers cn : NeapolitanCardNumbers.values()){
@@ -188,10 +181,93 @@ public class NeapolitanDeckTest {
         deck = new NeapolitanDeck(newDeckString);
 
         for(int j = 0; j < newDeck.length && j < deck.getCards().size(); j++) {
-            card = (NeapolitanCard) deck.getCards().get(j);
+            card = deck.getCards().get(j);
             assertTrue(card.getCardNumber().equals(newDeck[j].getCardNumber()));
+            assertTrue(card.getCardSuit().equals(newDeck[j].getCardSuit()));
+
         }
 
+
+    }
+
+    @Test
+    public void putCardToBottomTest(){
+
+        NeapolitanDeck deck;
+        String tempString;
+        for(int i = 0; i < buildValidDeck.length; i++) {
+            deck = new NeapolitanDeck(buildValidStrings[i]);
+            tempString = deck.toString();
+            deck.putCardToBottom(new NeapolitanCard("1","S"));
+            assertTrue(deck.toString().equals(tempString+"1S"));
+            System.out.println(deck);
+        }
+
+    }
+
+    @Test
+    public void drawCardFromTopTest(){
+        NeapolitanDeck deck = new NeapolitanDeck(buildValidStrings[0]);
+        List<NeapolitanCard> cards = new ArrayList<>(deck.getCards());
+        int tempSize = cards.size();
+        for(NeapolitanCard c : cards){
+            NeapolitanCard temp = deck.drawCardFromTop();
+            assertTrue(temp.equalTo(c));
+            assertTrue(--tempSize == deck.getCurrentDeckSize());
+        }
+        try{
+            deck.drawCardFromTop();
+        }catch(Exception e){
+            assertTrue(e instanceof IllegalStateException);
+        }
+    }
+
+
+    @Test
+    public void drawCardFromBottomTest(){
+        NeapolitanDeck deck = new NeapolitanDeck(buildValidStrings[0]);
+        List<NeapolitanCard> cards = new ArrayList<>(deck.getCards());
+        int tempSize = cards.size();
+        for(int i = cards.size()-1; i >= 0; i--){
+            NeapolitanCard c = cards.get(i);
+            NeapolitanCard temp = deck.drawCardFromBottom();
+            assertTrue(temp.equalTo(c));
+            assertTrue(--tempSize == deck.getCurrentDeckSize());
+        }
+        try{
+            deck.drawCardFromBottom();
+        }catch(Exception e){
+            assertTrue(e instanceof IllegalStateException);
+        }
+    }
+
+    @Test
+    public void equalToTest(){
+        for(int i = 0; i < buildValidDeck.length; i++){
+            for(int j = 0; j < buildValidDeck.length; j++){
+                NeapolitanDeck deck1 = new NeapolitanDeck(buildValidStrings[i]);
+                NeapolitanDeck deck2 = new NeapolitanDeck(buildValidStrings[j]);
+
+                if(i == j)
+                    assertTrue(deck1.equalTo(deck2));
+                else
+                    assertTrue(!deck1.equalTo(deck2));
+            }
+
+        }
+    }
+
+    @Test
+    public void containsCardTest(){
+        NeapolitanDeck deck = new NeapolitanDeck(buildValidStrings[0]);
+        assertTrue(deck.containsCard(new NeapolitanCard("1","S")));
+        assertTrue(deck.containsCard(new NeapolitanCard("K","G")));
+        assertTrue(deck.containsCard(new NeapolitanCard("J","C")));
+        assertTrue(deck.containsCard(new NeapolitanCard("3","B")));
+        assertTrue(!deck.containsCard(new NeapolitanCard("K","C")));
+
+        deck = new NeapolitanDeck(buildValidStrings[1]);
+        assertTrue(!deck.containsCard(new NeapolitanCard("K","C")));
 
     }
 }

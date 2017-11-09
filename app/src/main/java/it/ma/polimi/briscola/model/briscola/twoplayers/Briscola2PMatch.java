@@ -16,30 +16,30 @@ public class Briscola2PMatch {
         FIRSTCARDPLAYED,
         SECONDCARDPLAYED;
     };
-    private Briscola2PMatch(){
 
+    public Briscola2PMatch(){
+
+    }
+
+
+    public Briscola2PMatch(String configuration){ //resume from saved configuration
+        config = new Briscola2PMatchConfig(configuration);
+    }
+
+    public void startNewMatch(){
         config = new Briscola2PMatchConfig();
         config.initializeNewDeck();
         config.initializeFirstPlayer();
         config.initializePlayersHands();
         config.initializeBriscola();
-
     }
 
-    private Briscola2PMatch(String configuration){ //resume from saved configuration
-        config = new Briscola2PMatchConfig(configuration);
+    public void resumeMatch(String config){ //da un salvataggio
+        this.config = new Briscola2PMatchConfig(config);
     }
 
-    public Briscola2PMatch startNewMatch(){
-        return new Briscola2PMatch();
-    }
-
-    public Briscola2PMatch resumeMatch(String config){ //da un salvataggio
-        return new Briscola2PMatch(config);
-    }
-
-    public static String makeMove(String configuration, int move){
-        Briscola2PMatchConfig config = new Briscola2PMatchConfig(configuration);
+    public String makeMove(String configuration, int move){
+         config = new Briscola2PMatchConfig(configuration);
 
         if(config.countCardsOnSurface() == 0) {
             config.playCard(move);
@@ -62,8 +62,8 @@ public class Briscola2PMatch {
                     case Briscola2PMatchConfig.DRAW: return "DRAW";
                     default: throw new RuntimeException("Error while computing the winner");
                 }
-          //  }else if (config.arePlayersHandsEmpty() && !config.isDeckEmpty()) { //todo non è compito di questo metodo controllare la consistenza! vedi il metodo che devi fare in matchConfig
-           //     throw new RuntimeException("Players Hands are Empty but Deck is not Empty: inconsistent configuration");
+                //  }else if (config.arePlayersHandsEmpty() && !config.isDeckEmpty()) { //todo non è compito di questo metodo controllare la consistenza! vedi il metodo che devi fare in matchConfig
+                //     throw new RuntimeException("Players Hands are Empty but Deck is not Empty: inconsistent configuration");
             }else if (!config.arePlayersHandsEmpty() && config.isDeckEmpty()){
                 return config.toString();
             }else if(!config.isDeckEmpty()){
@@ -78,7 +78,7 @@ public class Briscola2PMatch {
     }
 
 
-    public static String moveTest(String configuration, String moveSequence){
+    public String makeMoveSequence(String configuration, String moveSequence){
         String config = configuration;
         try{
             for(int i = 0; i < moveSequence.length() -1; i++){
@@ -86,13 +86,17 @@ public class Briscola2PMatch {
             }
             return makeMove(config,Integer.valueOf(String.valueOf(moveSequence.charAt(moveSequence.length()-1))));
         }catch (Exception e){
-            e.printStackTrace();
+            //e.printStackTrace();
             return "ERROR:" +e.getMessage();
         }
 
     }
 
-  //  QUI DEVI SEGNARTI TUTTI GLI STATI (ma proprio tutti! anche quelli di pesca ecc, e in ognuno far chiamare i vari metodi di config )
+    public Briscola2PMatchConfig getConfig() {
+        return config;
+    }
+
+    //  QUI DEVI SEGNARTI TUTTI GLI STATI (ma proprio tutti! anche quelli di pesca ecc, e in ognuno far chiamare i vari metodi di config )
 
 
 
@@ -112,4 +116,42 @@ public class Briscola2PMatch {
     //fa pescare a turno i due giocatori (prima chi deve giocare per primo?), MA PRIMA CONTROLLA il deck (se ci sono abbastanza carte ok procedi, se ce n'è solo una fa pescare al giocatore che resta senza la briscola, se sono finite chiudi il match)
     //ritorna allo stato indicato con -->
 
+
+       /*
+    LISTA DEGLI STATI:
+        Inizializza partita
+            Deck shuffle            FATTO
+            Scegli primo a giocare (magari carta sasso forbice?) FATTO (prototipato)
+            PESCA LE CARTE (primo player, secondo, primo, secondo, primo, secondo) (FATTO)
+            estrai la briscola  FATTO
+            metti il deck a posto <- è una cosa che fa la GUI, non fatto quindi ...
+        Primo round
+            il primo player ha controllo, sceglie carta, butta a terra <- i primi due sono gestiti da GUI e controller, l'altra
+            setsso per secondo giocatore
+            determina il vincitore del round (se una briscola e una non briscola sono giocate, vince chi gioca la briscola)
+                                                (se due briscole sono giocate, quello con la briscola di più alto valore vince)
+                                                 (se non si giocano briscole, il primo giocatore butta una suit a terra e il secondo
+                                                   se gioca con la stessa suit si comparano e vince il più grande, altrimenti vince il primo giocatore
+           pulisci la superfici e mettile sulla pila del vincitore (faccia in giù)
+       SECONDO ... Quartultimo ROUND
+            il vincitore del round precedente diventa primo giocatore
+            entrambi i giocatori pescano una carda (prima il primo giocatore)
+                SE IL DECK E' VUOTO, NESSUNA CARTA SI PESCA
+  inizio    il primo player ha controllo, sceglie carta, butta a terra
+            setsso per secondo giocatore
+            determina il vincitore del round
+  fine      pulisci la superfici e mettile sulla pila del vincitore (faccia in giù)
+
+        Terzultimo round
+            il vincitore del round precedente diventa primo
+            entrambi pescano, il primo dal deck, il secondo raccoglie la briscola
+            RIPETI i passi da inizio a fine di prima
+        PENULTIMO E ULTIMO:
+            RIPETI i passi da inizio a fine di due stati prima
+            Calcola il punteggio (non lo puoi fare in itinere? così lo mostri sul display ... ma così il giocatore umano può contare ...)
+            Determina il vincitore
+            TERMINA
+
+
+     */
 }

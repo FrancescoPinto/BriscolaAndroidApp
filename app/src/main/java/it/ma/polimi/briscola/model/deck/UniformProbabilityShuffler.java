@@ -4,27 +4,29 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Created by utente on 21/10/17.
+ * Class implementing a Uniform Probability Shuffling algorithm using the Durstenfeld-Knuth Shuffling Algorithm
+ *
+ * @author Francesco Pinto
  */
+public class UniformProbabilityShuffler implements Shuffler{
 
-public class UniformProbabilityShuffler {
 
 
-    //Durstenfeld-Knuth Shuffle, uniform probability of each configuration
-    public NeapolitanDeck shuffleDeck(NeapolitanDeck deck){
+    @Override
+    public Deck shuffleDeck(Deck deck){
         int randomNum;
         List<Card> cards = (List<Card>) deck.getCards();
 
         for(int i = 1; i < cards.size();i++) {
-            randomNum = ThreadLocalRandom.current().nextInt(0, cards.size());
-            //Swap cards
+            randomNum = ThreadLocalRandom.current().nextInt(0, cards.size()); //Choose a card at random
+            //Swap the card chosen at random and the i-th card
             Card tempCard =  cards.get(randomNum);
             cards.set(randomNum, cards.get(i));
             cards.set(i,tempCard);
         }
 
-        deck.setCards(cards);
-        return deck;
+        deck.setCards(cards); //update the deck with the shuffled cards
+        return deck; //convenience
     }
 
 }

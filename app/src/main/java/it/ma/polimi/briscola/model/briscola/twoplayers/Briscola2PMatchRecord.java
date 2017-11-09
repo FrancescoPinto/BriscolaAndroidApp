@@ -10,6 +10,16 @@ public class Briscola2PMatchRecord implements Comparable<Briscola2PMatchRecord> 
 
     public static final String computerPlayerName = "CPU";
 
+    private int id;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     private String player0Name, player1Name;
     private int player0Score, player1Score;
     //todo di default player1 è il giocatore umano del dispositivo, player 0 è l'ALTRO (sia esso umano o meno non importa)

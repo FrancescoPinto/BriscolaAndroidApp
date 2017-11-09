@@ -3,4 +3,15 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="colorTransparent">#8a3f51b5</color>
+    <color name="whiteTransparent">#8aFFFFFF</color>
+    <color name="lighterWhiteTransparent">#3aFFFFFF</color>
+
+
+    <color name="black_overlay">#66000000</color>
+
+    <color name="greenLightCardDeskBackground">#16d20c</color>
+    <color name="greenDarkCardDeskBackground">#13af0b</color>
+    <color name="greenVeryLightCardDeskBackground">#34ff7f</color>
+
 </resources>

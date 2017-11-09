@@ -1,0 +1,15 @@
+1) ricontrollare la qualità e comprensibilità della documentazione
+2) generare i javadoc e metterli da qualche parte
+3) reingegnerizzare il package briscola (magari inserire AbstractCardListContainer)
+FARE TANTI TEST PIU' APPROFONDITI SU TUTTO (riprendi da deck, hai già testato esaustivamente CardNumbers/Suit e Card, ti mancano NeapolitanDeck (lo shuffler non puoi testarlo perché è casuale, lo "testi" nel deck
+e poi ti mancano test più approfonditi per tutta la parte di sopra
+
+3) fare esperimento sull'animazione di flip di una carta/moneta (il perché è al punto 8)
+4) sviluppare l'activity + fragment delle classifiche/record vecchi dati con un master+details (lascia perdere l'estetica per ora)
+5) sviluppare l'activity + fragment per il login + il controller che si occupa di garantire l'autorizzazione a recuperare dati/l'identità
+6) sviluppare l'activity + fragment della schermata iniziale (tra le opzioni metti solo FUNZIONALITA' DI GIOCO O DI DATI VECCHI) + un drawer a sinistra per le impostazioni dell'app e i dati profilo + pulsante logout
+7) introdurre musica nel menù iniziale e alla pressione dei tasti del menù ecc.
+7) sviluppare l'activity + fragment della partita di carte
+8) perfezionare la grafica con animazioni carine (PER SEMPLICITA' TU IMPLEMENTA IL GIOCO IN MODO BRUTTO: le carte le fai con delle pseudo immagini che hanno sopra una textview
+le carte compaiono e scompaiono nel nulla (non animarle bene, non serve per ora, poi le animazioni le curi dopo ... SOLO una cosa, fa un esperimento con una flip di una imageView
+per assicurarti che la tua scelta di non usare surfaceView o OpenGL vada bene

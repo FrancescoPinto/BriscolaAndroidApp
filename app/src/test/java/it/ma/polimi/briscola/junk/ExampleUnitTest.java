@@ -1,4 +1,4 @@
-package it.ma.polimi.briscola;
+package it.ma.polimi.briscola.junk;
 
 import org.junit.Test;
 

@@ -6,15 +6,13 @@ import java.util.List;
 import it.ma.polimi.briscola.model.deck.NeapolitanCard;
 
 /**
- * The type Briscola 2 p pile.
+ * Class representing the pile in a Briscola 2 Players match
  *
- * @author PintoFrancesco  Class containing the Pile of a Briscola 2 Players Pile and methods to manipulate it
+ * @author Francesco Pinto
  */
 public class Briscola2PPile {
 
-    /**
-     * The Pile.
-     */
+
     List<NeapolitanCard> pile = new ArrayList<>();
 
     /**
@@ -30,8 +28,7 @@ public class Briscola2PPile {
      * Constructor that builds a Briscola2PPile starting from a stringified list of NeapolitanCards
      *
      * @param pile String representing the Pile. Should contain two chars for each card in the list: the first char indicates the CardNumber, the second the CardSuit
-     * @see it.ma.polimi.briscola.model.deck.NeapolitanCardNumbers
-     * @see it.ma.polimi.briscola.model.deck.NeapolitanCardSuit
+     * @see it.ma.polimi.briscola.model.deck.NeapolitanCard
      */
     public Briscola2PPile(String pile){
         for(int i = 0; i <= pile.length()-1; i = i+2){
@@ -44,7 +41,7 @@ public class Briscola2PPile {
     /**
      * Method that returns the Pile in the form of a list
      *
-     * @return pile The List form of the pile
+     * @return The List form of the pile
      */
     public List<NeapolitanCard> getPile() {
         return pile;
@@ -62,7 +59,7 @@ public class Briscola2PPile {
 
     /**
      * Builds a String representation of the pile
-     * @return pile  String representing the Pile. Contains two chars for each card in the list: the first char indicates the CardNumber, the second the CardSuit. Topmost cards are appended at the end of the string.
+     * @return   String representing the Pile. Contains two chars for each card in the list: the first char indicates the CardNumber, the second the CardSuit. Topmost cards are appended at the end of the string.
      */
     @Override
     public String toString(){
@@ -78,19 +75,27 @@ public class Briscola2PPile {
     }
 
     /**
-     * Compare if the content of two piles is the same
+     * Compare if the content of two piles is the same (same cards in the same order)
      *
-     * @param pile the pile
-     * @return Boolean representing whether the two piles are equal or not
+     * @param pile The pile to be used for the comparison
+     * @return True if the two piles contain the same cards in the same order, false otherwise
      */
     public boolean equalTo(Briscola2PPile pile){
-        for(int i = 0; i < getPile().size() && i < pile.getPile().size(); i++) {
-            NeapolitanCard c1 = ((List<NeapolitanCard>)this.getPile()).get(i);
-            NeapolitanCard c2  = ((List<NeapolitanCard>)pile.getPile()).get(i);
-            if (!c1.equalTo(c2))
-                return false;
-        }
-        return true;
+        if(this.pile.isEmpty() && pile.getPile().size() == 0)
+            return true;
+        else if(this.pile.isEmpty() && !(pile.getPile().size() == 0))
+            return false;
+        else if(!this.pile.isEmpty() && (pile.getPile().size() == 0))
+            return false;
+        else {
+            for (int i = 0; i < getPile().size() && i < pile.getPile().size(); i++) {
+                NeapolitanCard c1 = this.getPile().get(i);
+                NeapolitanCard c2 = pile.getPile().get(i);
+                if (!c1.equalTo(c2))
+                    return false;
+            }
+            return true;
 
+        }
     }
 }
