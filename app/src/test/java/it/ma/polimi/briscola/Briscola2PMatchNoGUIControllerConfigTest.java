@@ -18,7 +18,7 @@ import static org.junit.Assert.assertTrue;
  * Created by utente on 24/10/17.
  */
 
-public class Briscola2PMatchConfigTest {
+public class Briscola2PMatchNoGUIControllerConfigTest {
 
     String startingConfig =  "0B5S4G6S2C5GKB7B6CHCHB1GKC5C4B1BHG7C6BJS6G7G4C3C7SJBHS2S3S4S1S2G3BJG5B..JCKG2B.1CKS3G..";
     String config1 = "1B5S4G6S2C5GKB7B6CHCHB1GKC5C4B1BHG7C6BJS6G7G4C3C7SJBHS2S3S4S1S2G3BJG5B.JC.KG2B.1CKS3G..";
@@ -87,7 +87,7 @@ public class Briscola2PMatchConfigTest {
         Briscola2PMatchConfig config = new Briscola2PMatchConfig();
         config.initializeNewDeck();
         NeapolitanDeck deck = config.getDeck();
-        List<NeapolitanCard> cards =  new ArrayList<>((List<NeapolitanCard>) deck.getCards());
+        List<NeapolitanCard> cards =  new ArrayList<>((List<NeapolitanCard>) deck.getCardList());
         config.initializeFirstPlayer();
         int currentPlayer = config.getCurrentPlayer();
         config.initializePlayersHands();
@@ -107,7 +107,7 @@ public class Briscola2PMatchConfigTest {
         Briscola2PMatchConfig config = new Briscola2PMatchConfig();
         config.initializeNewDeck();
         NeapolitanDeck deck = config.getDeck();
-        List<NeapolitanCard> cards = new ArrayList<>((List<NeapolitanCard>) deck.getCards());
+        List<NeapolitanCard> cards = new ArrayList<>((List<NeapolitanCard>) deck.getCardList());
         config.initializeFirstPlayer();
         config.initializePlayersHands();
         config.initializeBriscola();

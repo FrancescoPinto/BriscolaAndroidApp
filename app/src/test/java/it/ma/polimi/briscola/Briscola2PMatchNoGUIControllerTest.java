@@ -2,15 +2,13 @@ package it.ma.polimi.briscola;
 
 import org.junit.Test;
 
-import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMatch;
-
 import static junit.framework.Assert.assertTrue;
 
 /**
  * Created by utente on 31/10/17.
  */
 
-public class Biscola2PMatchTest {
+public class Briscola2PMatchNoGUIControllerTest {
 
     //del prof
     String startingConfig1 = "0B5S4G6S2C5GKB7B6CHCHB1GKC5C4B1BHG7C6BJS6G7G4C3C7SJBHS2S3S4S1S2G3BJG5B..JCKG2B.1CKS3G..";
@@ -83,7 +81,8 @@ public class Biscola2PMatchTest {
             "WINNER165"
     };
 
-    String HAND_indexOutOfBoundsErrorMessage =  "ERROR:The index of the card to be removed must be between "+0+" and ";
+    String HAND_indexOutOfBoundsErrorMessage =  "ERROR:Briscola2PHand: index can not exceed the maximum of ";
+    String HAND_ExceededSize = "ERROR:Briscola2PHand: index can not exceed the size (%d-1) of the list";
 
 
 
@@ -139,13 +138,13 @@ public class Biscola2PMatchTest {
 
         outcome = MoveTest.moveTest(Config3Array[0], "4");
         System.out.println(outcome);
-        System.out.println(HAND_indexOutOfBoundsErrorMessage + 0);
-        assertTrue(outcome.equals(HAND_indexOutOfBoundsErrorMessage + 0));
+        System.out.println(HAND_indexOutOfBoundsErrorMessage + 2);
+        assertTrue(outcome.equals(HAND_indexOutOfBoundsErrorMessage + 2));
 
         outcome = MoveTest.moveTest(Config5Array[0], "2");
         System.out.println(outcome);
-        System.out.println(HAND_indexOutOfBoundsErrorMessage + 1);
-        assertTrue(outcome.equals(HAND_indexOutOfBoundsErrorMessage + 1));
+        System.out.println(String.format(HAND_ExceededSize,2));
+        assertTrue(outcome.equals(String.format(HAND_ExceededSize, 2)));
 
     }
 

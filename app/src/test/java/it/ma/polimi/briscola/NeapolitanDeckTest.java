@@ -103,7 +103,7 @@ public class NeapolitanDeckTest {
     @Test
     public void briscola2PlayersDeckConstructorTest(){
         NeapolitanDeck nd = new NeapolitanDeck();
-        List<NeapolitanCard> cards = nd.getCards();
+        List<NeapolitanCard> cards = nd.getCardList();
 
         for(int i = 0; i < cards.size() && i < newDeck.length; i++){
             NeapolitanCard c1 = cards.get(i);
@@ -125,17 +125,17 @@ public class NeapolitanDeckTest {
         List<AbstractDeck> b2pds = new ArrayList<>();
         for(int i = 0; i < 10; i++) {
             b2pds.add(new NeapolitanDeck().shuffleDeck(new UniformProbabilityShuffler()));
-            assertTrue(b2pds.get(i).getCards().size() == 40);
+            assertTrue(b2pds.get(i).size() == 40);
         }
 
         int identicalShuffles = 0;
 
         for(int i = 0; i < 9; i++) { //da 0 a 8
-            List<? extends Card> ci = b2pds.get(i).getCards();
+            List<? extends Card> ci = b2pds.get(i).getCardList();
             int correspondences = 0;
 
             for (int j = i + 1; j < 10; j++) { //compara con quelli dopo
-                List<? extends Card> cj = b2pds.get(i).getCards();
+                List<? extends Card> cj = b2pds.get(i).getCardList();
 
                 for(int k = 0; k < 40; k++){
                     if(ci.get(k).getCardSuit() == cj.get(k).getCardSuit() && ci.get(k).getCardNumber() == cj.get(k).getCardNumber())
@@ -161,8 +161,8 @@ public class NeapolitanDeckTest {
         NeapolitanCard card;
         for(int i = 0; i < buildValidDeck.length; i++){
             deck = new NeapolitanDeck(buildValidStrings[i]);
-            List<NeapolitanCard> cards = deck.getCards();
-            for(int j = 0; j < buildValidDeck[i].length && j < deck.getCurrentDeckSize(); j++) {
+            List<NeapolitanCard> cards = deck.getCardList();
+            for(int j = 0; j < buildValidDeck[i].length && j < deck.size(); j++) {
                  card = cards.get(j);
                  assertTrue(card.getCardNumber().equals(buildValidDeck[i][j].getCardNumber()));
                 assertTrue(card.getCardSuit().equals(buildValidDeck[i][j].getCardSuit()));
@@ -180,8 +180,8 @@ public class NeapolitanDeckTest {
 
         deck = new NeapolitanDeck(newDeckString);
 
-        for(int j = 0; j < newDeck.length && j < deck.getCards().size(); j++) {
-            card = deck.getCards().get(j);
+        for(int j = 0; j < newDeck.length && j < deck.size(); j++) {
+            card = deck.getCard(j);
             assertTrue(card.getCardNumber().equals(newDeck[j].getCardNumber()));
             assertTrue(card.getCardSuit().equals(newDeck[j].getCardSuit()));
 
@@ -208,12 +208,12 @@ public class NeapolitanDeckTest {
     @Test
     public void drawCardFromTopTest(){
         NeapolitanDeck deck = new NeapolitanDeck(buildValidStrings[0]);
-        List<NeapolitanCard> cards = new ArrayList<>(deck.getCards());
+        List<NeapolitanCard> cards = new ArrayList<>(deck.getCardList());
         int tempSize = cards.size();
         for(NeapolitanCard c : cards){
             NeapolitanCard temp = deck.drawCardFromTop();
             assertTrue(temp.equalTo(c));
-            assertTrue(--tempSize == deck.getCurrentDeckSize());
+            assertTrue(--tempSize == deck.size());
         }
         try{
             deck.drawCardFromTop();
@@ -226,13 +226,13 @@ public class NeapolitanDeckTest {
     @Test
     public void drawCardFromBottomTest(){
         NeapolitanDeck deck = new NeapolitanDeck(buildValidStrings[0]);
-        List<NeapolitanCard> cards = new ArrayList<>(deck.getCards());
+        List<NeapolitanCard> cards = new ArrayList<>(deck.getCardList());
         int tempSize = cards.size();
         for(int i = cards.size()-1; i >= 0; i--){
             NeapolitanCard c = cards.get(i);
             NeapolitanCard temp = deck.drawCardFromBottom();
             assertTrue(temp.equalTo(c));
-            assertTrue(--tempSize == deck.getCurrentDeckSize());
+            assertTrue(--tempSize == deck.size());
         }
         try{
             deck.drawCardFromBottom();

@@ -40,7 +40,7 @@ public class Briscola2PSurfaceTest {
     public void constructorListTest(){
         List<NeapolitanCard> surface = new ArrayList<>();
         Briscola2PSurface briscolasurface = new Briscola2PSurface(surface);
-        assertTrue(briscolasurface.getSurface().isEmpty());
+        assertTrue(briscolasurface.isEmpty());
 
 
         for(NeapolitanCard nc : surface1){
@@ -48,7 +48,7 @@ public class Briscola2PSurfaceTest {
         }
         briscolasurface = new Briscola2PSurface(surface);
         boolean equal = true;
-        List<NeapolitanCard> surfaceList = briscolasurface.getSurface();
+        List<NeapolitanCard> surfaceList = briscolasurface.getCardList();
         for(int i = 0; i < surfaceList.size() && i < surface1.length;i++) {
             NeapolitanCard nc1 = surfaceList.get(i);
             NeapolitanCard nc2 = surface1[i];
@@ -73,10 +73,10 @@ public class Briscola2PSurfaceTest {
     public void constructorStringTest(){
 
         Briscola2PSurface surface = new Briscola2PSurface(surfaceS0);
-        assertTrue(surface.getSurface().isEmpty());
+        assertTrue(surface.isEmpty());
         surface = new Briscola2PSurface(surfaceS1);
         boolean equal = true;
-        List<NeapolitanCard> surfaceList = surface.getSurface();
+        List<NeapolitanCard> surfaceList = surface.getCardList();
         for(int i = 0; i < surfaceList.size() && i < surface1.length;i++) {
             NeapolitanCard nc1 = surfaceList.get(i);
             NeapolitanCard nc2 = surface1[i];
@@ -101,7 +101,10 @@ public class Briscola2PSurfaceTest {
         for(NeapolitanCard nc : surface1){
             surfaceList.add(nc);
         }
+
         surface = new Briscola2PSurface(surfaceS1);
+        System.out.println(""+surface.getCard(0) + surface.getCard(1));
+        System.out.println("Surf" + surface.toString() + ", should be "+surfaceS1);
         assertTrue(surface.toString().equals(surfaceS1));
     }
 
@@ -114,16 +117,16 @@ public class Briscola2PSurfaceTest {
         //TODO nel putCardInsurface assicurati che non può passare Null (in tal caso lanci un'eccezione, per ora invece aggiunge il null come fosse una carta
 
         Briscola2PSurface surface = new Briscola2PSurface(surfaceS0);
-        assertTrue(surface.getSurface().isEmpty());
+        assertTrue(surface.isEmpty());
 
-        surface.putCardOnSurface(surface1[0]);
-        assertTrue(surface.getSurface().size() == 1);
-        assertTrue(surface.getSurface().get(0).equalTo(surface1[0]));
+        surface.appendCard(surface1[0]);
+        assertTrue(surface.size() == 1);
+        assertTrue(surface.getCard(0).equalTo(surface1[0]));
 
-        surface.putCardOnSurface(surface1[1]);
-        assertTrue(surface.getSurface().size() == 2);
-        assertTrue(surface.getSurface().get(0).equalTo(surface1[0]));
-        assertTrue(surface.getSurface().get(1).equalTo(surface1[1]));
+        surface.appendCard(surface1[1]);
+        assertTrue(surface.size() == 2);
+        assertTrue(surface.getCard(0).equalTo(surface1[0]));
+        assertTrue(surface.getCard(1).equalTo(surface1[1]));
 
     }
 
@@ -131,15 +134,15 @@ public class Briscola2PSurfaceTest {
     public void clearSurfaceTest() {
 
         Briscola2PSurface surface = new Briscola2PSurface(surfaceS0);
-        assertTrue (surface.getSurface().isEmpty());
+        assertTrue (surface.isEmpty());
 
-        List<NeapolitanCard> surfList = surface.clearSurface();
+        List<NeapolitanCard> surfList = surface.clearCardList();
         assertTrue(surfList.isEmpty());
 
-        surface.putCardOnSurface(surface1[0]);
-        surface.putCardOnSurface(surface1[1]);
+        surface.appendCard(surface1[0]);
+        surface.appendCard(surface1[1]);
 
-        surfList = surface.clearSurface();
+        surfList = surface.clearCardList();
         assertTrue(surfList.get(0).equalTo(surface1[0]));
         assertTrue(surfList.get(1).equalTo(surface1[1]));
 
@@ -150,7 +153,7 @@ public class Briscola2PSurfaceTest {
     public void getCardTest() {
 
         Briscola2PSurface surface = new Briscola2PSurface(surfaceS0);
-        assertTrue (surface.getSurface().isEmpty());
+        assertTrue (surface.isEmpty());
 
         NeapolitanCard card0,card1;
         try{
@@ -166,8 +169,8 @@ public class Briscola2PSurfaceTest {
         }
 
 
-        surface.putCardOnSurface(surface1[0]);
-        surface.putCardOnSurface(surface1[1]);
+        surface.appendCard(surface1[0]);
+        surface.appendCard(surface1[1]);
 
          card0 = surface.getCard(0);
          card1 = surface.getCard(1);
@@ -179,12 +182,12 @@ public class Briscola2PSurfaceTest {
     @Test
     public void countCardsOnSurfaceTest(){
         Briscola2PSurface surface = new Briscola2PSurface(surfaceS0);
-        assertTrue(surface.countCardsOnSurface() == 0);
+        assertTrue(surface.size() == 0);
 
-        surface.putCardOnSurface(surface1[0]);
-        assertTrue(surface.countCardsOnSurface() == 1);
-        surface.putCardOnSurface(surface1[1]);
-        assertTrue(surface.countCardsOnSurface() == 2);
+        surface.appendCard(surface1[0]);
+        assertTrue(surface.size() == 1);
+        surface.appendCard(surface1[1]);
+        assertTrue(surface.size() == 2);
 
     }
 }

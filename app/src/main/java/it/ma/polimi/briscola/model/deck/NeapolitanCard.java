@@ -29,7 +29,6 @@ public class NeapolitanCard implements Card{
      *
      * @param num  String representing the number of the card, its value must be among the cardNumber values in NeapolitanCardNumber enum
      * @param suit String representing the suit of the card, its value must be among the cardSuit values in NeapolitanCardSuit enum
-     * @throws IllegalArgumentException If the num or suit aren't among the cardNumber and cardSuit values in NeapolitanCardNumber and NeapolitanCardSuit enums respectively
      * @see NeapolitanCardNumbers
      * @see NeapolitanCardSuit
      */
@@ -42,9 +41,8 @@ public class NeapolitanCard implements Card{
     /**
      * Convenience constructor, instantiates a new Neapolitan card from char values representing the card number and suit
      *
-     * @param num  char representing the number of the card, its value must be among the cardNumber values in NeapolitanCardNumber enum
-     * @param suit char representing the suit of the card, its value must be among the cardSuit values in NeapolitanCardSuit enum
-     * @throws IllegalArgumentException If the num or string aren't among the cardNumber and cardSuit values in NeapolitanCardNumber and NeapolitanCardSuit enums respectively
+     * @param num  char representing the number of the card, its stringified value must be among the cardNumber values in NeapolitanCardNumber enum
+     * @param suit char representing the suit of the card, its stringified value must be among the cardSuit values in NeapolitanCardSuit enum
      * @see NeapolitanCardNumbers
      * @see NeapolitanCardSuit
      */

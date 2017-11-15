@@ -4,16 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Class representing a NeapolitanDeck, extends AbstractDeck and thus inherits the implementation of common deck operations
+ * Class representing a NeapolitanDeck, extends AbstractDeck<NeapolitanCard> and thus inherits the implementation of common deck operations
  *
  * @author Francesco Pinto
  *
  */
 public class NeapolitanDeck extends AbstractDeck<NeapolitanCard>{
 
+    private static final int maxNumAllowedCards = 40;
 
     /**
-     * Instantiates a new 40-cards Neapolitan deck (shuffling is not included, should be made explicitly)
+     * Instantiates a new 40-cards Neapolitan deck (shuffling is not included, should be performed explicitly invoking the superclass shuffleDeck method)
      */
     public NeapolitanDeck(){
         NeapolitanCardNumbers[] numberValues = NeapolitanCardNumbers.values();
@@ -21,14 +22,14 @@ public class NeapolitanDeck extends AbstractDeck<NeapolitanCard>{
 
         for(NeapolitanCardNumbers cn : numberValues){ //for each possible card number
             for(NeapolitanCardSuit cs : suitValues){ //and card suit
-                super.getCards().add(new NeapolitanCard(cn,cs)); //generate a card, and add it to the deck
+                super.getCardList().add(new NeapolitanCard(cn,cs)); //generate a card, and add it to the deck
             }
         }
     }
 
 
     /**
-     * Instantiates a Neapolitan deck containing the cards contained in the argument cards
+     * Instantiates a Neapolitan deck containing the cards contained in the argument cards list
      *
      * @param cards The cards contained in the deck
      */
@@ -38,7 +39,7 @@ public class NeapolitanDeck extends AbstractDeck<NeapolitanCard>{
 
 
     /**
-     * Instantiates a  Neapolitan deck containing the cards represented in the argument deck
+     * Instantiates a  Neapolitan deck containing the cards represented in the argument deck string representation
      *
      * @param deck The string containing the string representation of the cards to be inserted in the deck. The left-most cards are the top-most.
      *             @see NeapolitanCard
@@ -62,5 +63,8 @@ public class NeapolitanDeck extends AbstractDeck<NeapolitanCard>{
         return new NeapolitanCard(num,suit);
     }
 
-
+    @Override
+    public Integer getMaxNumCardsAllowedInList() {
+        return maxNumAllowedCards;
+    }
 }

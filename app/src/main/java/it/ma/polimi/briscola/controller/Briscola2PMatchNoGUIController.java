@@ -1,28 +1,34 @@
-package it.ma.polimi.briscola.model.briscola.twoplayers;
+package it.ma.polimi.briscola.controller;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
+
+import it.ma.polimi.briscola.model.briscola.BriscolaCardPointsAndRankingRules;
+import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMatchConfig;
+import it.ma.polimi.briscola.model.deck.NeapolitanCard;
+import it.ma.polimi.briscola.model.deck.NeapolitanCardSuit;
+import it.ma.polimi.briscola.model.deck.NeapolitanDeck;
+import it.ma.polimi.briscola.model.deck.UniformProbabilityShuffler;
 
 /**
- * Created by utente on 19/10/17.
+ * Class that allows to play a Briscola 2-players match by manipulating a Briscola 2 player match configuration. It is a class that collects convenience methods that handle the match game logic, so that clients of this class can play a match without a GUI and do not need to be concerned with direct manipulation of the configuration in order to play the match.
+ * This class exposes methods for starting a new match, resuming a saved match (based on a string configuration), let the players make moves.
+ *
+ * @author Francesco Pinto
  */
 
-public class Briscola2PMatch {
+public class Briscola2PMatchNoGUIController {
 
 
     private Briscola2PMatchConfig config;
-    private MatchStatus matchStatus; //todo necessario? credo di sì! E' per forzare il seguire le regole
+   // private MatchStatus matchStatus; //todo necessario? credo di sì! E' per forzare il seguire le regole <- invece no, perché faccio un controller per la GUI e uno non per la gui
 
-
-    public enum MatchStatus {
-        ROUNDSTARTED,
-        FIRSTCARDPLAYED,
-        SECONDCARDPLAYED;
-    };
-
-    public Briscola2PMatch(){
+    public Briscola2PMatchNoGUIController(){
 
     }
 
-
-    public Briscola2PMatch(String configuration){ //resume from saved configuration
+    public Briscola2PMatchNoGUIController(String configuration){ //resume from saved configuration
         config = new Briscola2PMatchConfig(configuration);
     }
 
@@ -95,6 +101,9 @@ public class Briscola2PMatch {
     public Briscola2PMatchConfig getConfig() {
         return config;
     }
+
+
+
 
     //  QUI DEVI SEGNARTI TUTTI GLI STATI (ma proprio tutti! anche quelli di pesca ecc, e in ognuno far chiamare i vari metodi di config )
 

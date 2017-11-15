@@ -34,13 +34,13 @@ public class Briscola2PPileTest {
     public void constructorListTest(){
           List<NeapolitanCard> pile = new ArrayList<>();
           Briscola2PPile briscolaPile = new Briscola2PPile(pileS0);
-        assertTrue(briscolaPile.getPile().isEmpty());
+        assertTrue(briscolaPile.isEmpty());
           for(NeapolitanCard nc : pile1){
                pile.add(nc);
           }
          briscolaPile = new Briscola2PPile(pileS1);
          boolean equal = true;
-         List<NeapolitanCard> pileList = briscolaPile.getPile();
+         List<NeapolitanCard> pileList = briscolaPile.getCardList();
          for(int i = 0; i < pileList.size() && i < pile1.length;i++){
              NeapolitanCard nc1 = pileList.get(i);
              NeapolitanCard nc2 = pile1[i];
@@ -57,10 +57,10 @@ public class Briscola2PPileTest {
     public void constructorStringTest(){
 
          Briscola2PPile pile = new Briscola2PPile(pileS0);
-         assertTrue(pile.getPile().isEmpty());
+         assertTrue(pile.isEmpty());
          pile = new Briscola2PPile(pileS1);
          boolean equal = true;
-         List<NeapolitanCard> pileList = pile.getPile();
+         List<NeapolitanCard> pileList = pile.getCardList();
             for(int i = 0; i < pileList.size() && i < pile1.length;i++){
                 NeapolitanCard nc1 = pileList.get(i);
                 NeapolitanCard nc2 = pile1[i];
@@ -89,17 +89,17 @@ public class Briscola2PPileTest {
     public void pushOnPileTest(){
         Briscola2PPile pile = new Briscola2PPile(pileS0);
         List<NeapolitanCard> pileList = new ArrayList<>();
-        pile.pushOnPile(pileList);
-        assertTrue(pile.getPile().isEmpty());
+        pile.appendAll(pileList);
+        assertTrue(pile.isEmpty());
 
         for(NeapolitanCard nc : pile1){
             pileList.add(nc);
         }
 
-        pile.pushOnPile(pileList);
+        pile.appendAll(pileList);
         boolean equal = true;
-        for(int i = 0; i < pile.getPile().size() && i < pile1.length;i++){
-            NeapolitanCard nc1 = pile.getPile().get(i);
+        for(int i = 0; i < pile.size() && i < pile1.length;i++){
+            NeapolitanCard nc1 = pile.getCard(i);
             NeapolitanCard nc2 = pile1[i];
             if(!nc1.equalTo(nc2))
                 equal = false;

@@ -89,7 +89,7 @@ public enum BriscolaCardPointsAndRankingRules {
     }
 
     /**
-     * Gets point value.
+     * Gets point value based on the cardNumber passed as an argument
      *
      * @param cardNumber String representing the cardNumber
      * @return The point value if the cardNumber is valid (i.e. equal to one of the cardNumber values of the BriscolaCardPoitnsAndRankingRules enum)

@@ -34,12 +34,12 @@ public class Briscola2PHandTest {
     public void constructorListTest(){
         List<NeapolitanCard> hand = new ArrayList<>();
         Briscola2PHand briscolahand = new Briscola2PHand(hand);
-        assertTrue(briscolahand.getHand().isEmpty());
+        assertTrue(briscolahand.isEmpty());
         for(NeapolitanCard nc : hand1){
             hand.add(nc);
         }
         briscolahand = new Briscola2PHand(hand);
-        boolean equal = equalCardsList(briscolahand.getHand(),hand1);
+        boolean equal = equalCardsList(briscolahand.getCardList(),hand1);
         assertTrue(equal);
 
 
@@ -50,9 +50,9 @@ public class Briscola2PHandTest {
     public void constructorStringTest(){
 
         Briscola2PHand hand = new Briscola2PHand(handS0);
-        assertTrue(hand.getHand().isEmpty());
+        assertTrue(hand.isEmpty());
         hand = new Briscola2PHand(handS1);
-        boolean equal = equalCardsList(hand.getHand(),hand1);
+        boolean equal = equalCardsList(hand.getCardList(),hand1);
 
         assertTrue(equal);
     }
@@ -78,30 +78,30 @@ public class Briscola2PHandTest {
         //TODO nel putCardInHand assicurati che non può passare Null (in tal caso lanci un'eccezione, per ora invece aggiunge il null come fosse una carta
 
         Briscola2PHand hand = new Briscola2PHand(handS0);
-        assertTrue(hand.getHand().isEmpty());
+        assertTrue(hand.isEmpty());
 
-        hand.putCardInHand(hand1[0]);
-        assertTrue(hand.getHand().size() == 1);
-        assertTrue(hand.getHand().get(0).equalTo(hand1[0]));
+        hand.appendCard(hand1[0]);
+        assertTrue(hand.size() == 1);
+        assertTrue(hand.getCard(0).equalTo(hand1[0]));
 
-        hand.putCardInHand(hand1[1]);
-        assertTrue(hand.getHand().size() == 2);
-        assertTrue(hand.getHand().get(1).equalTo(hand1[1]));
+        hand.appendCard(hand1[1]);
+        assertTrue(hand.size() == 2);
+        assertTrue(hand.getCard(1).equalTo(hand1[1]));
 
-        hand.putCardInHand(hand1[2]);
-        assertTrue(hand.getHand().size() == 3);
-        assertTrue(hand.getHand().get(2).equalTo(hand1[2]));
+        hand.appendCard(hand1[2]);
+        assertTrue(hand.size() == 3);
+        assertTrue(hand.getCard(2).equalTo(hand1[2]));
 
-        boolean equal = equalCardsList(hand.getHand(),hand1);
+        boolean equal = equalCardsList(hand.getCardList(),hand1);
         assertTrue(equal);
 
         try {
-            hand.putCardInHand(hand1[2]);
+            hand.appendCard(hand1[2]);
         }catch(IllegalStateException e){
             assertTrue(e instanceof IllegalStateException);
         }
 
-        equal = equalCardsList(hand.getHand(),hand1);
+        equal = equalCardsList(hand.getCardList(),hand1);
         assertTrue(equal);
 
     }
@@ -111,35 +111,35 @@ public class Briscola2PHandTest {
 
 
         Briscola2PHand hand = new Briscola2PHand(handS0);
-        assertTrue (hand.getHand().isEmpty());
+        assertTrue (hand.isEmpty());
         for (int i = 0; i < 3; i++) {
             try {
-                NeapolitanCard card = hand.removeCardFromHand(i);
+                NeapolitanCard card = hand.removeCard(i);
                 assertTrue (card == null);
                 }catch(IndexOutOfBoundsException|IllegalArgumentException e){
                 assertTrue (e instanceof IndexOutOfBoundsException || e instanceof IllegalArgumentException);
                 }
         }
 
-        hand.putCardInHand(hand1[0]);
-        NeapolitanCard card0 = hand.removeCardFromHand(0);
+        hand.appendCard(hand1[0]);
+        NeapolitanCard card0 = hand.removeCard(0);
         assertTrue(card0.equalTo(hand1[0]));
         for (int i = 0; i < 3; i++) {
             try {
-                NeapolitanCard card = hand.removeCardFromHand(i);
+                NeapolitanCard card = hand.removeCard(i);
                 assertTrue (card == null);
             }catch(IndexOutOfBoundsException|IllegalArgumentException e){
                 assertTrue (e instanceof IndexOutOfBoundsException || e instanceof IllegalArgumentException);
             }
         }
 
-        hand.putCardInHand(hand1[0]);
-        hand.putCardInHand(hand1[1]);
-        card0 = hand.removeCardFromHand(0);
-        NeapolitanCard card1 = hand.removeCardFromHand(0);
+        hand.appendCard(hand1[0]);
+        hand.appendCard(hand1[1]);
+        card0 = hand.removeCard(0);
+        NeapolitanCard card1 = hand.removeCard(0);
         for (int i = 0; i < 3; i++) {
             try {
-                NeapolitanCard card = hand.removeCardFromHand(i);
+                NeapolitanCard card = hand.removeCard(i);
                 assertTrue (card == null);
             }catch(IndexOutOfBoundsException|IllegalArgumentException e){
                 assertTrue (e instanceof IndexOutOfBoundsException || e instanceof IllegalArgumentException);
@@ -149,13 +149,13 @@ public class Briscola2PHandTest {
         assertTrue(card0.equalTo(hand1[0]));
         assertTrue(card1.equalTo(hand1[1]));
 
-        hand.putCardInHand(hand1[0]);
-        hand.putCardInHand(hand1[1]);
-        card0 = hand.removeCardFromHand(1);
-        card1 = hand.removeCardFromHand(0);
+        hand.appendCard(hand1[0]);
+        hand.appendCard(hand1[1]);
+        card0 = hand.removeCard(1);
+        card1 = hand.removeCard(0);
         for (int i = 0; i < 3; i++) {
             try {
-                NeapolitanCard card = hand.removeCardFromHand(i);
+                NeapolitanCard card = hand.removeCard(i);
                 assertTrue (card == null);
             }catch(IndexOutOfBoundsException|IllegalArgumentException e){
                 assertTrue (e instanceof IndexOutOfBoundsException || e instanceof IllegalArgumentException);
@@ -166,16 +166,16 @@ public class Briscola2PHandTest {
         assertTrue(card1.equalTo(hand1[0]));
 
 
-        hand.putCardInHand(hand1[0]);
-        hand.putCardInHand(hand1[1]);
-        hand.putCardInHand(hand1[2]);
-        card0 = hand.removeCardFromHand(0);
-        card1 = hand.removeCardFromHand(0);
-        NeapolitanCard card2 = hand.removeCardFromHand(0);
+        hand.appendCard(hand1[0]);
+        hand.appendCard(hand1[1]);
+        hand.appendCard(hand1[2]);
+        card0 = hand.removeCard(0);
+        card1 = hand.removeCard(0);
+        NeapolitanCard card2 = hand.removeCard(0);
 
         for (int i = 0; i < 3; i++) {
             try {
-                NeapolitanCard card = hand.removeCardFromHand(i);
+                NeapolitanCard card = hand.removeCard(i);
                 assertTrue (card == null);
             }catch(IndexOutOfBoundsException|IllegalArgumentException e){
                 assertTrue (e instanceof IndexOutOfBoundsException || e instanceof IllegalArgumentException);
@@ -185,16 +185,16 @@ public class Briscola2PHandTest {
         assertTrue(card1.equalTo(hand1[1]));
         assertTrue(card2.equalTo(hand1[2]));
 
-        hand.putCardInHand(hand1[0]);
-        hand.putCardInHand(hand1[1]);
-        hand.putCardInHand(hand1[2]);
-        card0 = hand.removeCardFromHand(2);
-        card1 = hand.removeCardFromHand(1);
-        card2 = hand.removeCardFromHand(0);
+        hand.appendCard(hand1[0]);
+        hand.appendCard(hand1[1]);
+        hand.appendCard(hand1[2]);
+        card0 = hand.removeCard(2);
+        card1 = hand.removeCard(1);
+        card2 = hand.removeCard(0);
 
         for (int i = 0; i < 3; i++) {
             try {
-                NeapolitanCard card = hand.removeCardFromHand(i);
+                NeapolitanCard card = hand.removeCard(i);
                 assertTrue (card == null);
             }catch(IndexOutOfBoundsException|IllegalArgumentException e){
                 assertTrue (e instanceof IndexOutOfBoundsException || e instanceof IllegalArgumentException);
@@ -204,16 +204,16 @@ public class Briscola2PHandTest {
         assertTrue(card1.equalTo(hand1[1]));
         assertTrue(card2.equalTo(hand1[0]));
 
-        hand.putCardInHand(hand1[0]);
-        hand.putCardInHand(hand1[1]);
-        hand.putCardInHand(hand1[2]);
-        card0 = hand.removeCardFromHand(1);
-        card1 = hand.removeCardFromHand(1);
-        card2 = hand.removeCardFromHand(0);
+        hand.appendCard(hand1[0]);
+        hand.appendCard(hand1[1]);
+        hand.appendCard(hand1[2]);
+        card0 = hand.removeCard(1);
+        card1 = hand.removeCard(1);
+        card2 = hand.removeCard(0);
 
         for (int i = 0; i < 3; i++) {
             try {
-                NeapolitanCard card = hand.removeCardFromHand(i);
+                NeapolitanCard card = hand.removeCard(i);
                 assertTrue (card == null);
             }catch(IndexOutOfBoundsException|IllegalArgumentException e){
                 assertTrue (e instanceof IndexOutOfBoundsException || e instanceof IllegalArgumentException);

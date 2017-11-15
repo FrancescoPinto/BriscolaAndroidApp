@@ -18,8 +18,8 @@ public abstract class AbstractBriscola2PAIPlayer implements Briscola2PAIPlayer {
     Briscola2PMatchConfig config;
 
     public int findCardPositionInHand(NeapolitanCard c) {
-        for (int i = 0; i < myHand.getSize(); i++)
-            if (myHand.getHand().get(i).equalTo(c))
+        for (int i = 0; i < myHand.size(); i++)
+            if (myHand.getCard(i).equalTo(c))
                 return i;
 
         throw new IllegalArgumentException("The argument is not contained in hand");
@@ -73,7 +73,7 @@ public abstract class AbstractBriscola2PAIPlayer implements Briscola2PAIPlayer {
 
     public List<NeapolitanCard> getCardsOfSuitInHand(NeapolitanCardSuit suit){
         List<NeapolitanCard> cards = new ArrayList<>();
-        for (NeapolitanCard c : myHand.getHand()) {
+        for (NeapolitanCard c : myHand.getCardList()) {
             if (c.getCardSuit().equals(suit.getSuit()))
             cards.add(c);
         }
@@ -94,7 +94,7 @@ public abstract class AbstractBriscola2PAIPlayer implements Briscola2PAIPlayer {
 
     public NeapolitanCard getWorstRankedCardInHandWithSamePointsAndSuitOfCardInHand(NeapolitanCard card){
         NeapolitanCard worstRanked = card;
-        for(NeapolitanCard c: myHand.getHand()){
+        for(NeapolitanCard c: myHand.getCardList()){
             if(BriscolaCardPointsAndRankingRules.getPointValue(c.getCardNumber()) == BriscolaCardPointsAndRankingRules.getPointValue(worstRanked.getCardNumber())
                     && BriscolaCardPointsAndRankingRules.getRank(c.getCardNumber()) > BriscolaCardPointsAndRankingRules.getRank(worstRanked.getCardNumber())
                     && c.getCardSuit().equals(card.getCardSuit()))
@@ -104,8 +104,8 @@ public abstract class AbstractBriscola2PAIPlayer implements Briscola2PAIPlayer {
     }
 
     public NeapolitanCard getWorstPointValuedCardInHand(){
-        NeapolitanCard worstCard = myHand.getHand().get(0);
-        for(NeapolitanCard c:myHand.getHand())
+        NeapolitanCard worstCard = myHand.getCardList().get(0);
+        for(NeapolitanCard c:myHand.getCardList())
             if (BriscolaCardPointsAndRankingRules.getPointValue(c.getCardNumber()) < BriscolaCardPointsAndRankingRules.getPointValue(worstCard.getCardNumber()))
                 worstCard = c;
             else if (BriscolaCardPointsAndRankingRules.getPointValue(c.getCardNumber()) == BriscolaCardPointsAndRankingRules.getPointValue(worstCard.getCardNumber()) && //a parità di value torna rank peggiore

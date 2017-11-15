@@ -1,17 +1,8 @@
 package it.ma.polimi.briscola.model.briscola.twoplayers.ai;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import it.ma.polimi.briscola.model.briscola.BriscolaCardPointsAndRankingRules;
-import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PHand;
-import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMatch;
 import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMatchConfig;
-import it.ma.polimi.briscola.model.deck.Card;
 import it.ma.polimi.briscola.model.deck.NeapolitanCard;
-import it.ma.polimi.briscola.model.deck.NeapolitanCardNumbers;
 import it.ma.polimi.briscola.model.deck.NeapolitanCardSuit;
 
 /**
@@ -27,17 +18,17 @@ public class Briscola2PAIDumbGreedyPlayer extends AbstractBriscola2PAIPlayer {
         myHand = config.getHand(config.PLAYER1);
 
 
-        if(config.getSurface().countCardsOnSurface() == 0){
+        if(config.getSurface().size() == 0){
 
             //greedy STUPIDO: butta a terra la carta di massimo valore   //todo, il greedy intelligente invece valuta se è meglio buttare una briscola o altro
-            NeapolitanCard bestRankedInHand = getBestRankedCard(myHand.getHand()); //cerco quella con miglior rank
+            NeapolitanCard bestRankedInHand = getBestRankedCard(myHand.getCardList()); //cerco quella con miglior rank
             if(BriscolaCardPointsAndRankingRules.getPointValue(bestRankedInHand.getCardNumber()) == 0) //se ne ho presa una con punteggio nullo, invece di buttare questa cerco un'altra carta a punteggio nullo e rango peggiore da buttare (ok, non è proprio greedy scemo scemo, ma è ok)
-                return findCardPositionInHand(getBestPointValuedCard(myHand.getHand())); //le altre bestpoint saranno tutte a valore nullo, però questo metodo ritorna quello con rank peggiore
+                return findCardPositionInHand(getBestPointValuedCard(myHand.getCardList())); //le altre bestpoint saranno tutte a valore nullo, però questo metodo ritorna quello con rank peggiore
             else
                 return findCardPositionInHand(bestRankedInHand); //se non è a punteggio nullo ALLORA il rank è il migliore in mano (se hai più carte con stesso rank in mano scegline una qualunque (l'algoritmo qui di default si sceglie quella che viene prima nella lista)
 
 
-        }else if(config.getSurface().countCardsOnSurface() == 1){ //se sono il secondo giocatore
+        }else if(config.getSurface().size() == 1){ //se sono il secondo giocatore
             NeapolitanCard cardOnSurface = config.getSurface().getCard(0);
 
             //todo UN ALGORITMO PIU' INTELLIGENTE DI UN PURO GREEDY ora FAREBBE UNA COSA: se l'avversario ha giocato una carta a valore 0 allora gioco carte di basso valore e cerco di vincere, conservandomi le carte ad alto valore per dopo (sperando di vincere)

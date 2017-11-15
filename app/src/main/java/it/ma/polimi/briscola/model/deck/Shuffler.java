@@ -1,7 +1,7 @@
 package it.ma.polimi.briscola.model.deck;
 
 /**
- * Interface of a Shuffler, intended so that it is possible to specify and use both fair and unfair shuffling algorithms easily
+ * Interface of a Shuffler, created in order to easily allow the implementation of different shuffling algorithms (both fair and unfair; unfair algorithms may be used in order to increase the match difficulty for the human player!)
  *
  * @author Francesco Pinto
  */

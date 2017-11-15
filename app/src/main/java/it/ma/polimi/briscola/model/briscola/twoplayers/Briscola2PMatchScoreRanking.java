@@ -5,23 +5,40 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Created by utente on 25/10/17.
+ * Class representing a ranking of Briscola2PMatchRecors of previously played matches. In the ranking, records are ordered according to the inverse of the compareTo method of Briscola2PMatchRecord logic, i.e. top ranked players are the humans (only humans) with the best scores.
  */
-
 public class Briscola2PMatchScoreRanking {
-    List<Briscola2PMatchRecord> ranking = new ArrayList<>();
 
-    public Briscola2PMatchScoreRanking(List<Briscola2PMatchRecord> ranking) {
-        Collections.sort(ranking);
-        this.ranking = ranking;
+    private List<Briscola2PMatchRecord> ranking = new ArrayList<>();
+
+    /**
+     * Instantiates a new Briscola 2 p match score ranking based on an (unordered) list of Briscola2PMatchRecords
+     *
+     * @param records the list of records
+     */
+    public Briscola2PMatchScoreRanking(List<Briscola2PMatchRecord> records) {
+        Collections.sort(records);
+        Collections.reverse(records);
+        this.ranking = records;
     }
 
+    /**
+     * Gets ranking. Top ranked players are the humans (only humans) with the best scores.
+     *
+     * @return the ranking
+     */
     public List<Briscola2PMatchRecord> getRanking() {
         return ranking;
     }
 
-    public void setRanking(List<Briscola2PMatchRecord> ranking) {
-        Collections.sort(ranking);
-        this.ranking = ranking;
+    /**
+     * Sets ranking given an (unordered) list of Briscola2PMatchRecords
+     *
+     * @param records the list of records
+     */
+    public void setRanking(List<Briscola2PMatchRecord> records) {
+        Collections.sort(records);
+        Collections.reverse(records);
+        this.ranking = records;
     }
 }

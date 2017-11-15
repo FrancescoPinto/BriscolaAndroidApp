@@ -2,7 +2,6 @@ package it.ma.polimi.briscola.model.briscola.twoplayers.ai;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMatch;
 import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMatchConfig;
 
 /**
@@ -14,7 +13,7 @@ import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMatchConfig;
 public class Briscola2PAIRandomPlayer implements Briscola2PAIPlayer {
     @Override
     public int chooseMove(Briscola2PMatchConfig config) {
-        int max = config.getHand(config.PLAYER1).getSize();
+        int max = config.getHand(config.PLAYER1).size();
         ThreadLocalRandom.current().nextInt(0, max);
         return 0;
     }

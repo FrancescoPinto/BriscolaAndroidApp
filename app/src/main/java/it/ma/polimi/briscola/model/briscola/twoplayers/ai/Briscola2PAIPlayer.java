@@ -1,6 +1,5 @@
 package it.ma.polimi.briscola.model.briscola.twoplayers.ai;
 
-import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMatch;
 import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMatchConfig;
 
 /**

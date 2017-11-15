@@ -22,7 +22,7 @@ public interface Card {
 
     /**
      * Method that determines whether the argument c is equal to card on which this method is invoked
-     * @param c The card to be compared
+     * @param c The card to be used for the comparison
      * @return True if the cards are of the same class, number and suit, false otherwise
      */
     public boolean equalTo(Card c);
