@@ -1,15 +1,15 @@
 All the source code for the first release is contained in:
-it.ma.polimi.briscola.controller (contains the class that controls the execution of a match)
-it.ma.polimi.briscola.model.briscola
-it.ma.polimi.briscola.model.briscola.twoplayers
-it.ma.polimi.briscola.model.deck
+1) it.ma.polimi.briscola.controller (contains the class that controls the execution of a match)
+2) it.ma.polimi.briscola.model.briscola (the various tests)
+3) it.ma.polimi.briscola.model.briscola.twoplayers
+4) it.ma.polimi.briscola.model.deck
 
 Some code for the full release has been developed (however it is not granted to work!), it is contained in:
 it.ma.polimi.briscola.forfullrelease and its subpackages
 it.ma.polimi.briscola.junk (junk files I should have removed)
 
 Automated tests with JUnit are under 
-it.ma.polimi.briscola (in the test folder in the Project View of android)
+it.ma.polimi.briscola (in the test folder in the Project View of android studio)
 
 Javadoc is under the folder JavaDoc
 
