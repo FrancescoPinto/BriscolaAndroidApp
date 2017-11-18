@@ -14,8 +14,10 @@ import java.util.List;
 public abstract class AbstractCardListWrapper <CARD extends Card> implements CardListWrapper<CARD>{
 
 
+    //identifiers of error messages
     private final String illegalConstructorArgumentErrorMessage_TOO_LONG = "illegalConstructorArgumentErrorMessage_TOO_LONG", noMoreCardsCanBeAddedErrorMessage= "noMoreCardsCanBeAddedErrorMessage",
-    operationNotPermittedErrorMessage_EMPTY_LIST = "operationNotPermittedErrorMessage_EMPTY_LIST", indexListSizeExceededErrorMessage = "indexListSizeExceededErrorMessage", indexListMaximumExceededErrorMessage = "indexListMaximumExceededErrorMessage", nonNullArgument = "nonNullArgument";
+    operationNotPermittedErrorMessage_EMPTY_LIST = "operationNotPermittedErrorMessage_EMPTY_LIST", indexListSizeExceededErrorMessage = "indexListSizeExceededErrorMessage", indexListMaximumExceededErrorMessage = "indexListMaximumExceededErrorMessage", nonNullArgument = "nonNullArgument",
+            tooLongArgument = "tooLongArgument";
 
     /**
      * The Card list.
@@ -164,7 +166,10 @@ public abstract class AbstractCardListWrapper <CARD extends Card> implements Car
     }
 
     @Override
-    public void appendAll(List<CARD> cards){ getCardList().addAll(cards);}
+    public void appendAll(List<CARD> cards){
+        if(getMaxNumCardsAllowedInList() != null && this.size() + cards.size() > getMaxNumCardsAllowedInList())
+            throw new IllegalArgumentException(tooLongArgument);
+        getCardList().addAll(cards);}
 
     @Override
     public List<CARD> getCardList(){
@@ -172,6 +177,8 @@ public abstract class AbstractCardListWrapper <CARD extends Card> implements Car
     }
     @Override
     public void setCardList(List<CARD> cards){
+        if(getMaxNumCardsAllowedInList() != null && cards.size() > getMaxNumCardsAllowedInList())
+            throw new IllegalArgumentException(tooLongArgument);
         this.cardList = new ArrayList<>(cards);
     }
 
@@ -183,15 +190,10 @@ public abstract class AbstractCardListWrapper <CARD extends Card> implements Car
     }
 
 
-    /**
-     * Gets max num cards allowed in list.
-     *
-     * @return the max num cards allowed in list
-     */
+    @Override
     public Integer getMaxNumCardsAllowedInList() {
         return null;
     }
-
 
     /**
      * Abstract method used to get an instance of the generic type CARD based on two Strings representing the number and the suit (respectively) of the desired card
@@ -211,6 +213,7 @@ public abstract class AbstractCardListWrapper <CARD extends Card> implements Car
             case "indexListSizeExceededErrorMessage" : return this.getClass().getSimpleName() + ": index can not exceed the current bounds of the list";
             case "indexListMaximumExceededErrorMessage" : return this.getClass().getSimpleName() +": index can not exceed the maximum of "+ (getMaxNumCardsAllowedInList() - 1);
             case "nonNullArgument": return this.getClass().getSimpleName() + ": non null argument should be used";
+            case "tooLongArgument": return this.getClass().getSimpleName() + ": adding all those cards to the list will make it overflow! maximum size exceeded!";
             default: return null;
         }
 

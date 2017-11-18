@@ -33,3 +33,65 @@ Per la navigazione potresti:
 1) usare le tab per 1.1, 1.2 e 1.3 ... però non mi convince più di tanto
 2) usare il tipico menù dei videogiochi, ma  mi sembra troppo banale (e poi se metti un menù a scomparsa laterale diventa brutto e ridondante)
 3)
+
+
+
+
+    //  QUI DEVI SEGNARTI TUTTI GLI STATI (ma proprio tutti! anche quelli di pesca ecc, e in ognuno far chiamare i vari metodi di config )
+
+
+
+    //macchina a stati che rappresenta il match, reagisce alle mosse
+    //in base alle regole, alle mosse e allo stato corrente, mantenendo
+    //una conta del punteggio
+
+    //Inizializza e mescola deck
+    //scegli chi è il primo a giocare
+    //distribuisci le carte
+    //estrai la briscola
+    //-->//gioca il primo giocatore di turno: guarda le carte, sceglie, butta a terra
+    //gioca il secondo giocatore di turno: guarda le carte, sceglie, butta a terra
+    //determina chi ha vinto il round
+    //mette le carte nel mucchio del giocatore che ha vinto (aggiorna punteggio)
+    //determina il primo a giocare al prossimo turno
+    //fa pescare a turno i due giocatori (prima chi deve giocare per primo?), MA PRIMA CONTROLLA il deck (se ci sono abbastanza carte ok procedi, se ce n'è solo una fa pescare al giocatore che resta senza la briscola, se sono finite chiudi il match)
+    //ritorna allo stato indicato con -->
+
+
+       /*
+    LISTA DEGLI STATI:
+        Inizializza partita
+            Deck shuffle            FATTO
+            Scegli primo a giocare (magari carta sasso forbice?) FATTO (prototipato)
+            PESCA LE CARTE (primo player, secondo, primo, secondo, primo, secondo) (FATTO)
+            estrai la briscola  FATTO
+            metti il deck a posto <- è una cosa che fa la GUI, non fatto quindi ...
+        Primo round
+            il primo player ha controllo, sceglie carta, butta a terra <- i primi due sono gestiti da GUI e controller, l'altra
+            setsso per secondo giocatore
+            determina il vincitore del round (se una briscola e una non briscola sono giocate, vince chi gioca la briscola)
+                                                (se due briscole sono giocate, quello con la briscola di più alto valore vince)
+                                                 (se non si giocano briscole, il primo giocatore butta una suit a terra e il secondo
+                                                   se gioca con la stessa suit si comparano e vince il più grande, altrimenti vince il primo giocatore
+           pulisci la superfici e mettile sulla pila del vincitore (faccia in giù)
+       SECONDO ... Quartultimo ROUND
+            il vincitore del round precedente diventa primo giocatore
+            entrambi i giocatori pescano una carda (prima il primo giocatore)
+                SE IL DECK E' VUOTO, NESSUNA CARTA SI PESCA
+  inizio    il primo player ha controllo, sceglie carta, butta a terra
+            setsso per secondo giocatore
+            determina il vincitore del round
+  fine      pulisci la superfici e mettile sulla pila del vincitore (faccia in giù)
+
+        Terzultimo round
+            il vincitore del round precedente diventa primo
+            entrambi pescano, il primo dal deck, il secondo raccoglie la briscola
+            RIPETI i passi da inizio a fine di prima
+        PENULTIMO E ULTIMO:
+            RIPETI i passi da inizio a fine di due stati prima
+            Calcola il punteggio (non lo puoi fare in itinere? così lo mostri sul display ... ma così il giocatore umano può contare ...)
+            Determina il vincitore
+            TERMINA
+
+
+     */

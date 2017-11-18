@@ -21,6 +21,7 @@ public interface Deck<CARD extends Card> extends CardListWrapper<CARD> {
      * Draw card from top of the deck, as a side effect the card is removed from the deck
      *
      * @return The top most card of the deck
+     * @throws IllegalStateException if the deck is empty
      */
     CARD drawCardFromTop();
 
@@ -35,6 +36,7 @@ public interface Deck<CARD extends Card> extends CardListWrapper<CARD> {
      * Draw card from the deck's bottom, as a side effect the card is removed from the deck.
      *
      * @return The card at the deck's bottom
+     * @throws IllegalStateException if the deck is empty
      */
     CARD drawCardFromBottom();
 

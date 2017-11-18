@@ -570,6 +570,12 @@ public class NeapolitanDeckTest {
         deck.appendAll(temp); //append all cards in buildValidDeck0
         assertTrue(deck.toString().equals(buildValidStrings[2] + buildValidStrings[0])); //check cards have been appended correctly
 
+        try{ //try to add more than 40 cards
+            deck = new NeapolitanDeck(); //deck with 40 cards
+            deck.appendAll(temp); //other cards
+        }catch(Exception e){
+            assertTrue(e instanceof IllegalArgumentException);
+        }
     }
 
 
@@ -586,10 +592,19 @@ public class NeapolitanDeckTest {
         }
         deck.setCardList(temp);
         assertTrue(deck.toString().equals(new NeapolitanDeck().toString())); //check cards have been set properly
+
+
+        try{
+            deck = new NeapolitanDeck();
+            temp.add(new NeapolitanCard("1","S"));
+            deck.setCardList(temp);
+        }catch(Exception e){
+            assertTrue(e instanceof IllegalArgumentException);
+        }
     }
 
     /**
-     * Clear card list test. Check that
+     * Clear card list test.
      */
     @Test
     public void clearCardList(){

@@ -16,14 +16,31 @@ import it.ma.polimi.briscola.model.deck.NeapolitanCardSuit;
  */
 public class Briscola2PSurface extends AbstractCardListWrapper<NeapolitanCard> {
 
-    public static final int FIRSTCARD = 0,SECONDCARD = 1;
+    /**
+     * The constant FIRSTCARD.
+     */
+    public static final int FIRSTCARD = 0;
+    /**
+     * The constant SECONDCARD.
+     */
+    public static final int SECONDCARD = 1;
 
     private static int maxNumCardsAllowedOnSurface = 2;
 
+    /**
+     * Instantiates a new Briscola 2 p surface.
+     *
+     * @param list the String representing the surface (format as specified in the slides)
+     */
     public Briscola2PSurface(String list){
         super(list);
     }
 
+    /**
+     * Instantiates a new Briscola 2 p surface from a list of NeapolitanCards
+     *
+     * @param cards the list of NeapolitanCards
+     */
     public Briscola2PSurface(List<NeapolitanCard> cards){
         super(cards);
     }

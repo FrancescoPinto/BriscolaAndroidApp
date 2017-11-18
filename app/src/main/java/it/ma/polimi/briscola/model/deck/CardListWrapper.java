@@ -3,7 +3,7 @@ package it.ma.polimi.briscola.model.deck;
 import java.util.List;
 
 /**
- * Interface representing a wrapper to a card list. It  mainly provides convenience methods in order to hide the internal implementation (avoids that client classes need to ask for the internal card list in order to perform on it trivial operations)
+ * Interface representing a wrapper to a card list, checking the(optionally specified) maximum number of cards is never esceeded. It  mainly provides convenience methods in order to hide the internal implementation (avoids that client classes need to ask for the internal card list in order to perform on it trivial operations)
  *
  * @param <CARD> the type parameter, extends Card
  * @author Francesco Pinto
@@ -72,6 +72,7 @@ public interface CardListWrapper<CARD extends Card> {
      * Append the cards in the list passed as an argument.
      *
      * @param cards The list of cards to be appended
+     * @throws IllegalArgumentException if adding the cards to the list would make it exceed the maximum size
      */
     void appendAll(List<CARD> cards);
     /**
@@ -85,6 +86,7 @@ public interface CardListWrapper<CARD extends Card> {
      * Sets card list.
      *
      * @param cards The list of cards that will be contained by the wrapper.
+     * @throws IllegalArgumentException if setting the cards to the list would make it exceed the maximum size
      */
     void setCardList(List<CARD> cards);
 
@@ -94,4 +96,13 @@ public interface CardListWrapper<CARD extends Card> {
      * @return The cards previously contained in the list
      */
     List<CARD> clearCardList();
+
+    /**
+     * Gets max num cards allowed in list.
+     *
+     * @return the max num cards allowed in list (if undefined, returns null)
+     */
+    Integer getMaxNumCardsAllowedInList();
+
+
 }

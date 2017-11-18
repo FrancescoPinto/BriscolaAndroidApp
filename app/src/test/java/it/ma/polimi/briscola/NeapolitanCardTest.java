@@ -13,10 +13,8 @@ import static org.junit.Assert.assertTrue;
  */
 public class NeapolitanCardTest {
 
-    /**
-     * The Cards collection 1.
-     */
-    NeapolitanCard[] cardsCollection1 = {
+
+    private NeapolitanCard[] cardsCollection1 = {
             new NeapolitanCard(NeapolitanCardNumbers.KING, NeapolitanCardSuit.GOLDS),
             new NeapolitanCard(NeapolitanCardNumbers.ACE, NeapolitanCardSuit.CUPS),
             new NeapolitanCard(NeapolitanCardNumbers.TWO, NeapolitanCardSuit.BATONS),
@@ -31,10 +29,8 @@ public class NeapolitanCardTest {
     };
 
 
-    /**
-     * The Cards collection 1 stringified.
-     */
-    String[] cardsCollection1Stringified = {
+
+    private String[] cardsCollection1Stringified = {
             "KG",
             "1C",
             "2B",
@@ -47,10 +43,8 @@ public class NeapolitanCardTest {
             "JS"
     };
 
-    /**
-     * The Cards collection 1 built with string constructor.
-     */
-    NeapolitanCard[] cardsCollection1WithStrings = {
+
+    private NeapolitanCard[] cardsCollection1WithStrings = {
             new NeapolitanCard("K","G"),
             new NeapolitanCard("1", "C"),
             new NeapolitanCard("2", "B"),
@@ -64,10 +58,8 @@ public class NeapolitanCardTest {
 
     };
 
-    /**
-     * The Cards collection 1 built with char constructor.
-     */
-    NeapolitanCard[] cardsCollection1WithChars = {
+
+    private NeapolitanCard[] cardsCollection1WithChars = {
             new NeapolitanCard('K','G'),
             new NeapolitanCard('1', 'C'),
             new NeapolitanCard('2', 'B'),

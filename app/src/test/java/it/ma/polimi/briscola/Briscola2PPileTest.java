@@ -16,30 +16,22 @@ import static org.junit.Assert.assertTrue;
  * */
 
 public class Briscola2PPileTest {
-    /**
-     * The Pile 0.
-     */
-    NeapolitanCard[] pile0 = {
+
+    private NeapolitanCard[] pile0 = {
 
    };
-    /**
-     * The Pile 1.
-     */
-    NeapolitanCard[] pile1 = {
+
+    private NeapolitanCard[] pile1 = {
             new NeapolitanCard("1","S"),
             new NeapolitanCard("2","B"),
             new NeapolitanCard("K","G"),
             new NeapolitanCard("H","C")
     };
 
-    /**
-     * The Pile 0 stringified.
-     */
-    String pileS0 = "";
-    /**
-     * The Pile 1 stringified.
-     */
-    String pileS1 = "1S2BKGHC";
+
+    private String pileS0 = "";
+
+    private String pileS1 = "1S2BKGHC";
 
 
     /**

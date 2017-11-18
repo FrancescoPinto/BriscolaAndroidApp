@@ -14,14 +14,9 @@ import static junit.framework.Assert.assertTrue;
 
 
 public class EnumsTest {
-    /**
-     * The Neapolitan card numbers.
-     */
-    String neapolitanCardNumbers = "1234567JHK";
-    /**
-     * The Neapolitan card suit.
-     */
-    String neapolitanCardSuit = "BCGS";
+
+    private String neapolitanCardNumbers = "1234567JHK";
+    private String neapolitanCardSuit = "BCGS";
 
     /**
      * Test that the right NeapolitanCardNumber is returned given the input

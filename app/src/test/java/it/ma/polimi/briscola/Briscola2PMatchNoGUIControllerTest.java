@@ -14,24 +14,24 @@ import static junit.framework.Assert.assertTrue;
  */
 public class Briscola2PMatchNoGUIControllerTest {
 
-    /**
-     *  Here are some configurations. NAMING CONVENTION: stratingConfig + number of config (optionally followed by  _ + movesequence that lead to that config.
-     *  The following startingConfig1 correspond to the examples presented in the slides by the prof.
-     */
-//del prof
-    String startingConfig1 = "0B5S4G6S2C5GKB7B6CHCHB1GKC5C4B1BHG7C6BJS6G7G4C3C7SJBHS2S3S4S1S2G3BJG5B..JCKG2B.1CKS3G..";
-    String startingConfig1_0 = "1B5S4G6S2C5GKB7B6CHCHB1GKC5C4B1BHG7C6BJS6G7G4C3C7SJBHS2S3S4S1S2G3BJG5B.JC.KG2B.1CKS3G..";
-    String startingConfig1_00 = "1B6S2C5GKB7B6CHCHB1GKC5C4B1BHG7C6BJS6G7G4C3C7SJBHS2S3S4S1S2G3BJG5B..KG2B4G.KS3G5S..JC1C";
-    String startingConfig1_001 = "0B6S2C5GKB7B6CHCHB1GKC5C4B1BHG7C6BJS6G7G4C3C7SJBHS2S3S4S1S2G3BJG5B.3G.KG2B4G.KS5S..JC1C";
-    String startingConfig1_0011 = "0B5GKB7B6CHCHB1GKC5C4B1BHG7C6BJS6G7G4C3C7SJBHS2S3S4S1S2G3BJG5B..KG4G6S.KS5S2C.3G2B.JC1C";
-    String startingConfig1_00110 = "1B5GKB7B6CHCHB1GKC5C4B1BHG7C6BJS6G7G4C3C7SJBHS2S3S4S1S2G3BJG5B.KG.4G6S.KS5S2C.3G2B.JC1C";
 
-    /**
-     * Now follows a sequence of configs that describe a complete match. The starting config and the moveSequence are given below. Then, in order to simplify the test writing, an array is defined, that contains all the configs (starting config included) that are obtained applying one at a time the moves in the specified sequence to the starting config.
-     */
-    String startingConfig2 = "1GHGKGHS7C2S3B3S4S7B4B5S6GKSKB6SJB1G5CJS7S2G6BHB4CHC4GKC1S7G5G2B3C1BJG..3G1C6C.JC2C5B..";
-    String moveSequenceConfig2 = "2120200110210201120022102122222212221100";
-    String[] Config2Array = {
+    //del prof
+    //Here are some configurations. NAMING CONVENTION: stratingConfig + number of config (optionally followed by  _ + movesequence that lead to that config.
+    //The following startingConfig1 correspond to the examples presented in the slides by the prof.
+
+    private String startingConfig1 = "0B5S4G6S2C5GKB7B6CHCHB1GKC5C4B1BHG7C6BJS6G7G4C3C7SJBHS2S3S4S1S2G3BJG5B..JCKG2B.1CKS3G..";
+    private String startingConfig1_0 = "1B5S4G6S2C5GKB7B6CHCHB1GKC5C4B1BHG7C6BJS6G7G4C3C7SJBHS2S3S4S1S2G3BJG5B.JC.KG2B.1CKS3G..";
+    private String startingConfig1_00 = "1B6S2C5GKB7B6CHCHB1GKC5C4B1BHG7C6BJS6G7G4C3C7SJBHS2S3S4S1S2G3BJG5B..KG2B4G.KS3G5S..JC1C";
+    private String startingConfig1_001 = "0B6S2C5GKB7B6CHCHB1GKC5C4B1BHG7C6BJS6G7G4C3C7SJBHS2S3S4S1S2G3BJG5B.3G.KG2B4G.KS5S..JC1C";
+    private String startingConfig1_0011 = "0B5GKB7B6CHCHB1GKC5C4B1BHG7C6BJS6G7G4C3C7SJBHS2S3S4S1S2G3BJG5B..KG4G6S.KS5S2C.3G2B.JC1C";
+    private String startingConfig1_00110 = "1B5GKB7B6CHCHB1GKC5C4B1BHG7C6BJS6G7G4C3C7SJBHS2S3S4S1S2G3BJG5B.KG.4G6S.KS5S2C.3G2B.JC1C";
+
+
+     // Now follows a sequence of configs that describe a complete match. The starting config and the moveSequence are given below. Then, in order to simplify the test writing, an array is defined, that contains all the configs (starting config included) that are obtained applying one at a time the moves in the specified sequence to the starting config.
+
+    private String startingConfig2 = "1GHGKGHS7C2S3B3S4S7B4B5S6GKSKB6SJB1G5CJS7S2G6BHB4CHC4GKC1S7G5G2B3C1BJG..3G1C6C.JC2C5B..";
+    private String moveSequenceConfig2 = "2120200110210201120022102122222212221100";
+    private String[] Config2Array = {
             "1GHGKGHS7C2S3B3S4S7B4B5S6GKSKB6SJB1G5CJS7S2G6BHB4CHC4GKC1S7G5G2B3C1BJG..3G1C6C.JC2C5B..",
             "0GHGKGHS7C2S3B3S4S7B4B5S6GKSKB6SJB1G5CJS7S2G6BHB4CHC4GKC1S7G5G2B3C1BJG.5B.3G1C6C.JC2C..",//player 1 played 2
             "1GHS7C2S3B3S4S7B4B5S6GKSKB6SJB1G5CJS7S2G6BHB4CHC4GKC1S7G5G2B3C1BJG..3G6CKG.JC2CHG..5B1C",//player 0 played 1
@@ -75,36 +75,29 @@ public class Briscola2PMatchNoGUIControllerTest {
             "WINNER073"
     };
 
-    /**
-     * The config 3 Array Configuration used to test a draw (obtained modifying the last config in the previous array so that the players have the same score)
-     */
-    String[] Config3Array = {
+    //to test a draw (obtained modifying the last config in the previous array so that the players have the same score)
+    private String[] Config3Array = {
             "0G.6S.5C..HSJC3BKG7B3SHC4GKC1S7G5G1BJG.5B1C6C7C2S6G2C5SKSJB4B4SJS7S1GKBHB6B4C3C2B2GHG3G",
             "DRAW"
     };
 
-    /**
-     * The Config 4 array used to make player 1 win (in the match of config2Array player0 won!)
-     */
-    String[] Config4Array = {
+
+    // used to make player 1 win (in the match of config2Array player0 won!)
+    private String[] Config4Array = {
             "0G.6S.5C..3BKG7B3SHC4GKC1S7G5G1BJG.5B1C6C7C2S6G2C5SKSJB4B4SJS7S1GKBHB6B4C3C2B2GHG3GHSJC",
             "WINNER165"
     };
 
-    /**
-     * The Config 5 array used to test illegal input moves
-     */
-    String[] Config5Array = {
+    //for illegal input moves
+    private String[] Config5Array = {
             "1G.2B.5C.6S2G.HG3GHSJC3BKG7B3SHC4GKC1S7G5G1BJG.5B1C6C7C2S6G2C5SKSJB4B4SJS7S1GKBHB6B4C3C",
             "WINNER165"
     };
 
-    /*
-     * Another match
-     */
 
-    String moves6 = "0012200220012122110011202101011111200100";
-    String[] config6Array = {
+    //another full match
+    private String moves6 = "0012200220012122110011202101011111200100";
+    private String[] config6Array = {
             "0C3GHG3S6S2S3C1G5S6B4C4B1CJSKC2C6C3BKBHS2G7BHCJBJGKG5G1S4G5BJC1B2B7C5C..4S6GKS.HB7S7G..",
             "1C3GHG3S6S2S3C1G5S6B4C4B1CJSKC2C6C3BKBHS2G7BHCJBJGKG5G1S4G5BJC1B2B7C5C.4S.6GKS.HB7S7G..",
             "0C3S6S2S3C1G5S6B4C4B1CJSKC2C6C3BKBHS2G7BHCJBJGKG5G1S4G5BJC1B2B7C5C..6GKS3G.7S7GHG.4SHB.",
@@ -148,12 +141,10 @@ public class Briscola2PMatchNoGUIControllerTest {
             "WINNER169"
     };
 
-    /**
-     * Expected message errors follow
-     */
-    String HAND_indexOutOfBoundsErrorMessage1 =  "ERROR:Briscola2PHand: index can not exceed the maximum of ";
 
-    String HAND_indexOutOfBoundsErrorMessage2 = "ERROR:Briscola2PHand: index can not exceed the current bounds of the list";
+    private String HAND_indexOutOfBoundsErrorMessage1 =  "ERROR:Briscola2PHand: index can not exceed the maximum of ";
+
+    private String HAND_indexOutOfBoundsErrorMessage2 = "ERROR:Briscola2PHand: index can not exceed the current bounds of the list";
 
 
     //todo il prof dice che NON testerà configurazioni inconsistenti, MA TESTERA' MOSSE ILLECITE!)
@@ -269,7 +260,7 @@ public class Briscola2PMatchNoGUIControllerTest {
 
     }
     //convenience function
-public void checkMatchEndedCorrectly(String config){
+private void checkMatchEndedCorrectly(String config){
     boolean correctMatch = false;
     System.out.println("------------------------------------------------------------------------------------------------\n"+
             config+

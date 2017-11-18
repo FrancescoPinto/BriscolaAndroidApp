@@ -14,10 +14,20 @@ import it.ma.polimi.briscola.model.deck.NeapolitanCard;
 public class Briscola2PPile extends AbstractCardListWrapper<NeapolitanCard> {
 
 
+    /**
+     * Instantiates a new Briscola 2 p pile.
+     *
+     * @param list the String representing the surface (format as specified in the slides)
+     */
     public Briscola2PPile(String list){
         super(list);
     }
 
+    /**
+     * Instantiates a new Briscola 2 p pile from a list of NeapolitanCards
+     *
+     * @param cards the list of NeapolitanCards
+     */
     public Briscola2PPile(List<NeapolitanCard> cards){
         super(cards);
     }

@@ -456,6 +456,7 @@ public class Briscola2PMatchConfigTest {
         //clearing empty surface
         try{
             Briscola2PMatchConfig config = new Briscola2PMatchConfig(configRoundWinnerArray[0]);
+            //no matter who wins, I'll use the first player as winner
             config.clearSurface(1); //clearing the surface two times implies that the second time we attempt to clear the surface, it is empty (clear should not be called in that case)
             config.clearSurface(1);
 
@@ -466,6 +467,7 @@ public class Briscola2PMatchConfigTest {
         //clearing surface with one card
         try{
             Briscola2PMatchConfig config = new Briscola2PMatchConfig(configRoundWinnerArray[0]);
+            //no matter who wins, I'll use the first player as winner
             config.clearSurface(1); //clear the surface, put a card on it, then attempt to clear it (with one card on surface -> illegal)
             config.playCard(0);
             config.clearSurface(1);

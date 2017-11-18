@@ -17,29 +17,21 @@ import static org.junit.Assert.assertTrue;
  */
 public class Briscola2PHandTest {
 
-    /**
-     * The Hand 0.
-     */
-    NeapolitanCard[] hand0 = {
+
+    private NeapolitanCard[] hand0 = {
 
     };
-    /**
-     * The Hand 1.
-     */
-    NeapolitanCard[] hand1 = {
+
+    private NeapolitanCard[] hand1 = {
             new NeapolitanCard("1","S"),
             new NeapolitanCard("2","B"),
             new NeapolitanCard("K","G"),
     };
 
-    /**
-     * The Hand 0 stringified.
-     */
-    String handS0 = "";
-    /**
-     * The Hand 1 stringified.
-     */
-    String handS1 = "1S2BKG";
+
+    private String handS0 = "";
+
+    private String handS1 = "1S2BKG";
 
     /**
      * Constructor list test.Not strictly necessary, already tested in NeapolitanDeckTest

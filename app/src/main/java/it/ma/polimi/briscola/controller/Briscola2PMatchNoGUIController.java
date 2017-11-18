@@ -19,21 +19,30 @@ import it.ma.polimi.briscola.model.deck.UniformProbabilityShuffler;
  *
  * @author Francesco Pinto
  */
-
 public class Briscola2PMatchNoGUIController {
 
 
     private Briscola2PMatchConfig config;
-   // private MatchStatus matchStatus; //todo necessario? credo di sì! E' per forzare il seguire le regole <- invece no, perché faccio un controller per la GUI e uno non per la gui
 
+    /**
+     * Instantiates a new Briscola 2 p match no gui controller. If this constructor is used, then should be initialized programmatically by invoking either startNewmatch or resumeMatch
+     */
     public Briscola2PMatchNoGUIController(){
 
     }
 
+    /**
+     * Instantiates a new Briscola 2 p match no gui controller starting from a string configuration.
+     *
+     * @param configuration the configuration, format as specified in the slides.
+     */
     public Briscola2PMatchNoGUIController(String configuration){ //resume from saved configuration
         config = new Briscola2PMatchConfig(configuration);
     }
 
+    /**
+     * Start new match (initializes the deck, chooses first player, initializes player's hands and the briscola)
+     */
     public void startNewMatch(){
         config = new Briscola2PMatchConfig();
         config.initializeNewDeck();
@@ -46,41 +55,51 @@ public class Briscola2PMatchNoGUIController {
 
     }
 
+    /**
+     * Resume match from a given configuration.
+     *
+     * @param config the configuration, format as specified in the slides
+     */
     public void resumeMatch(String config){ //da un salvataggio
         this.config = new Briscola2PMatchConfig(config);
     }
 
-    public String makeMove(String configuration, int move){
+    /**
+     * Make a single move specified by an input.
+     *
+     * @param configuration the configuration on which the move should be performed
+     * @param move          the move (shoudld be a valid index of card in hand of the current player
+     * @return the string representing either the new configuration (if the match is not finished), the outcome of the match (if the match is finished), an error message (if a fatal error occurs)
+     */
+    private String makeMove(String configuration, int move){
          config = new Briscola2PMatchConfig(configuration);
 
-        if(config.countCardsOnSurface() == 0) {
-            config.playCard(move);
-            config.toggleCurrentPlayer();
+        if(config.countCardsOnSurface() == 0) { //if the roud has just begun
+            config.playCard(move); //play first card
+            config.toggleCurrentPlayer(); //toggle player
 
-        }else if (config.countCardsOnSurface() == 1){
-            config.playCard(move);
+        }else if (config.countCardsOnSurface() == 1){ //if the first card has already been played
+            config.playCard(move); //play second card
 
         }
 
-        if (config.countCardsOnSurface() == 2){
-            int roundWinner = config.chooseRoundWinner();
-            config.clearSurface(roundWinner);
-            config.setCurrentPlayer(roundWinner);
+        if (config.countCardsOnSurface() == 2){ //if two cards are on surface, close the round
+            int roundWinner = config.chooseRoundWinner(); //choose round winner
+            config.clearSurface(roundWinner); //put cards on surface to the winner's pile
+            config.setCurrentPlayer(roundWinner); //choose the next round winner
 
-            if(config.arePlayersHandsEmpty() && config.isDeckEmpty()){
+            if(config.arePlayersHandsEmpty() && config.isDeckEmpty()){ //if the match is finished, choose winner
                 switch(config.chooseMatchWinner()){
                     case Briscola2PMatchConfig.PLAYER0: return "WINNER" + Briscola2PMatchConfig.PLAYER0 + config.computeScore(Briscola2PMatchConfig.PLAYER0);
                     case Briscola2PMatchConfig.PLAYER1: return "WINNER" + Briscola2PMatchConfig.PLAYER1 + config.computeScore(Briscola2PMatchConfig.PLAYER1);
                     case Briscola2PMatchConfig.DRAW: return "DRAW";
                     default: throw new RuntimeException("Error while computing the winner");
                 }
-                //  }else if (config.arePlayersHandsEmpty() && !config.isDeckEmpty()) { //todo non è compito di questo metodo controllare la consistenza! vedi il metodo che devi fare in matchConfig
-                //     throw new RuntimeException("Players Hands are Empty but Deck is not Empty: inconsistent configuration");
-            }else if (!config.arePlayersHandsEmpty() && config.isDeckEmpty()){
+            }else if (!config.arePlayersHandsEmpty() && config.isDeckEmpty()){ //if the deck is empty, but players have cards in hand, return new config
                 return config.toString();
-            }else if(!config.isDeckEmpty()){
+            }else if(!config.isDeckEmpty()){ //if deck is not empty, return new config
                 config.drawCardsNewRound();
-                return config.toString();  //cards have been colleted from surface, new cards have been drawn
+                return config.toString();  //cards have been collected from surface, new cards have been drawn
             }
 
         }
@@ -90,10 +109,17 @@ public class Briscola2PMatchNoGUIController {
     }
 
 
+    /**
+     * Make the moves specified in a sequence.
+     *
+     * @param configuration the configuration on which the move sequence should be performed
+     * @param moveSequence  the move sequence, left-most moves are executed first (single moves should be valid indexes of cards in hand of the current player)
+     * @return the string representing either the new configuration (if the match is not finished), the outcome of the match (if the match is finished), an error message (if a fatal error occurs)
+     */
     public String makeMoveSequence(String configuration, String moveSequence){
         String config = configuration;
         try{
-            for(int i = 0; i < moveSequence.length() -1; i++){
+            for(int i = 0; i < moveSequence.length() -1; i++){ //parse the input string and execute alle the moves in the string
                 config = makeMove(config, Integer.valueOf(String.valueOf(moveSequence.charAt(i))));
             }
             return makeMove(config,Integer.valueOf(String.valueOf(moveSequence.charAt(moveSequence.length()-1))));
@@ -104,69 +130,14 @@ public class Briscola2PMatchNoGUIController {
 
     }
 
+    /**
+     * Gets config.
+     *
+     * @return the config
+     */
     public Briscola2PMatchConfig getConfig() {
         return config;
     }
 
 
-
-
-    //  QUI DEVI SEGNARTI TUTTI GLI STATI (ma proprio tutti! anche quelli di pesca ecc, e in ognuno far chiamare i vari metodi di config )
-
-
-
-    //macchina a stati che rappresenta il match, reagisce alle mosse
-    //in base alle regole, alle mosse e allo stato corrente, mantenendo
-    //una conta del punteggio
-
-    //Inizializza e mescola deck
-    //scegli chi è il primo a giocare
-    //distribuisci le carte
-    //estrai la briscola
-    //-->//gioca il primo giocatore di turno: guarda le carte, sceglie, butta a terra
-    //gioca il secondo giocatore di turno: guarda le carte, sceglie, butta a terra
-    //determina chi ha vinto il round
-    //mette le carte nel mucchio del giocatore che ha vinto (aggiorna punteggio)
-    //determina il primo a giocare al prossimo turno
-    //fa pescare a turno i due giocatori (prima chi deve giocare per primo?), MA PRIMA CONTROLLA il deck (se ci sono abbastanza carte ok procedi, se ce n'è solo una fa pescare al giocatore che resta senza la briscola, se sono finite chiudi il match)
-    //ritorna allo stato indicato con -->
-
-
-       /*
-    LISTA DEGLI STATI:
-        Inizializza partita
-            Deck shuffle            FATTO
-            Scegli primo a giocare (magari carta sasso forbice?) FATTO (prototipato)
-            PESCA LE CARTE (primo player, secondo, primo, secondo, primo, secondo) (FATTO)
-            estrai la briscola  FATTO
-            metti il deck a posto <- è una cosa che fa la GUI, non fatto quindi ...
-        Primo round
-            il primo player ha controllo, sceglie carta, butta a terra <- i primi due sono gestiti da GUI e controller, l'altra
-            setsso per secondo giocatore
-            determina il vincitore del round (se una briscola e una non briscola sono giocate, vince chi gioca la briscola)
-                                                (se due briscole sono giocate, quello con la briscola di più alto valore vince)
-                                                 (se non si giocano briscole, il primo giocatore butta una suit a terra e il secondo
-                                                   se gioca con la stessa suit si comparano e vince il più grande, altrimenti vince il primo giocatore
-           pulisci la superfici e mettile sulla pila del vincitore (faccia in giù)
-       SECONDO ... Quartultimo ROUND
-            il vincitore del round precedente diventa primo giocatore
-            entrambi i giocatori pescano una carda (prima il primo giocatore)
-                SE IL DECK E' VUOTO, NESSUNA CARTA SI PESCA
-  inizio    il primo player ha controllo, sceglie carta, butta a terra
-            setsso per secondo giocatore
-            determina il vincitore del round
-  fine      pulisci la superfici e mettile sulla pila del vincitore (faccia in giù)
-
-        Terzultimo round
-            il vincitore del round precedente diventa primo
-            entrambi pescano, il primo dal deck, il secondo raccoglie la briscola
-            RIPETI i passi da inizio a fine di prima
-        PENULTIMO E ULTIMO:
-            RIPETI i passi da inizio a fine di due stati prima
-            Calcola il punteggio (non lo puoi fare in itinere? così lo mostri sul display ... ma così il giocatore umano può contare ...)
-            Determina il vincitore
-            TERMINA
-
-
-     */
 }

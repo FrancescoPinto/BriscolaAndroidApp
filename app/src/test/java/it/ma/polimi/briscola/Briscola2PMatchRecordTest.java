@@ -14,10 +14,8 @@ import static junit.framework.Assert.assertTrue;
  * Test class containing test for Briscola2PMatchRecord
  */
 public class Briscola2PMatchRecordTest {
-    /**
-     * The Correct ranking.
-     */
-    Briscola2PMatchRecord[] correctRanking = new Briscola2PMatchRecord[]{
+
+    private Briscola2PMatchRecord[] correctRanking = new Briscola2PMatchRecord[]{
             new Briscola2PMatchRecord("giocatore1","CPU",115,5),
             new Briscola2PMatchRecord("giocatore2","CPU",110,10),
             new Briscola2PMatchRecord("giocatore1","giocatore2", 100,20),
@@ -26,10 +24,8 @@ public class Briscola2PMatchRecordTest {
             new Briscola2PMatchRecord("giocatore2","CPU",0,120)
     };
 
-    /**
-     * The Records. The way these records are ordered tests every branch of compareTo.
-     */
-    Briscola2PMatchRecord[] records = new Briscola2PMatchRecord[]{
+
+    private Briscola2PMatchRecord[] records = new Briscola2PMatchRecord[]{
             new Briscola2PMatchRecord("giocatore2","CPU",0,120),
             new Briscola2PMatchRecord("giocatore2","giocatore1", 50,70),
             new Briscola2PMatchRecord("giocatore2","CPU",110,10),

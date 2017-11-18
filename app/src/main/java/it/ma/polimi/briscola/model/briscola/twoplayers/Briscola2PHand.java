@@ -20,8 +20,6 @@ public class Briscola2PHand extends AbstractCardListWrapper<NeapolitanCard> {
      * The constants representing the indices of CARD1, CARD2 and CARD3.
      */
     public static final int CARD1 = 0,CARD2 = 1,CARD3 = 2;
-    //Todo, se devi implementare regole diverse dalle solite per la seconda parte del corso, crea un'interfaccia BriscolaHand
-
 
     private static final int maxNumAllowedCards = 3;
 

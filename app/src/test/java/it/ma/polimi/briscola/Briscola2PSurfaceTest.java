@@ -17,42 +17,28 @@ import static junit.framework.Assert.assertTrue;
  */
 public class Briscola2PSurfaceTest {
 
-    /**
-     * The Surface 0.
-     */
+
 //data for testing
-    NeapolitanCard[] surface0 = {
+    private NeapolitanCard[] surface0 = {
 
     };
-    /**
-     * The Surface 1.
-     */
-    NeapolitanCard[] surface1 = {
+
+    private NeapolitanCard[] surface1 = {
             new NeapolitanCard("1","S"),
             new NeapolitanCard("2","B")
     };
 
-    /**
-     * The Surface 2.
-     */
-    NeapolitanCard[] surface2 ={
+
+    private NeapolitanCard[] surface2 ={
             new NeapolitanCard("1","S"),
             new NeapolitanCard("2","B"),
             new NeapolitanCard("K","G"),
             new NeapolitanCard("H","C")
     };
-    /**
-     * The Surface 0 stringified .
-     */
-    String surfaceS0 = "";
-    /**
-     * The Surface 1 stringified.
-     */
-    String surfaceS1 = "1S2B";
-    /**
-     * The Surface 2 stringified.
-     */
-    String surfaceS2 = "1S2BKGHC";
+
+    private String surfaceS0 = "";
+    private String surfaceS1 = "1S2B";
+    private String surfaceS2 = "1S2BKGHC";
 
     /**
      * Constructor list test. Not strictly necessary, already tested in NeapolitanDeckTest
@@ -199,13 +185,13 @@ public class Briscola2PSurfaceTest {
 
         NeapolitanCard card0,card1;
         try{
-             card0 = surface.getCard(0); //try to remove from empty
+             card0 = surface.getCard(Briscola2PSurface.FIRSTCARD); //try to remove from empty
         }catch(Exception e){
             assertTrue(e instanceof IllegalArgumentException);
         }
 
         try{
-             card0 = surface.getCard(1); //try to remove from empty
+             card0 = surface.getCard(Briscola2PSurface.SECONDCARD); //try to remove from empty
         }catch(Exception e){
             assertTrue(e instanceof IllegalArgumentException);
         }
@@ -214,8 +200,8 @@ public class Briscola2PSurfaceTest {
         surface.appendCard(surface1[0]);
         surface.appendCard(surface1[1]);
 
-         card0 = surface.getCard(0);
-         card1 = surface.getCard(1);
+         card0 = surface.getCard(Briscola2PSurface.FIRSTCARD);
+         card1 = surface.getCard(Briscola2PSurface.SECONDCARD);
         assertTrue(card0.equalTo(surface1[0]));
         assertTrue(card1.equalTo(surface1[1]));
 

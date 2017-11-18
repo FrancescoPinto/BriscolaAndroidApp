@@ -4,7 +4,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 /**
- * Created by utente on 11/11/17.
+ * Class that, if run, performs all the tests produced for the delivery.
  */
 
 @RunWith(Suite.class)

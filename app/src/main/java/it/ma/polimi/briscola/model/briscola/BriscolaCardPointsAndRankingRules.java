@@ -70,14 +70,6 @@ public enum BriscolaCardPointsAndRankingRules {
         return cardNumber;
     }
 
-    /**
-     * Sets card number.
-     *
-     * @param cardNumber the card number
-     */
-    public void setCardNumber(String cardNumber) {
-        this.cardNumber = cardNumber;
-    }
 
     /**
      * Gets point value.
@@ -103,14 +95,6 @@ public enum BriscolaCardPointsAndRankingRules {
         throw new IllegalArgumentException(invalidCardNumberError);
     }
 
-    /**
-     * Sets point value.
-     *
-     * @param pointValue the point value
-     */
-    public void setPointValue(int pointValue) {
-        this.pointValue = pointValue;
-    }
 
     /**
      * Gets rank.
@@ -122,7 +106,7 @@ public enum BriscolaCardPointsAndRankingRules {
     }
 
     /**
-     * Gets rank.
+     * Gets rank based on the cardNumber passed as an argument
      *
      * @param cardNumber String representing the cardNumber
      * @return The rank if the cardNumber is valid (i.e. equal to one of the cardNumber values of the BriscolaCardPoitnsAndRankingRules enum)
@@ -136,12 +120,4 @@ public enum BriscolaCardPointsAndRankingRules {
         throw new IllegalArgumentException(invalidCardNumberError);
     }
 
-    /**
-     * Sets rank.
-     *
-     * @param rank the rank
-     */
-    public void setRank(int rank) {
-        this.rank = rank;
-    }
 }
