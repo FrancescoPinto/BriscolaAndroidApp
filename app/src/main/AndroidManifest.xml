@@ -9,7 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Briscola2PMatchActivity">
+        <activity android:name=".forfullrelease.Briscola2PMatchActivity">
 
             <!-- <activity android:name=".MainActivity"> -->
             <intent-filter>
@@ -20,11 +20,11 @@
         </activity>
         <!-- <activity android:name=".Briscola2PMatchActivity" android:theme = "@style/FullscreenActionBarStyle" /> -->
         <activity
-            android:name=".FullscreenActivity"
+            android:name=".forfullrelease.FullscreenActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_fullscreen"
             android:theme="@style/FullscreenTheme" />
-        <activity android:name=".MatchGUIPrototype"></activity>
+        <activity android:name=".forfullrelease.MatchGUIPrototype"></activity>
     </application>
 
 </manifest>
