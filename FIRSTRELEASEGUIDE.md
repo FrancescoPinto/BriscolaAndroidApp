@@ -19,8 +19,8 @@ Recommendation: I would recommend one to start reading the source code in the fo
 3) package it.ma.polimi.briscola.model.deck abstract classes
 4) package it.ma.polimi.briscola.model.deck concrete classes
 5) package it.ma.polimi.briscola.model.briscola enum
-6) package it.ma.polimi.briscola.model.briscola.twoplayers classes (read for last Briscola2PMatchConfig), reading of Briscola2PMatchRecord and Briscola2PMatchScoreRanking is not necessary for this release
+6) package it.ma.polimi.briscola.model.briscola.twoplayers classes (read for last Briscola2PMatchConfig), the classes Briscola2PMatchRecord and Briscola2PMatchScoreRanking are not necessary for this release (it is possible to ignore them)
 7) package it.ma.polimi.briscola.controller class
 
 THE METHOD moveTest REQUIRED FOR TESTING IS PROVIDED AS A STATIC METHOD UNDER it.ma.polimi.briscola in the class MoveTest
-All the automated tests I performed can be executed by running the class called TestSuit
+All the automated tests I performed can be executed by running the class called TestSuit (incomplete tests about feature not required to be working for first release, such as Briscola2PAITournament and Briscola2PMatchRecordTest are not included in the suit and not granted to execute correctly)
