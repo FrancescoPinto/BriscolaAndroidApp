@@ -11,13 +11,20 @@ import it.ma.polimi.briscola.model.deck.NeapolitanCard;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Created by utente on 23/10/17.
- */
+ *Class for test of Briscola2PPile. REMARK: not all the inherited methods are tested! (They have been already exhaustively tested in NeapolitanDeckTest.
+ * This class just performs further tests on methods that are actually invoked on the pile (just to be perfectly sure everything works as desired, some of them are not necessary!), some of which are inherited.
+ * */
 
 public class Briscola2PPileTest {
+    /**
+     * The Pile 0.
+     */
     NeapolitanCard[] pile0 = {
 
    };
+    /**
+     * The Pile 1.
+     */
     NeapolitanCard[] pile1 = {
             new NeapolitanCard("1","S"),
             new NeapolitanCard("2","B"),
@@ -25,11 +32,19 @@ public class Briscola2PPileTest {
             new NeapolitanCard("H","C")
     };
 
+    /**
+     * The Pile 0 stringified.
+     */
     String pileS0 = "";
+    /**
+     * The Pile 1 stringified.
+     */
     String pileS1 = "1S2BKGHC";
 
-            //TODO check siano bastoni/coppe ecc. e numeri corretti, siano carte tutte
 
+    /**
+     * Constructor list test.  Not strictly necessary, already tested in NeapolitanDeckTest
+     */
     @Test
     public void constructorListTest(){
           List<NeapolitanCard> pile = new ArrayList<>();
@@ -53,6 +68,9 @@ public class Briscola2PPileTest {
 
     }
 
+    /**
+     * Constructor string test.  Not strictly necessary, already tested in NeapolitanDeckTest
+     */
     @Test
     public void constructorStringTest(){
 
@@ -70,6 +88,9 @@ public class Briscola2PPileTest {
           assertTrue(equal);
     }
 
+    /**
+     * To string test.  Not strictly necessary, already tested in NeapolitanDeckTest
+     */
     @Test
     public void toStringTest(){
 
@@ -85,6 +106,9 @@ public class Briscola2PPileTest {
         assertTrue(pile.toString().equals(pileS1));
     }
 
+    /**
+     * Push on pile test.  Not strictly necessary, already tested in NeapolitanDeckTest
+     */
     @Test
     public void pushOnPileTest(){
         Briscola2PPile pile = new Briscola2PPile(pileS0);

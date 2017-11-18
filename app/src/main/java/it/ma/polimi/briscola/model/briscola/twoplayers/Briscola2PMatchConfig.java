@@ -28,15 +28,28 @@ public class Briscola2PMatchConfig {
      */
     DRAW = -1;
 
-    private int currentPlayer;
+    private Integer currentPlayer;
     private String briscolaSuit;
     private NeapolitanDeck deck;
     private Briscola2PSurface surface;
     private List<Briscola2PHand> hands = new ArrayList<>();
     private List<Briscola2PPile> piles = new ArrayList<>();
 
+    //error messages
+    private static final String wrongCurrentPlayer = "Wrong Current Player. Current Player should either be "+ PLAYER0 + " or " + PLAYER1,
+                                wrongPlayerIndex = "Wrong player index, shoudl either be PLAYER0 or PLAYER1 provided by this class",
+                                noCurrentPlayerOrBriscolaSpecified = "No current player or briscola properly specified",
+                                startWith40CardDeck = "The deck should contain 40 cards to start a match",
+                                noCurrentPlayerInitialized = "The currentPlayer has not been initialized",
+                                playersHandsNotInitialized = "Players hands have not been initialized, cards for first round have not been drawn",
+                                surfaceNotFilled = "Surface is not completely filled",
+                                notFinishedMatch ="Match is not finished, cannot compute choose match winner",
+                                inconsistentSurfaceForRound = "The surface is in an inconsistent state, could not evaluate the round winner";
+
+    private static final int totPoints = 120; //the total of the points of a deck
+
     /**
-     * Instantiates a new empty Briscola 2 Players Match Configuration. Before the configuration can be used, it must be brought programmatically to a consistent state by using the class' initialization methods.
+     * Instantiates a new empty Briscola 2 Players Match Configuration. Before the configuration can be used, it must be brought programmatically to a consistent state by using the class' initialization methods, called in proper order.
      */
     public Briscola2PMatchConfig(){}
 
@@ -44,23 +57,29 @@ public class Briscola2PMatchConfig {
      * Instantiates a new Briscola 2 p match config from its string representation.
      *
      * @param configuration String representation of the match configuration (format as specified in the slides)
+     * @throws IllegalArgumentException if current player or briscola are not specified
      */
     public Briscola2PMatchConfig(String configuration){
         //Parse the configuration string
-
-
         String[] tokens = configuration.split("\\.",6); //get the tokens
 
-        String deck = "";//initialize the deck
+        String deck = "";//initialize the deck string
         if(tokens[0].length() > 2) //there's more than current player and briscola suit in the first token
-            deck = tokens[0].substring(2);
-        NeapolitanDeck temp = new NeapolitanDeck(deck); //deck and briscola
+            deck = tokens[0].substring(2); //extract the deck string
+        NeapolitanDeck temp = new NeapolitanDeck(deck); //deck (remark, if deck is not empty, the briscola is the last last card)
+
 
         if(tokens[0].length() >= 2) { //initialize the briscola and the currentPlayer
-            this.currentPlayer = Integer.valueOf(""+tokens[0].charAt(0)); //first char is current player
+            int currentPlayer = Integer.valueOf(""+tokens[0].charAt(0)); //first char is current player
+
+            if(currentPlayer == PLAYER1 || currentPlayer == PLAYER0)
+                this.currentPlayer = currentPlayer;
+            else
+                throw new IllegalArgumentException(noCurrentPlayerOrBriscolaSpecified);
+
             this.briscolaSuit = NeapolitanCardSuit.getCardSuit(""+tokens[0].charAt(1)).getSuit(); //uses getCardSuit in order to make the check that the suit value is valid
         } else
-            throw new IllegalArgumentException("No current player or briscola properly specified");
+            throw new IllegalArgumentException(noCurrentPlayerOrBriscolaSpecified);
 
         this.deck = temp;
         this.surface = new Briscola2PSurface(tokens[1]);//initialize surface
@@ -70,91 +89,58 @@ public class Briscola2PMatchConfig {
         this.piles.add(new Briscola2PPile(tokens[5])); // pile1
     }
 
-
-    /**
-     * Instantiates a new Briscola 2 p match config.
-     *
-     * @param currentPlayer the current player
-     * @param briscolaSuit  the briscola suit
-     * @param deck          the deck
-     * @param surface       the surface
-     * @param hand0         the hand 0
-     * @param hand1         the hand 1
-     * @param pile0         the pile 0
-     * @param pile1         the pile 1
-     */
-    public Briscola2PMatchConfig(int currentPlayer, String briscolaSuit, NeapolitanDeck deck, Briscola2PSurface surface, Briscola2PHand hand0, Briscola2PHand hand1, Briscola2PPile pile0, Briscola2PPile pile1) {
-        this.currentPlayer = currentPlayer;
-        this.briscolaSuit = briscolaSuit;
-        this.deck = deck;
-        this.surface = surface;
-        this.hands.add(hand0);
-        this.hands.add(hand1);
-        this.piles.add(pile0);
-        this.piles.add(pile1);
-
-    }
-
-    /**
-     * Instantiates a new Briscola 2 p match config.
-     *
-     * @param config the config
-     */
-    public Briscola2PMatchConfig(Briscola2PMatchConfig config){
-        this.currentPlayer = config.getCurrentPlayer();
-        this.briscolaSuit = config.getBriscolaSuit();
-        this.deck = config.getDeck();
-        this.surface = config.getSurface();
-        this.hands.add(config.getHand(PLAYER0));
-        this.hands.add(config.getHand(PLAYER1));
-        this.piles.add(config.getPile(PLAYER0));
-        this.piles.add(config.getPile(PLAYER1));
-    }
-
     /**
      * Set hand of the i-th player from String
      *
-     * @param i    the player's index, should be the public final int PLAYER0 or PLAYER1 provided by this class
-     * @param hand the hand
+     * @param i    the player's index, should be either the public final int PLAYER0 or PLAYER1 provided by this class
+     * @param hand String representing the hand, format as specified in the slides
      */
     public void setHand(int i, String hand){
-        this.hands.add(i,new Briscola2PHand(hand));
+        setHand(i,new Briscola2PHand(hand));
     }
 
     /**
      * Set hand of the i-th player from Briscola2PHand
      *
-     * @param i    the player's index, should be the public final int PLAYER0 or PLAYER1 provided by this class
-     * @param hand the hand
+     * @param i    the player's index, should be either the public final int PLAYER0 or PLAYER1 provided by this class
+     * @param hand the hand represented as a Briscola2PHand object
+     * @throws IllegalArgumentException if invalid index is specified
      */
     public void setHand(int i, Briscola2PHand hand){
-        this.hands.add(i,hand);
+
+        if(i == PLAYER0 || i == PLAYER1)
+            this.hands.add(i,hand);
+        else throw new IllegalArgumentException(wrongPlayerIndex);
     }
 
     /**
      * Set pile of the i-th player from String
      *
-     * @param i    the player's index, should be the public final int PLAYER0 or PLAYER1 provided by this class
-     * @param pile the pile
+     * @param i    the player's index, should be either the public final int PLAYER0 or PLAYER1 provided by this class
+     * @param pile String representing the pile, format as specified in the slides
      */
     public void setPile(int i, String pile){
-        this.piles.add(i,new Briscola2PPile(pile));
+        setPile(i, new Briscola2PPile(pile));
     }
 
     /**
      * Set pile of the i-th player from Briscola2PPile
      *
-     * @param i    the player's index, should be the public final int PLAYER0 or PLAYER1 provided by this class
-     * @param pile the pile
+     * @param i    the player's index, should be either the public final int PLAYER0 or PLAYER1 provided by this class
+     * @param pile the pile represented as a Briscola2PPile object
+     * @throws IllegalArgumentException if invalid index is specified
      */
     public void setPile(int i, Briscola2PPile pile){
-        this.piles.add(i,pile);
+        if(i == PLAYER0 || i == PLAYER1)
+            this.piles.add(i,pile);
+        else throw new IllegalArgumentException(wrongPlayerIndex);
+
     }
 
     /**
      * Gets current player.
      *
-     * @return the current player
+     * @return Index of the current player, is either the public final int PLAYER0 or PLAYER1 provided by this class
      */
 
     public int getCurrentPlayer() {
@@ -164,13 +150,13 @@ public class Briscola2PMatchConfig {
     /**
      * Sets current player.
      *
-     * @param currentPlayer the current player, should be the public final int PLAYER0 or PLAYER1 provided by this class
+     * @param currentPlayer the current player, should be either the public final int PLAYER0 or PLAYER1 provided by this class
      * @throws IllegalArgumentException if invalid player is specified.
      */
     public void setCurrentPlayer(int currentPlayer) {
         if(currentPlayer == PLAYER0 || currentPlayer == PLAYER1)
             this.currentPlayer = currentPlayer;
-        else throw new IllegalArgumentException("Wrong Current Player. Current Player should either be "+ PLAYER0 + " or " + PLAYER1);
+        else throw new IllegalArgumentException(wrongCurrentPlayer);
     }
 
     /**
@@ -254,7 +240,7 @@ public class Briscola2PMatchConfig {
 
 
     /**
-     * Initialize new deck. Creates a neapolitan deck and shuffles it.
+     * Initialize new deck. Creates a neapolitan deck and shuffles it. Puts it in the configuration.
      */
     public void initializeNewDeck(){
         NeapolitanDeck deck = new NeapolitanDeck();
@@ -266,7 +252,7 @@ public class Briscola2PMatchConfig {
      * Initialize first player. Initialization is made at random (coin toss).
      */
     public void initializeFirstPlayer(){
-        int coinTossResult = ThreadLocalRandom.current().nextInt(0, 2); //coin toss, Bernoulli random variable
+        int coinTossResult = ThreadLocalRandom.current().nextInt(0, 2); //coin toss, Bernoulli random variable with p  = 0.5
         if(coinTossResult == 0){
             currentPlayer = PLAYER0;
         }else{
@@ -276,48 +262,64 @@ public class Briscola2PMatchConfig {
 
     /**
      * Initialize players hands. To be called after initializeNewDeck and initializeFirstPlayer. Alternates a card draw from the deck for first and second player of the first round. Each player draws 3 cards.
+     * @throws IllegalStateException if either the deck is not filled with 40 cards or the current player has not been initialized
      */
     public void initializePlayersHands(){
-        List<NeapolitanCard> firstPlayerHand = new ArrayList<>();
-        List<NeapolitanCard> secondPlayerHand = new ArrayList<>();
+        if(deck != null && deck.size() == deck.getMaxNumCardsAllowedInList() && currentPlayer != null) {
+            List<NeapolitanCard> firstPlayerHand = new ArrayList<>();
+            List<NeapolitanCard> secondPlayerHand = new ArrayList<>();
 
-        for(int i = 0; i < 3; i++) {
+            for (int i = 0; i < 3; i++) {
 
-            firstPlayerHand.add(deck.drawCardFromTop());  // the first player (current player) draws a card
-            secondPlayerHand.add(deck.drawCardFromTop()); //then the second player
+                firstPlayerHand.add(deck.drawCardFromTop());  // the first player (current player) draws a card
+                secondPlayerHand.add(deck.drawCardFromTop()); //then the second player
 
+            }
+
+            hands.add(new Briscola2PHand(currentPlayer == PLAYER0 ? firstPlayerHand : secondPlayerHand)); //the currentPlayer is the first to draw a card
+            hands.add(new Briscola2PHand(currentPlayer == PLAYER0 ? secondPlayerHand : firstPlayerHand));
+
+        }else if(deck == null ||!(deck.size() == deck.getMaxNumCardsAllowedInList()))
+            throw new IllegalStateException(startWith40CardDeck);
+        else if (currentPlayer == null){
+            throw new IllegalStateException(noCurrentPlayerInitialized);
         }
-
-        hands.add(new Briscola2PHand(currentPlayer == PLAYER0?firstPlayerHand:secondPlayerHand)); //the currentPlayer is the first to draw a card
-        hands.add(new Briscola2PHand(currentPlayer == PLAYER0?secondPlayerHand:firstPlayerHand));
-
     }
 
     /**
      * Initialize briscola. To be called after initializePlayersHands. Draws the briscola from the top of the deck, and puts it to the bottom.
+     * @throws IllegalStateException if the deck does not contain 34 cards
      */
     public void initializeBriscola(){
-        NeapolitanCard briscola = deck.drawCardFromTop();
-        deck.putCardToBottom(briscola);
-        this.briscolaSuit = briscola.getCardSuit();
+        if(deck != null && deck.size() == deck.getMaxNumCardsAllowedInList() - 6) {
+            NeapolitanCard briscola = deck.drawCardFromTop();
+            deck.putCardToBottom(briscola);
+            this.briscolaSuit = briscola.getCardSuit();
+        }else
+            throw new IllegalStateException(playersHandsNotInitialized);
     }
 
 
     /**
      * Toggle current player.
+     * @throws IllegalStateException if the currentPlayer has not been initialized
      */
     public void toggleCurrentPlayer(){
-        this.currentPlayer = (currentPlayer+1)%2; //remember: player0 = 0 and player1 = 1, hence (player0+1)%2 = 1 and (player1 + 1)%2 = 0
+        if(currentPlayer != null && (currentPlayer == PLAYER1||currentPlayer == PLAYER0))
+            this.currentPlayer = (currentPlayer+1)%2; //remember: player0 = 0 and player1 = 1, hence (player0+1)%2 = 1 and (player1 + 1)%2 = 0
+        else
+            throw new IllegalStateException(noCurrentPlayerInitialized);
     }
 
     /**
      * Clear surface. Clears the surface and appends the cards on the surface to the pile of the winner.
      *
-     * @param winner the winner
+     * @param winner the winner index, is either the public final int PLAYER0 or PLAYER1 provided by this class
+     * @throws IllegalStateException if the surface is not completely filled
      */
     public void clearSurface(int winner){
         if(surface.size() != surface.getMaxNumCardsAllowedInList())
-            throw new IllegalStateException();
+            throw new IllegalStateException(surfaceNotFilled);
 
         List<NeapolitanCard> cardsOnSurface = surface.clearCardList();
         piles.get(winner).appendAll(cardsOnSurface);
@@ -341,8 +343,8 @@ public class Briscola2PMatchConfig {
         if(deck.isEmpty()) //if deck is empty, don't do anything.
             return;
 
-        hands.get(currentPlayer).appendCard(deck.drawCardFromTop());
-        hands.get((currentPlayer+1)%2).appendCard(deck.drawCardFromTop());
+        hands.get(currentPlayer).appendCard(deck.drawCardFromTop()); //first player draws a card
+        hands.get((currentPlayer+1)%2).appendCard(deck.drawCardFromTop()); //second player draws a card
 
     }
 
@@ -350,10 +352,14 @@ public class Briscola2PMatchConfig {
      * Choose match winner, should be called after the end of the whole match.
      *
      * @return the int representing the player who won the match (PLAYER0,PLAYER1 or DRAW in case of draw)
+     * @throws IllegalStateException if all 120 points are not in the player's piles
      */
     public int chooseMatchWinner(){
         int score0 = computeScore(PLAYER0),
                 score1 = computeScore(PLAYER1);
+
+        if(score0 + score1 != totPoints)
+            throw new IllegalStateException(notFinishedMatch);
 
         if(score0 > score1)
             return PLAYER0;
@@ -368,11 +374,13 @@ public class Briscola2PMatchConfig {
      * Choose round winner int, should be called at the end of the round, after clearSurface has been called.
      *
      * @return the int representing the round winner (either PLAYER0 or PLAYER1)
+     * @throws IllegalStateException if the surface is not filled (round is not finished), or if the surface is in an inconsistent state (i.e. does not satisfy any of the round winner evaluation rules)
      */
     public int chooseRoundWinner(){
         if(surface.size() != 2) //if round is not finished, throw exception
-            throw new IllegalStateException();
+            throw new IllegalStateException(surfaceNotFilled);
 
+        //get data
         NeapolitanCard cardFirstPlayer = surface.getCard(surface.FIRSTCARD),
                 cardCurrentPlayer = surface.getCard(surface.SECONDCARD); //current player is the second player (since when the second card has been played, the current player is the second)
 
@@ -385,7 +393,8 @@ public class Briscola2PMatchConfig {
         int rankFirstPlayer = BriscolaCardPointsAndRankingRules.getRank(numberFirstPlayer),
                 rankCurrentPlayer = BriscolaCardPointsAndRankingRules.getRank(numberCurrentPlayer);
 
-        if(suitFirstPlayer != suitCurrentPlayer){ //if different suit
+        //reason about data gathered
+        if(!suitFirstPlayer.equals(suitCurrentPlayer)){ //if different suit
 
                 //if there is a trump, the trump wins
                 if(suitFirstPlayer.equals(briscolaSuit)){
@@ -395,7 +404,7 @@ public class Briscola2PMatchConfig {
                 }
 
                 //if no trump, first player wins
-                return (currentPlayer+1)%2; //the first player wins
+                return (currentPlayer+1)%2; //the first player wins (remember: when the second card has been played, the current player is the second player)
 
         }else if ((suitFirstPlayer.equals(briscolaSuit)) &&  (briscolaSuit.equals(suitCurrentPlayer))) { //both trumps suit
 
@@ -403,23 +412,23 @@ public class Briscola2PMatchConfig {
                 if(rankCurrentPlayer < rankFirstPlayer)
                     return currentPlayer;
                 else
-                    return (currentPlayer+1)%2; //the first player wins
+                    return (currentPlayer+1)%2; //the first player wins (remember: when the second card has been played, the current player is the second player)
 
-        } else if (suitFirstPlayer.equals(suitCurrentPlayer)){ //not trumps, but same suit
+        } else if (suitFirstPlayer.equals(suitCurrentPlayer)){ // there are no trumps, but both cards have same suit
 
                 if(rankFirstPlayer > rankCurrentPlayer)
                     return currentPlayer;
                 else
-                    return (currentPlayer+1)%2; //the first player wins
+                    return (currentPlayer+1)%2; //the first player wins (remember: when the second card has been played, the current player is the second player)
         }
 
-        throw new IllegalStateException();
+        throw new IllegalStateException(inconsistentSurfaceForRound);
     }
 
     /**
-     * Compute score examining the piles of the specified player
+     * Compute score examining the piles of the specified player (this class does not enforce the match end, since it could be called during the match, for instance, to show the current points of each player on the GUI)
      *
-     * @param player the player index, should be either PLAYER0 or PLAYER1
+     * @param player the player index, should be either PLAYER0 or PLAYER1 provided by this class
      * @return the int representing the score, computed summing the point values of the cards in the player's pile
      */
     public int computeScore(int player){
@@ -455,7 +464,7 @@ public class Briscola2PMatchConfig {
     /**
      * Determine whether the deck is empty, convenience method
      *
-     * @return True if the deck is empty, false otherwise
+     * @return true if the deck is empty, false otherwise
      */
     public boolean isDeckEmpty(){
         return deck.isEmpty();
@@ -470,7 +479,7 @@ public class Briscola2PMatchConfig {
      */
     public boolean equalTo(Briscola2PMatchConfig config){
         return  this.currentPlayer == config.getCurrentPlayer()&&
-                this.briscolaSuit == config.getBriscolaSuit() &&
+                this.briscolaSuit.equals(config.getBriscolaSuit()) &&
                 this.deck.equalTo(config.getDeck()) &&
                 this.surface.equalTo(config.getSurface()) &&
                 this.hands.get(PLAYER0).equalTo(config.getHand(PLAYER0)) &&

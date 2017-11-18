@@ -14,7 +14,10 @@ public class Briscola2PAIRandomPlayer implements Briscola2PAIPlayer {
     @Override
     public int chooseMove(Briscola2PMatchConfig config) {
         int max = config.getHand(config.PLAYER1).size();
-        ThreadLocalRandom.current().nextInt(0, max);
-        return 0;
+        if(max == 0)
+            return 0;
+        else
+            return ThreadLocalRandom.current().nextInt(0, max);
+
     }
 }

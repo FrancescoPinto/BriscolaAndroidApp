@@ -15,12 +15,12 @@ public abstract class AbstractCardListWrapper <CARD extends Card> implements Car
 
 
     private final String illegalConstructorArgumentErrorMessage_TOO_LONG = "illegalConstructorArgumentErrorMessage_TOO_LONG", noMoreCardsCanBeAddedErrorMessage= "noMoreCardsCanBeAddedErrorMessage",
-    operationNotPermittedErrorMessage_EMPTY_LIST = "operationNotPermittedErrorMessage_EMPTY_LIST", indexListSizeExceededErrorMessage = "indexListSizeExceededErrorMessage", indexListMaximumExceededErrorMessage = "indexListMaximumExceededErrorMessage";
+    operationNotPermittedErrorMessage_EMPTY_LIST = "operationNotPermittedErrorMessage_EMPTY_LIST", indexListSizeExceededErrorMessage = "indexListSizeExceededErrorMessage", indexListMaximumExceededErrorMessage = "indexListMaximumExceededErrorMessage", nonNullArgument = "nonNullArgument";
 
     /**
      * The Card list.
      */
-    List<CARD> cardList;
+    private List<CARD> cardList;
 
     /**
      * Instantiates a new Abstract card list wrapper, only implemented to allow descendants to have their own default constructor.
@@ -66,11 +66,13 @@ public abstract class AbstractCardListWrapper <CARD extends Card> implements Car
 
     @Override
     public boolean equalTo(CardListWrapper<CARD> clw){
-        if(this.getCardList().isEmpty() && clw.getCardList().size() == 0)
+        if(this.getCardList().isEmpty() && clw.getCardList().size() == 0) //if both are empty, return true
             return true;
         else if(this.getCardList().isEmpty() && !(clw.getCardList().size() == 0))
             return false;
         else if(!this.getCardList().isEmpty() && (clw.getCardList().size() == 0))
+            return false;
+        else if(this.size() != clw.size())
             return false;
         else {
             for (int i = 0; i < getCardList().size() && i < clw.getCardList().size(); i++) {
@@ -121,11 +123,24 @@ public abstract class AbstractCardListWrapper <CARD extends Card> implements Car
 
     @Override
     public CARD getCard(int i){
+        if(isEmpty())
+            throw new IllegalArgumentException(getErrorMessage(operationNotPermittedErrorMessage_EMPTY_LIST));
+
+        if(getMaxNumCardsAllowedInList() != null && i > getMaxNumCardsAllowedInList()-1)
+            throw new IndexOutOfBoundsException(getErrorMessage(indexListMaximumExceededErrorMessage));
+
+        if(i >= size() || i < 0 )
+            throw new IndexOutOfBoundsException(getErrorMessage(indexListSizeExceededErrorMessage));
+
+
         return getCardList().get(i);
-    } //todo check dei boundaries
+    }
 
     @Override
     public void appendCard(CARD card){
+        if(card == null)
+            throw new IllegalArgumentException(nonNullArgument);
+
         if(getMaxNumCardsAllowedInList() != null && this.size() >= getMaxNumCardsAllowedInList())
             throw new IllegalStateException(getErrorMessage(noMoreCardsCanBeAddedErrorMessage));
         getCardList().add(card);
@@ -150,19 +165,6 @@ public abstract class AbstractCardListWrapper <CARD extends Card> implements Car
 
     @Override
     public void appendAll(List<CARD> cards){ getCardList().addAll(cards);}
-
-    //Method created because if the message errors were initialized as members, it wouldn't have been possible to get the subclass name to complete the message.
-    private String getErrorMessage(String errorName){
-        switch(errorName){
-            case "illegalConstructorArgumentErrorMessage_TOO_LONG": return this.getClass().getSimpleName() + ": the number of cards in the argument of the constructor should be between 0 and "+getMaxNumCardsAllowedInList();
-            case "noMoreCardsCanBeAddedErrorMessage" : return this.getClass().getSimpleName() + " already contains "+getMaxNumCardsAllowedInList()+"cards. No other cards can be added";
-            case "operationNotPermittedErrorMessage_EMPTY_LIST" : return this.getClass().getSimpleName() + " is empty, operation not permitted";
-            case "indexListSizeExceededErrorMessage" : return this.getClass().getSimpleName() + ": index can not exceed the size ("+size()+"-1) of the list";
-            case "indexListMaximumExceededErrorMessage" : return this.getClass().getSimpleName() +": index can not exceed the maximum of "+ (getMaxNumCardsAllowedInList() - 1);
-            default: return null;
-        }
-
-    }
 
     @Override
     public List<CARD> getCardList(){
@@ -199,4 +201,18 @@ public abstract class AbstractCardListWrapper <CARD extends Card> implements Car
      * @return A CARD object having the desired number and suit
      */
     public abstract CARD buildCardInstance(String num, String suit);
+
+    //Method created because if the message errors were initialized as members, it wouldn't have been possible to get the subclass name to complete the message.
+    private String getErrorMessage(String errorName){
+        switch(errorName){
+            case "illegalConstructorArgumentErrorMessage_TOO_LONG": return this.getClass().getSimpleName() + ": the number of cards in the argument of the constructor should be between 0 and "+getMaxNumCardsAllowedInList();
+            case "noMoreCardsCanBeAddedErrorMessage" : return this.getClass().getSimpleName() + " already contains "+getMaxNumCardsAllowedInList()+"cards. No other cards can be added";
+            case "operationNotPermittedErrorMessage_EMPTY_LIST" : return this.getClass().getSimpleName() + " is empty, operation not permitted";
+            case "indexListSizeExceededErrorMessage" : return this.getClass().getSimpleName() + ": index can not exceed the current bounds of the list";
+            case "indexListMaximumExceededErrorMessage" : return this.getClass().getSimpleName() +": index can not exceed the maximum of "+ (getMaxNumCardsAllowedInList() - 1);
+            case "nonNullArgument": return this.getClass().getSimpleName() + ": non null argument should be used";
+            default: return null;
+        }
+
+    }
 }

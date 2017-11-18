@@ -43,14 +43,18 @@ public interface CardListWrapper<CARD extends Card> {
      * Append card at the end of the list.
      *
      * @param card The card to be appended.
+     * @throws IllegalArgumentException if null argument is passed
+     * @throws IllegalStateException if maximum size (if defined) of the list is exceeded
      */
     void appendCard(CARD card);
 
     /**
      * Gets card.
      *
-     * @param i Index of the card to be appended.
+     * @param i Index of the card to be read.
      * @return The card corresponding to the index.
+     * @throws IllegalArgumentException if the list is empty
+     * @throws IndexOutOfBoundsException if the list size or maximum size is exceeded
      */
     CARD getCard(int i);
 
@@ -59,6 +63,8 @@ public interface CardListWrapper<CARD extends Card> {
      *
      * @param i Index of the card to be removed
      * @return The removed card
+     * @throws IllegalArgumentException if the list is empty
+     * @throws IndexOutOfBoundsException if the list size or maximum size is exceeded
      */
     CARD removeCard(int i);
 
@@ -68,7 +74,6 @@ public interface CardListWrapper<CARD extends Card> {
      * @param cards The list of cards to be appended
      */
     void appendAll(List<CARD> cards);
-
     /**
      * Gets card list.
      *

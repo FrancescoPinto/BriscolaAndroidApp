@@ -13,7 +13,7 @@ public enum BriscolaCardPointsAndRankingRules {
     /**
      * Ace briscola card points and ranking rules.
      */
-    ACE(NeapolitanCardNumbers.ACE.getNumber(),11,1),
+    ACE(NeapolitanCardNumbers.ACE.getNumber(),11,1), //(number, points, rank)
     /**
      * Two briscola card points and ranking rules.
      */

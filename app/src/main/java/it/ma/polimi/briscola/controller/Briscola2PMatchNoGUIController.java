@@ -6,6 +6,8 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import it.ma.polimi.briscola.model.briscola.BriscolaCardPointsAndRankingRules;
 import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMatchConfig;
+import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PPile;
+import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PSurface;
 import it.ma.polimi.briscola.model.deck.NeapolitanCard;
 import it.ma.polimi.briscola.model.deck.NeapolitanCardSuit;
 import it.ma.polimi.briscola.model.deck.NeapolitanDeck;
@@ -38,6 +40,10 @@ public class Briscola2PMatchNoGUIController {
         config.initializeFirstPlayer();
         config.initializePlayersHands();
         config.initializeBriscola();
+        config.setSurface( new Briscola2PSurface(""));
+        config.setPile(config.PLAYER0, new Briscola2PPile(""));
+        config.setPile(config.PLAYER1, new Briscola2PPile(""));
+
     }
 
     public void resumeMatch(String config){ //da un salvataggio

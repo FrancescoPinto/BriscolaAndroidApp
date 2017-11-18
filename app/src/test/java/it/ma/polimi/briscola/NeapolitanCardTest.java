@@ -9,11 +9,13 @@ import it.ma.polimi.briscola.model.deck.NeapolitanCardSuit;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Created by utente on 27/10/17.
+ * Tests for NeapolitanCard.
  */
-
 public class NeapolitanCardTest {
 
+    /**
+     * The Cards collection 1.
+     */
     NeapolitanCard[] cardsCollection1 = {
             new NeapolitanCard(NeapolitanCardNumbers.KING, NeapolitanCardSuit.GOLDS),
             new NeapolitanCard(NeapolitanCardNumbers.ACE, NeapolitanCardSuit.CUPS),
@@ -29,6 +31,9 @@ public class NeapolitanCardTest {
     };
 
 
+    /**
+     * The Cards collection 1 stringified.
+     */
     String[] cardsCollection1Stringified = {
             "KG",
             "1C",
@@ -42,6 +47,9 @@ public class NeapolitanCardTest {
             "JS"
     };
 
+    /**
+     * The Cards collection 1 built with string constructor.
+     */
     NeapolitanCard[] cardsCollection1WithStrings = {
             new NeapolitanCard("K","G"),
             new NeapolitanCard("1", "C"),
@@ -56,6 +64,9 @@ public class NeapolitanCardTest {
 
     };
 
+    /**
+     * The Cards collection 1 built with char constructor.
+     */
     NeapolitanCard[] cardsCollection1WithChars = {
             new NeapolitanCard('K','G'),
             new NeapolitanCard('1', 'C'),
@@ -70,19 +81,24 @@ public class NeapolitanCardTest {
 
     };
 
+    /**
+     * Test getters and to string and constructors.
+     */
     @Test
     public void testGettersAndToStringAndConstructors(){
 
-        for(int i = 0; i < cardsCollection1.length; i++) {
-            System.out.println(i);
+        for(int i = 0; i < cardsCollection1.length; i++) { //for each card in each of the collection, check cardNumber, suit and toString
+            //constructor with enums
             assertTrue(cardsCollection1[i].getCardNumber().equals(""+cardsCollection1Stringified[i].charAt(0)));
             assertTrue(cardsCollection1[i].getCardSuit().equals(""+cardsCollection1Stringified[i].charAt(1)));
             assertTrue(cardsCollection1[i].toString().equals(cardsCollection1Stringified[i]));
 
+            //constructor with strings
             assertTrue(cardsCollection1WithStrings[i].getCardNumber().equals(""+cardsCollection1Stringified[i].charAt(0)));
             assertTrue(cardsCollection1WithStrings[i].getCardSuit().equals(""+cardsCollection1Stringified[i].charAt(1)));
             assertTrue(cardsCollection1WithStrings[i].toString().equals(cardsCollection1Stringified[i]));
 
+            //constructor with chars
             assertTrue(cardsCollection1WithChars[i].getCardNumber().equals(""+cardsCollection1Stringified[i].charAt(0)));
             assertTrue(cardsCollection1WithChars[i].getCardSuit().equals(""+cardsCollection1Stringified[i].charAt(1)));
             assertTrue(cardsCollection1WithChars[i].toString().equals(cardsCollection1Stringified[i]));
@@ -90,6 +106,9 @@ public class NeapolitanCardTest {
 
     }
 
+    /**
+     * Test invalid configs in constructors.
+     */
     @Test
     public void testInvalidConfigsInConstructors(){
         NeapolitanCard c;
@@ -131,6 +150,9 @@ public class NeapolitanCardTest {
 
     }
 
+    /**
+     * Equal to test. Test to check equal cards are detected correctly. The same for inequal cards.
+     */
     @Test
     public void equalToTest(){
         NeapolitanCard c1 = new NeapolitanCard('1','B');

@@ -11,10 +11,12 @@ import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMatchRecord;
 import static junit.framework.Assert.assertTrue;
 
 /**
- * Created by utente on 15/11/17.
+ * Test class containing test for Briscola2PMatchRecord
  */
-
 public class Briscola2PMatchRecordTest {
+    /**
+     * The Correct ranking.
+     */
     Briscola2PMatchRecord[] correctRanking = new Briscola2PMatchRecord[]{
             new Briscola2PMatchRecord("giocatore1","CPU",115,5),
             new Briscola2PMatchRecord("giocatore2","CPU",110,10),
@@ -24,6 +26,9 @@ public class Briscola2PMatchRecordTest {
             new Briscola2PMatchRecord("giocatore2","CPU",0,120)
     };
 
+    /**
+     * The Records. The way these records are ordered tests every branch of compareTo.
+     */
     Briscola2PMatchRecord[] records = new Briscola2PMatchRecord[]{
             new Briscola2PMatchRecord("giocatore2","CPU",0,120),
             new Briscola2PMatchRecord("giocatore2","giocatore1", 50,70),
@@ -33,26 +38,28 @@ public class Briscola2PMatchRecordTest {
             new Briscola2PMatchRecord("giocatore1","CPU",115,5)
     };
 
+    /**
+     * Test compare to. In this case we use the compare to to build a correct ranking starting from an unordered array of records
+     */
     @Test
     public void testCompareTo(){
-        List<Briscola2PMatchRecord> correctRankingList = new ArrayList<Briscola2PMatchRecord>();
+
+        //prepare data for testing
+        List<Briscola2PMatchRecord> correctRankingList = new ArrayList<>();
         for(Briscola2PMatchRecord r : correctRanking){
             correctRankingList.add(r);
-        System.out.println(correctRankingList.get(correctRankingList.size()-1).getPlayer0Name());
-    }
+        }
 
-    System.out.println("---------------");
+        List<Briscola2PMatchRecord> recordsList = new ArrayList<>();
+            for(Briscola2PMatchRecord r : records)
+                recordsList.add(r);
 
-    List<Briscola2PMatchRecord> recordsList = new ArrayList<Briscola2PMatchRecord>();
-        for(Briscola2PMatchRecord r : records)
-            recordsList.add(r);
 
         Collections.sort(recordsList);
-        Collections.reverse(recordsList); //todo: ricorda! lui di default ordina dal basso al più alto ... ma il ranking va dal più alto al più basso
-        for(int i = 0; i < records.length; i++){
-            System.out.println(recordsList.get(i).getPlayer0Name());
+        Collections.reverse(recordsList); //IMPORTANT REMARK: sort orders from bottom to top, but a ranking is from top score to bottom!
+        for(int i = 0; i < records.length; i++){ //check they contain the same records in the same order
             assertTrue(recordsList.get(i).getWinnerScore() == correctRankingList.get(i).getWinnerScore());
-            assertTrue(recordsList.get(i).getWinnerName() == correctRankingList.get(i).getWinnerName());
+            assertTrue(recordsList.get(i).getWinnerName().equals(correctRankingList.get(i).getWinnerName()));
         }
 
     }
