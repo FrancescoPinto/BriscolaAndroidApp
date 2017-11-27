@@ -1,6 +1,7 @@
 package it.ma.polimi.briscola;
 
-import it.ma.polimi.briscola.controller.daFare.Briscola2PMatchNoGUIController;
+
+import it.ma.polimi.briscola.forfullrelease.Briscola2PMatchNoGUIController;
 
 /**
  * Class created appositely for the Prof. evaluation.

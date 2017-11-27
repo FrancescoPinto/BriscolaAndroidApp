@@ -1,4 +1,4 @@
-package it.ma.polimi.briscola.controller.daFare;
+package it.ma.polimi.briscola.forfullrelease;
 
 import java.util.ArrayList;
 import java.util.List;

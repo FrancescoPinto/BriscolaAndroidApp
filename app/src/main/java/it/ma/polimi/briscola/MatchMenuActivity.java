@@ -2,13 +2,10 @@ package it.ma.polimi.briscola;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.support.design.widget.NavigationView;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -21,6 +18,8 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import it.ma.polimi.briscola.view.DrawerListAdapter;
 
@@ -29,6 +28,157 @@ public class MatchMenuActivity extends AppCompatActivity {
 
     /** the DrawerLayout */
     private DrawerLayout drawerLayout;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_match_menu);
+
+        initializeDrawer();
+
+    }
+
+
+    private void initializeDrawer(){
+        // init the drawer layout
+        drawerLayout =(DrawerLayout) findViewById(R.id.id_drawerLayout);
+        // init the list view
+        final ListView drawerList = (ListView) findViewById(R.id.drawer_list);
+        // add the header
+        LayoutInflater inflater = getLayoutInflater();
+        ViewGroup header = (ViewGroup) inflater.inflate(R.layout.nav_header_main, drawerList, false);
+        drawerList.addHeaderView(header);
+
+        // set the customized adapter to the list view
+        //Map<Separator,List<Item>>
+        Map<String, Map<String, Drawable>> drawerContent = new HashMap<>();
+
+        Map<String, Drawable> sublistContent1 = new HashMap<>();
+        sublistContent1.put(getString(R.string.play_offline),ContextCompat.getDrawable(this,R.drawable.ic_play_offline_black_48dp));
+        sublistContent1.put(getString(R.string.play_online),ContextCompat.getDrawable(this,R.drawable.ic_play_online_black_48dp));
+        drawerContent.put(getString(R.string.game), sublistContent1);
+
+        Map<String, Drawable> sublistContent2 = new HashMap<>();
+        sublistContent2.put(getString(R.string.ranking),ContextCompat.getDrawable(this,R.drawable.ic_ranking_black_48dp));
+        sublistContent2.put(getString(R.string.performance_summary),ContextCompat.getDrawable(this,R.drawable.ic_performance_summary_black_48dp));
+        drawerContent.put(getString(R.string.statistics), sublistContent2);
+
+        Map<String, Drawable> sublistContent3 = new HashMap<>();
+        sublistContent3.put(getString(R.string.app_settings),ContextCompat.getDrawable(this,R.drawable.ic_settings_black));
+        sublistContent3.put(getString(R.string.game_rules),ContextCompat.getDrawable(this,R.drawable.ic_info));
+        drawerContent.put(getString(R.string.general_sublist), sublistContent3);
+
+        drawerList.setAdapter(new DrawerListAdapter(this,drawerContent)); //todo <- THIS IS THE MOST IMPORTANT LINE
+
+
+        // set the click listener
+        drawerList.setOnItemClickListener(new AdapterView.OnItemClickListener()
+
+        {
+            @Override
+            public void onItemClick (AdapterView < ? > adapterView, View view,int i, long l){
+                switch (i) {
+                    case 0: // the header...
+                        break;
+                    case 1: // the settings item
+                        /*Intent intent = new Intent(MainCalculatorActivity.this, MainSettingsActivity.class);
+                        intent.putExtra("result", editText.getText().toString());
+                        // we want to retrieve the update
+                        startActivityForResult(intent, REQUIRE_THEME);*/
+                        break;
+                }
+                // close the drawer
+                drawerLayout.closeDrawer(drawerList);
+            }
+        });
+
+        ActionBar temp = getSupportActionBar();
+        // Enabling the Drawer button
+        getSupportActionBar().setHomeButtonEnabled(true);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(
+                this, drawerLayout, 0, 0
+        );
+        // add listener to drawer
+        drawerLayout.addDrawerListener(actionBarDrawerToggle);
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        if (item.getItemId() == android.R.id.home) {
+            if(drawerLayout.isDrawerOpen(Gravity.START)) {
+                drawerLayout.closeDrawer(Gravity.START);
+            }else{
+                drawerLayout.openDrawer(Gravity.START);
+            }
+
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Build and AlertDialog instance
+     *
+     * @param _message:     get the message text
+     * @param _positive:    get the positive button text
+     * @param _negative:    get the negative button text
+     * @param exit:         get the exit text
+     * @return AlertDialog instance
+     */
+    public AlertDialog onBuildDialog(String _message, String _positive, String _negative,
+                                     final boolean exit, final boolean restart) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(_message);
+        builder.setPositiveButton(_positive, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                if (exit) {
+                    /*if (restart)
+                        startActivity(new Intent(MainCalculatorActivity.this, MainCalculatorActivity.class));
+                    else
+                        new UpdateAppSettings(MainCalculatorActivity.this).onResetSavedText();
+                    finish();*/
+                }
+                // dismiss dialog
+                dialogInterface.dismiss();
+            }
+        });
+        if (_negative != null)
+            builder.setNegativeButton(_negative, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    // dismiss dialog
+                    dialogInterface.dismiss();
+                }
+            });
+        builder.setCancelable(false);
+        return builder.create();
+    }
+
+    @Override
+    public void onBackPressed() {
+        onBuildDialog(
+                "temporaneo, vuoi uscire",//getString(R.string.exit_message),
+                "temporaneo si",//getString(R.string.yes),
+                "temporaneo no",//getString(R.string.no),
+                true,
+                false
+        ).show();
+    }
+
+
+/*    private DrawerLayout drawerLayout;
     private NavigationView nvDrawer;
 
     // Make sure to be using android.support.v7.app.ActionBarDrawerToggle version.
@@ -42,18 +192,8 @@ public class MatchMenuActivity extends AppCompatActivity {
 
         //Todo, per il drawer ho consultato questo tutorial, mixato alle lezioni: https://github.com/codepath/android_guides/wiki/Fragment-Navigation-Drawe
         //todo, da quel tutorial, una cosa che potresti aggiungere è far passare il drawer SOPRA la action bar, usando una toolbar
-        // Find our drawer view
-        drawerLayout = (DrawerLayout) findViewById(R.id.id_drawerLayout);
 
-        // Enabling the Drawer button
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(
-                this, drawerLayout, 0, 0
-        );
-        // add listener to drawer
-        drawerLayout.addDrawerListener(actionBarDrawerToggle);
 
 
     }
@@ -65,7 +205,7 @@ public class MatchMenuActivity extends AppCompatActivity {
             case android.R.id.home:
                 drawerLayout.openDrawer(GravityCompat.START);
                 return true;
-        }*/
+        }
 
         if (item.getItemId() == android.R.id.home) {
             if(drawerLayout.isDrawerOpen(Gravity.START)) {

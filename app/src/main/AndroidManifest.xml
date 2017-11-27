@@ -19,12 +19,7 @@
             </intent-filter>
         </activity>
         <!-- <activity android:name=".Briscola2PMatchActivity" android:theme = "@style/FullscreenActionBarStyle" /> -->
-        <activity
-            android:name=".forfullrelease.FullscreenActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/title_activity_fullscreen"
-            android:theme="@style/FullscreenTheme" />
-        <activity android:name=".controller.daFare.MatchGUIPrototype"></activity>
+
     </application>
 
 </manifest>

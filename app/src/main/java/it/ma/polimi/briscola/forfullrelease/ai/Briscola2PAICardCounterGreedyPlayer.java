@@ -3,7 +3,6 @@ package it.ma.polimi.briscola.forfullrelease.ai;
 import java.util.HashMap;
 import java.util.Map;
 
-import it.ma.polimi.briscola.controller.daFare.Briscola2PMatchNoGUIController;
 
 /**
  * Created by utente on 07/11/17.
@@ -61,8 +60,8 @@ public class Briscola2PAICardCounterGreedyPlayer {
     //TODO: prima di iniziare a scrivere questo, guarda tutti i todo che hai messo in Dumb greedy!
 
 
-    public void updateProbabilityEstimates(Briscola2PMatchNoGUIController match){ //todo questo metodo va chiamato prima di iniziare i conti, serve ad aggiornare le probabiltà, chiamalo come updateProbabilityEstimates(match);
+    //public void updateProbabilityEstimates(Controller match){ //todo questo metodo va chiamato prima di iniziare i conti, serve ad aggiornare le probabiltà, chiamalo come updateProbabilityEstimates(match);
         //todo scandisci la configurazione per fare delle stime sulle probabilità
 
-    }
+    //}
 }
