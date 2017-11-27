@@ -3,7 +3,7 @@ package it.ma.polimi.briscola.forfullrelease.ai;
 import java.util.HashMap;
 import java.util.Map;
 
-import it.ma.polimi.briscola.controller.Briscola2PMatchNoGUIController;
+import it.ma.polimi.briscola.controller.daFare.Briscola2PMatchNoGUIController;
 
 /**
  * Created by utente on 07/11/17.

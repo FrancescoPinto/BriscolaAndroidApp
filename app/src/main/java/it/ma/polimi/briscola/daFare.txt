@@ -1,0 +1,37 @@
+NELLA SPECIFICA, PER LA UI LUI RICHIEDE ALMENO:
+- UI should contain navigation that allows to
+    1) select options
+    2) start new games
+    3) seeing history/statistics of previous games
+ALTRI REQUISITI ESSENZIALI: no bug visibili, gioco implementato completamente, regole di gioco corrette, codice pulito, giocabile almeno uomo-computer, salvare statistiche (sì, statistiche) sulle partite precedenti E deve salvare info sulle partite precedenti
+
+
+Per prendere tutti i punti devi poter giocare facilmente il gioco, e la UI deve essere completa, elegante, intuitiva e pulita.
+PUNTI EXTRA: bella grafica e sonoro (vedi le specifiche)
+PUNTI EXTRA: Giocare con il server
+PUNTI EXTRA: AI
+PUNTI EXTRA: Configurabilità (opzioni per personalizzare l'esperienza utente, e una lsita di idee (vedi slides o il documento Extensions qui)
+
+ALLA FINE HO SCELTO, per l'interfaccia grafica, l'ultima parte del documento ideeGUI, che si chiama POSSIBILE CONCLUSIONE MIA, fai quello!
+La ricopio qua (ma fa riferimento ad ideeGUI in alcune parti, quindi leggilo là)
+
+POSSIBILE CONCLUSIONE MIA:
+    Io direi di mixare idea 3 ed idea 4 (così togliendo la modalità online dal menù e mettendola nel tab partite)
+    PERO' nella schermata partita io metterei un pulsante di pausa (forse anche questo nell'action bar? oppure sul campo da gioco), e se lo si preme si apre un menù contenente le sole AZIONI sulla partita (non le impostazioni), magari menù trasparente, così da non oscurare la partita)
+    poi a sinistra un ingranaggio per le impostazioni (icona in alto a sinistra)
+    a destra invece un'icona
+
+QUINDI ora hai bisogno di capire quali activities/fragments associati in quale gerarchia di navigazione ti servono
+
+
+LINK UTILI:
+-------------> PER LE CARTE, in ideeGUI ho trovato un sito con le carte francesi gratis (per ora arrangia con quelle, poi si vedrà per le napoletane)
+Per i videogiochi: https://www.packtpub.com/mapt/book/application_development/9781785880957/5/ch05lvl1sec17/adding-animations-to-make-your-game-more-awesome
+Per qualche info su come usare bene il Material Deisgn in Android Studio: https://www.packtpub.com/mapt/book/application_development/9781786467447/3/03lvl1sec20/the-design-library
+Altro su Material design: https://www.packtpub.com/mapt/book/web_development/9781786468956/5/ch05lvl1sec24/material-ui-for-android-developers
+Sulle animazioni: https://www.packtpub.com/mapt/book/application_development/9781785882869/6/ch06lvl1sec25/custom-made-animations
+Per info varie sul design di app android, il libro https://www.packtpub.com/mapt/book/application_development/9781788475051/2
+Per SQLite: https://www.packtpub.com/mapt/book/application_development/9781783282951
+Per design patterns: https://www.packtpub.com/mapt/book/web_development/9781786467218/1
+
+

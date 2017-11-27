@@ -1,30 +1,32 @@
-package it.ma.polimi.briscola.forfullrelease;
+package it.ma.polimi.briscola.controller.daFare;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.Spinner;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import it.ma.polimi.briscola.R;
-import it.ma.polimi.briscola.forfullrelease.Briscola2PMatchController;
+import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PHand;
 import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMatchConfig;
-import it.ma.polimi.briscola.model.deck.NeapolitanCard;
+import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PSurface;
+import it.ma.polimi.briscola.model.deck.Deck;
 
 //THIS IS JUST A PROTOTYPE! NOT PERFECTLY DESIGNED!!!!!!
 public class MatchGUIPrototype extends AppCompatActivity {
 
-    TextView card0player1, card1player1, card2player1, surfacecard0,surfacecard1, pointsplayer0,pointsplayer1, briscola;
-    Spinner deck, pileplayer0,pileplayer1;
+    TextView card0player1, card1player1, card2player1, surfacecard0,surfacecard1, pointsplayer0,pointsplayer1, briscola, deck, pileplayer0,pileplayer1;
     Button card0player0, card1player0,card2player0;
     Briscola2PMatchController match;
-    ArrayAdapter<String> deckAdapter, pile0adapter, pile1adapter;
+
+    public Briscola2PMatchController getMatchController() {
+        return match;
+    }
+
+    public void setMatchController(Briscola2PMatchController match) {
+        this.match = match;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,25 +41,20 @@ public class MatchGUIPrototype extends AppCompatActivity {
         pointsplayer0 = (TextView) findViewById(R.id.pointsPlayer0);
         pointsplayer1 = (TextView) findViewById(R.id.pointsPlayer1);
         briscola = (TextView) findViewById(R.id.briscola);
-
-        deck = (Spinner) findViewById(R.id.deck);
-        pileplayer0 = (Spinner) findViewById(R.id.pile0);
-        pileplayer1 = (Spinner) findViewById(R.id.pile1);
+        deck = (TextView) findViewById(R.id.deck);
+        pileplayer0 = (TextView) findViewById(R.id.pilePlayer0);
+        pileplayer1 = (TextView) findViewById(R.id.pilePlayer1);
 
         card0player0 = (Button) findViewById(R.id.card0player0);
         card1player0 = (Button) findViewById(R.id.card1player0);
         card2player0 = (Button) findViewById(R.id.card2player0);
 
+        card0player0.setOnClickListener(new PlayCardListener(MatchGUIPrototype.this, 0));
+        card1player0.setOnClickListener(new PlayCardListener(MatchGUIPrototype.this, 1));
+        card2player0.setOnClickListener(new PlayCardListener(MatchGUIPrototype.this, 2));
 
-        pile0adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, new ArrayList<NeapolitanCard>());
-        pile0adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        pileplayer0.setAdapter(pile0adapter);
-
-
-        pile1adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, new ArrayList<NeapolitanCard>());
-        pile1adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        pileplayer1.setAdapter(pile1adapter);
-
+       // match = new Briscola2PMatchController(this); todo, nei test, resinserire questa riga
+        match.startNewMatch();
     }
 
     public void onShowMessage(String message) {
@@ -148,15 +145,8 @@ public class MatchGUIPrototype extends AppCompatActivity {
 
     }
 
-    public void initializeNewDeck(List<NeapolitanCard> deck){
-
-// Create an ArrayAdapter using the string array and a default spinner layout
-        deckAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, deck);
-
-// Specify the layout to use when the list of choices appears
-        deckAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-// Apply the adapter to the spinner
-        this.deck.setAdapter(deckAdapter);
+    public void initializeNewDeck(Deck deck){
+        this.deck.setText("Deck:"+ deck);
     }
 
     public void initializeFirstPlayer(int currentPlayer){
@@ -164,16 +154,16 @@ public class MatchGUIPrototype extends AppCompatActivity {
         setCurrentPlayer(currentPlayer);
     }
 
-    public void initializePlayersHands(int currentPlayer, List<NeapolitanCard> hand0, List<NeapolitanCard> hand1){
+    public void initializePlayersHands(int currentPlayer, Briscola2PHand hand0, Briscola2PHand hand1){
         //todo, implementare animazione che estrae e ealterna le estrazioni
 
-        card0player0.setText(""+hand0.get(0));
-        card1player0.setText(""+hand0.get(1));
-        card2player0.setText(""+hand0.get(2));
+        card0player0.setText(""+hand0.getCard(0));
+        card1player0.setText(""+hand0.getCard(1));
+        card2player0.setText(""+hand0.getCard(2));
 
-        card0player1.setText(""+hand1.get(0));
-        card1player1.setText(""+hand1.get(1));
-        card2player1.setText(""+hand1.get(2));
+        card0player1.setText(""+hand1.getCard(0));
+        card1player1.setText(""+hand1.getCard(1));
+        card2player1.setText(""+hand1.getCard(2));
 
     }
 
@@ -181,30 +171,50 @@ public class MatchGUIPrototype extends AppCompatActivity {
         briscola.setText(briscolaSuit);
     }
 
-    public void playCard(int move, int currentPlayer){
+    public void playFirstCard(int move, int currentPlayer){
         switch(currentPlayer){
             case 0:
                 switch(move) {
-                    case 0: card0player0.setText("-"); break;
-                    case 1: card1player0.setText("-"); break;
-                    case 2: card2player0.setText("-"); break;
+                    case 0: surfacecard0.setText(card0player0.getText()); card0player0.setText("-"); break;
+                    case 1: surfacecard0.setText(card1player0.getText());card1player0.setText("-"); break;
+                    case 2: surfacecard0.setText(card2player0.getText());card2player0.setText("-"); break;
                     }
                     return;
             case 1:
                 switch(move) {
-                    case 0: card0player1.setText("-"); break;
-                    case 1: card1player1.setText("-"); break;
-                    case 2: card2player1.setText("-"); break;
+                    case 0: surfacecard0.setText(card0player1.getText());card0player1.setText("-"); break;
+                    case 1: surfacecard0.setText(card1player1.getText());card1player1.setText("-"); break;
+                    case 2: surfacecard0.setText(card2player1.getText());card2player1.setText("-"); break;
                     }
                     return;
         }
     }
 
-    public void clearSurface(int roundWinner, List<NeapolitanCard> surface){
-        if(roundWinner == Briscola2PMatchConfig.PLAYER0) {
-            //pile0adapter.add.addAll(surface);
+    public void playSecondCard(int move, int currentPlayer){
+        switch(currentPlayer){
+            case 0:
+                switch(move) {
+                    case 0: surfacecard0.setText(card0player0.getText()); card0player0.setText("-"); break;
+                    case 1: surfacecard0.setText(card1player0.getText());card1player0.setText("-"); break;
+                    case 2: surfacecard0.setText(card2player0.getText());card2player0.setText("-"); break;
+                }
+                return;
+            case 1:
+                switch(move) {
+                    case 0: surfacecard0.setText(card0player1.getText());card0player1.setText("-"); break;
+                    case 1: surfacecard0.setText(card1player1.getText());card1player1.setText("-"); break;
+                    case 2: surfacecard0.setText(card2player1.getText());card2player1.setText("-"); break;
+                }
+                return;
         }
-           // pileplayer0.get
+    }
+
+    public void clearSurface(int roundWinner, Briscola2PSurface surface){
+        if(roundWinner == Briscola2PMatchConfig.PLAYER0) {
+            pileplayer0.setText(pileplayer0.getText()+surface.toString());
+        }else{
+            pileplayer1.setText(pileplayer1.getText()+surface.toString());
+        }
     }
 
 }

@@ -354,7 +354,7 @@ public class Briscola2PMatchConfig {
      * @return the int representing the player who won the match (PLAYER0,PLAYER1 or DRAW in case of draw)
      * @throws IllegalStateException if all 120 points are not in the player's piles
      */
-    public int chooseMatchWinner(){
+    public int  chooseMatchWinner(){
         int score0 = computeScore(PLAYER0),
                 score1 = computeScore(PLAYER1);
 

@@ -50,6 +50,7 @@ public enum NeapolitanCardNumbers {
     KING("K");
 
     private String cardNumber;
+    private String toImageResourceMapping;
 
     NeapolitanCardNumbers(String cardNumber) {
         this.cardNumber = cardNumber;

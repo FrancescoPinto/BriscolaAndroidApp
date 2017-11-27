@@ -54,8 +54,10 @@ public class Briscola2PMatchRecordTest {
         Collections.sort(recordsList);
         Collections.reverse(recordsList); //IMPORTANT REMARK: sort orders from bottom to top, but a ranking is from top score to bottom!
         for(int i = 0; i < records.length; i++){ //check they contain the same records in the same order
+            System.out.println(recordsList.get(i).getWinnerName());
+            System.out.println(correctRankingList.get(i).getWinnerName());
             assertTrue(recordsList.get(i).getWinnerScore() == correctRankingList.get(i).getWinnerScore());
-            assertTrue(recordsList.get(i).getWinnerName().equals(correctRankingList.get(i).getWinnerName()));
+            assertTrue(recordsList.get(i).getWinnerName() == (correctRankingList.get(i).getWinnerName()));
         }
 
     }

@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background_shape"
-    tools:context="it.ma.polimi.briscola.forfullrelease.Briscola2PMatchActivity"
+    tools:context="it.ma.polimi.briscola.controller.daFare.Briscola2PMatchActivity"
     tools:layout_editor_absoluteX="0dp"
     tools:layout_editor_absoluteY="81dp">
 
@@ -98,7 +98,7 @@
         app:srcCompat="@drawable/card_slot_shape" />
 
     <ImageView
-        android:id="@+id/player1Card0Slot"
+        android:id="@+id/player1Card2Slot"
         android:layout_width="65dp"
         android:layout_height="117dp"
         android:layout_marginBottom="8dp"
@@ -210,4 +210,5 @@
         app:layout_constraintGuide_percent="0.05"
         tools:layout_editor_absoluteX="19dp"
         tools:layout_editor_absoluteY="0dp" />
+
 </android.support.constraint.ConstraintLayout>

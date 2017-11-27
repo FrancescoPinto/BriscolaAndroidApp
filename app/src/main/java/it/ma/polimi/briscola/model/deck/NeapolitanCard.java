@@ -93,6 +93,23 @@ public class NeapolitanCard implements Card{
         return (nc instanceof NeapolitanCard) && nc.getCardSuit().equals(neapolitanCardSuit.getSuit()) && nc.getCardNumber().equals(neapolitanCardNumber.getNumber());
     }
 
+    /**
+     * Returns a String representing the Card number
+     *
+     * @return String representing the Card number, its value is among the cardNumber values in NeapolitanCardNumber enum
+     */
 
+    public NeapolitanCardNumbers getCardNumberEnum() {
+        return neapolitanCardNumber;
+    }
+
+    /**
+     * Returns a String representing the Card suit
+     *
+     * @return String representing the Card suit, its value is among the cardSuit values in NeapolitanCardSuit enum
+     */
+    public NeapolitanCardSuit getCardSuitEnum() {
+        return neapolitanCardSuit;
+    }
 
 }

@@ -1,0 +1,81 @@
+Visti i requisiti nel "daFare" scrivo qui delle possibili idee per la gui:
+
+REQUISITI DEL PROFESSORE:
+    1) select options
+    2) start new games
+    3) seeing history/statistics of previous games
+    giocabile almeno uomo-computer, salvare statistiche (sì, statistiche) sulle partite precedenti E deve salvare info sulle partite precedenti
+
+FUNZIONALITA' OFFERTA:
+    1) opzioni
+        1.1) Punti visibili/nascosti
+        1.2) Difficoltà di default
+        1.3) Cambia carte
+        1.4) Attiva/disattiva audio)
+        1.5) visualizza guida di gioco
+    2) inizia un nuovo match
+        2.1) online
+            2.2) seleziona la stanza (OPZIONALE DA FARE IN INTERFACCIA, visto che comunque l'idea di base è che la room privata serve
+                solo per i test, quindi potresti evitare la selezione e hardcodare la public room)
+            2.3) qualcosa che faccia "in attesa di trovare un altro giocatore" e per gestire le risposte/errori del server
+        2.2) offline
+            2.2.3) Imposta difficoltà (la difficoltà la puoi impostare anche durante il match! poco ti cambia! è facilissimo implementarlo)
+            2.2.4) Salva partita e riprendi da partita salvata
+        2.4) Esci dalla partita corrente
+        2.5) Riavvia la partita (in pratica inizia una nuova partita, ma a partita già avviata)
+        2.6) METTI IN PAUSA
+    3) history/statistics
+        3.1) Ranking delle partite passate
+        3.3) lista dei record di gioco del giocatore
+        3.4) Statistiche: numero di partite giocate, percentuale vinte, percentuale perse, percentuale pareggiate (in base al livello di difficoltà dell'AI?)
+PER
+
+
+PER LA GRAFICA, E LE CARTE:
+Per le carte francesi ho trovato questo link con carte gratuite (carte rettangolari):
+https://github.com/hayeah/playing-cards-assets/blob/master/png/jack_of_spades.png
+ANCORA MEGLIO LE IMMAGINI QUI:
+https://github.com/notpeter/Vector-Playing-Cards/blob/master/cards-svg/KS.svg
+(che però sono svg quindi devi convertirle? o android le prende?)
+
+POSSIBILI APPROCCI:
+1) SCHERMATA INIZIALE CON MENU' A LISTA (tipo i vecchi videogiochi), da cui selezionare: nuova partita, storie e statistiche, impostazioni
+       Selezionato nuova partita, riprendere partita puoi selezionare se giocare online o offline (e in tal caso impostare la difficoltà)
+       Durante una partita, oltre al fottio di animazioni e al gioco, puoi: modificare le impostazioni (praticamente tutte), più le azioni sulla partita (salva,riprendi,esci,carica), riavvia) (ma non puoi vedere le statistiche etc.)
+
+2) DRAWER A SINISTRA PER LE IMPOSTAZIONI e MENU' INIZIALE (tutte le opzioni <- quindi le opzioni tipo salva partita ecc. le metti dentro dinamicamente? ... non mi pare la migliore soluzione ...
+            potresti mettere dei bottoni ... ma meglio di no, però potresti mettere un altro menù ... troppo confusionario
+
+3) Scopiazzare l'idea dell'app di briscola più bella che hai scaricato (ovvero, di default si apre su un match, in un menù a sinistra hai le statistiche, in un menù a destra tutte le impostazioni e la possibilità di giocare online)
+
+4) 3 Tab di scorrimento (ancora meglio, solo uno slider):
+    1) Tab dedicato alle impostazioni (tutte)
+    2) Tab dedicato alle partite (da cui avvii anche la partita)
+    3) Tab dedicato alle statistiche
+    UNICO DIFETTO: come dici al giocatore che ci sono? metti un "tutorial?"
+
+POSSIBILE CONCLUSIONE MIA:
+    Io direi di mixare idea 3 ed idea 4 (così togliendo la modalità online dal menù e mettendola nel tab partite)
+    PERO' nella schermata partita io metterei un pulsante di pausa (forse anche questo nell'action bar? oppure sul campo da gioco), e se lo si preme si apre un menù contenente le sole AZIONI sulla partita (non le impostazioni), magari menù trasparente, così da non oscurare la partita)
+    poi a sinistra un ingranaggio per le impostazioni (icona in alto a sinistra)
+    a destra invece un'icona
+    ANZI, sai che ti dico? chissene dell'opzione 3, va benissimo uno slider tipo chat (quella nera che conosci tu)
+    QUINDI L'iDEA E':
+    SPLASHSCREEN CON LOGO DELL'APP, poi scompare
+    PICCOLO TUTORIALINO (questo è proprio un extra da fare alla fine se hai tempo!)
+    L'action bar scompare, resta solo il tri-tab, l'utente apre l'app e vede il tri-tab con preselezionato quello centrale (quello di gioco), a destra c'è statistics, a sinistra impostazioni
+    Facendo slide a sinistra, l'utente può impostare ciò che vuole, facendo slide a destra il ranking, tutto questo anche a partita avviata
+    ... idea ... perché non fai solo due tab, e un drawer (il drawer per le impostazioni, tanto oramai le impostazioni attivabili solo in partita sono nel menù di pausa)
+    NEL DRAWER metti una lista di icone + etichette toggle, che ci clicchi sopra e in base al loro stato cambiano icona ed etichetta
+     (esempio: l'audio: puoi attivarlo e disattivarlo, quindi avrai "Disattiva Audio <iconaAudioSpento>" ci clicchi sopra e diventa "Attiva Audio <iconaAudioAperto>")
+     Il menù di pausa del tab centrale viene invocato non solo quando il giocatore preme un pulsante, ma anche quando fa slide verso ranking
+     UNICO PUNTO SU CUI SONO ANCORA INDECISO: se metti il drawer, alla fine restano match e ranking ... ma questo punto metti ranking anch'esso in un drawer
+     IDEA: metti doppio drawer, uno a sinistra per le impostazioni, uno a destra per statistiche (infatti, COMUNQUE dovresti prima o poi permettere al giocatore di selezionare
+     che tipo di statistiche vuole vedere (statistiche sue, ranking migliori giocatori, record partite passate, ecc. ecc.) a questo punto mettilo in un drawer
+     QUINDI IDEA FINALE E':
+        NEL PRINCIPALE METTI I PULSANTI PER LA PARTITA (e giocaci la partita dentro)
+        DRAWER a sinistra per le impostazioni
+        DRAWER a destra per le statistiche/ranking/records ecc.
+        QUALUNQUE COSA ACCADA, ONESTAMENTE, L'ACTION BAR IN ALTO NON LA VOGLIO PERO' SERVE --> mettile il colore ad invisibile! così saranno visibili solo i bottoni
+        VORREI ADOTTARE UN DESIGN MOLTO MINIMALE, quindi un'action bar trasparente di cui si vedono solo i bottoni è molto elegante (dà la sensazione che i bottoni siano sospesi
+        al massimo puoi pensare di realizzare i bottoni come reali buttons, o almeno vedere se è possibile modificarne un po' la grafica

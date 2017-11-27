@@ -1,4 +1,4 @@
-package it.ma.polimi.briscola.forfullrelease.persistency;
+package it.ma.polimi.briscola.persistency;
 
 import android.content.ContentValues;
 import android.content.Context;

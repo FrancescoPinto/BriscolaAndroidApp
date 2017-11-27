@@ -9,7 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".forfullrelease.Briscola2PMatchActivity">
+        <activity android:name=".MatchMenuActivity">
 
             <!-- <activity android:name=".MainActivity"> -->
             <intent-filter>
@@ -24,7 +24,7 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_fullscreen"
             android:theme="@style/FullscreenTheme" />
-        <activity android:name=".forfullrelease.MatchGUIPrototype"></activity>
+        <activity android:name=".controller.daFare.MatchGUIPrototype"></activity>
     </application>
 
 </manifest>
