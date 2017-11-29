@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMatchRecord;
+import it.ma.polimi.briscola.model.briscola.statistics.Briscola2PMatchRecord;
 
 import static junit.framework.Assert.assertTrue;
 

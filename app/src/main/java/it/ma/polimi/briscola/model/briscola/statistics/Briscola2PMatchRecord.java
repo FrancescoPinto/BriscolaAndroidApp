@@ -1,4 +1,4 @@
-package it.ma.polimi.briscola.model.briscola.twoplayers;
+package it.ma.polimi.briscola.model.briscola.statistics;
 
 import android.support.annotation.NonNull;
 

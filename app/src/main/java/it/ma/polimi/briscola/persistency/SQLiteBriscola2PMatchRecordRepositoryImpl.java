@@ -7,18 +7,24 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
-import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMatchRecord;
+import it.ma.polimi.briscola.model.briscola.statistics.Briscola2PAggregatedData;
+import it.ma.polimi.briscola.model.briscola.statistics.Briscola2PMatchRecord;
 
 /**
  * Created by utente on 25/10/17.
  */
 
-public class SQLiteBriscola2PMatchRecordRepositoryImpl extends SQLiteOpenHelper implements Briscola2PMatchRecordRepository{
+public class SQLiteBriscola2PMatchRecordRepositoryImpl extends SQLiteOpenHelper {
 
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "recordRepository";
+
+    private static SQLiteBriscola2PMatchRecordRepositoryImpl repo = null;
+
 
     public SQLiteBriscola2PMatchRecordRepositoryImpl(Context context){
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -41,7 +47,6 @@ public class SQLiteBriscola2PMatchRecordRepositoryImpl extends SQLiteOpenHelper 
         }
     }
 
-    @Override
     public Briscola2PMatchRecord save(Briscola2PMatchRecord matchRecord) {
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -59,7 +64,6 @@ public class SQLiteBriscola2PMatchRecordRepositoryImpl extends SQLiteOpenHelper 
         return matchRecord;
     }
 
-    @Override
     public List<Briscola2PMatchRecord> findAll() {
         String selectQuery = "SELECT * FROM " + "briscola2pmatchrecords"; //todo constant
         SQLiteDatabase db = this.getWritableDatabase();
@@ -74,7 +78,6 @@ public class SQLiteBriscola2PMatchRecordRepositoryImpl extends SQLiteOpenHelper 
         return result;
     }
 
-    @Override
     public Briscola2PMatchRecord findById(int id) {
         SQLiteDatabase db = this.getWritableDatabase();
         String[] ids = {""+id};
@@ -88,16 +91,49 @@ public class SQLiteBriscola2PMatchRecordRepositoryImpl extends SQLiteOpenHelper 
         return null;
     }
 
-    @Override
     public void delete(int id) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete("briscola2pmatchrecords","id = ?", new String[] {""+id});
     }
 
-    /*
-    todo: cose da salvare
-     config di partite interrotte
-        i record delle partite passate
-        statistiche
-        settings e dati utente (magari non nel database)*/
+    // Updating single contact
+    public int updateContact(Briscola2PMatchRecord matchRecord) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("player0Name", matchRecord.getPlayer0Name()); //todo, usa delle costanti come attributi per rappresentare i nomi delle colonne!
+        values.put("player1Name", matchRecord.getPlayer1Name()); //todo, usa delle costanti come attributi per rappresentare i nomi delle colonne!
+        values.put("player0Score", matchRecord.getPlayer0Score()); //todo, usa delle costanti come attributi per rappresentare i nomi delle colonne!
+        values.put("player1Score", matchRecord.getPlayer1Score()); //todo, usa delle costanti come attributi per rappresentare i nomi delle colonne!
+
+        // updating row
+        return db.update("briscola2pmatchrecords", values, "id" + " = ?",
+                new String[] { String.valueOf(matchRecord.getId()) });
+    }
+
+    public List<Briscola2PAggregatedData> getRanking(){
+        List<Briscola2PMatchRecord> matchRecords = findAll();
+        HashSet<String> players = new HashSet<>();
+
+        for(Briscola2PMatchRecord mr : matchRecords){
+            players.add(mr.getPlayer0Name());
+        }
+
+        List<Briscola2PAggregatedData> aggregatedData = new ArrayList<>();
+        for(String player : players){
+            List<Briscola2PMatchRecord> temp = new ArrayList<>();
+            for(Briscola2PMatchRecord mr : matchRecords){
+                if(player.equals(mr.getPlayer0Name())){
+                    temp.add(mr);
+                }
+            }
+            aggregatedData.add(new Briscola2PAggregatedData(temp));
+        }
+        Collections.sort(aggregatedData);
+        Collections.reverse(aggregatedData);
+        return aggregatedData;
+    }
+
+
+
 }

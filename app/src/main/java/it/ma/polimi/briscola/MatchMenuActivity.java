@@ -2,34 +2,176 @@ package it.ma.polimi.briscola;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.graphics.drawable.Drawable;
-import android.support.v4.content.ContextCompat;
+import android.content.Intent;
+import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ListView;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
-import it.ma.polimi.briscola.view.DrawerListAdapter;
+import it.ma.polimi.briscola.view.fragments.OfflineMenuFragment;
 
 
 public class MatchMenuActivity extends AppCompatActivity {
 
     /** the DrawerLayout */
     private DrawerLayout drawerLayout;
+    private NavigationView nvDrawer;
+    private Toolbar toolbar;
+
+    // Make sure to be using android.support.v7.app.ActionBarDrawerToggle version.
+    // The android.support.v4.app.ActionBarDrawerToggle has been deprecated.
+    private ActionBarDrawerToggle drawerToggle;
 
     @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_match_menu);
+
+        ActionBar actionBar = getSupportActionBar(); //todo, mettere l'hamburger nell'action bar, vedere perché crasha dannatamente!
+        // Set a Toolbar to replace the ActionBar.
+       // getSupportActionBar().hide(); todo, attenzione, questo ora funziona (ho cambiato il minSdk
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+       // setSupportActionBar(toolbar);
+       // getSupportActionBar().setHomeButtonEnabled(true); // for burger icon
+       // getSupportActionBar().setDisplayHomeAsUpEnabled(true); // burger icon related
+       // getSupportActionBar().setDisplayShowCustomEnabled(true); // CRUCIAL - for displaying your custom actionbar
+
+//todo LEGGI SOTTO
+  //DA FARE MOLTO IMPORTANTE, NASCONDI LA ACTION BAR E METTI UN FLOATING BUTTON
+
+        // Find our drawer view
+        drawerLayout = (DrawerLayout) findViewById(R.id.id_drawerLayout);
+        //todo se proprio sarai costretto a fare questo drawer con adapter scritto a mano, tieni bene a mente
+        //        che ilt uo vecchio adapter era inutilmente complicato: l'adapter ' deve avere solo una lista di elementi,
+        //        prendi a modello l'implementazione' di adapter e holder che hai fatto per le recyclerView in RankingActivity
+        //        QUINDI, se vuoi dei SEPARATORI, molto semplicemente salvi nell'adapter ' delle costanti (che rappresentano
+        //gli indici di dove si troveranno, nell'UNICA' lista, i nomi dei separatori, e setterai la view in quel modo)
+        // Enabling the Drawer button
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(
+                this, drawerLayout, 0, 0
+        );
+
+        //todo, se vuoi puoi anche modificare il titolo sull'action bar (vedi le slides delle lezioni, slide 28 di Fragments and Navigation
+        // add listener to drawer
+        drawerLayout.addDrawerListener(actionBarDrawerToggle);
+
+        // Setup drawer view
+        nvDrawer = (NavigationView) findViewById(R.id.nvView);
+
+        setupDrawerContent(nvDrawer);
+
+        Log.i("TAG1","Ho finito onCreate");
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // The action bar home/up action should open or close the drawer.
+        if (item.getItemId() == android.R.id.home) {
+            if(drawerLayout.isDrawerOpen(Gravity.START)) {
+                drawerLayout.closeDrawer(Gravity.START);
+            }else{
+                drawerLayout.openDrawer(Gravity.START);
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
+
+    private void setupDrawerContent(NavigationView navigationView) {
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(MenuItem menuItem) {
+                        selectDrawerItem(menuItem);
+                        return true;
+                    }
+                });
+    }
+
+    public void selectDrawerItem(MenuItem menuItem) {
+        // Create a new fragment and specify the fragment to show based on nav item clicked
+        Intent intent;
+        Class fragmentClass;
+        switch(menuItem.getItemId()) {
+            case R.id.id_play_offline:
+                fragmentClass = OfflineMenuFragment.class;
+                startFragment(fragmentClass);
+                break;
+            case R.id.id_play_online:
+                fragmentClass = OfflineMenuFragment.class;
+                startFragment(fragmentClass);
+                break;
+            case R.id.id_ranking:
+                intent = new Intent(MatchMenuActivity.this, RankingActivity.class);
+               startActivity(intent);
+                break;
+            case R.id.id_performance:
+                intent = new Intent(MatchMenuActivity.this, PreviousMatchRecordsActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.id_settings:
+                fragmentClass = RankingActivity.class;
+                startFragment(fragmentClass);
+                break;
+            case R.id.id_game_rules:
+                fragmentClass = RankingActivity.class;
+                startFragment(fragmentClass);
+                break;
+            default:
+                fragmentClass = RankingActivity.class;
+                startFragment(fragmentClass);
+        }
+
+        // Highlight the selected item has been done by NavigationView
+        menuItem.setChecked(true);
+        // Set action bar title
+        setTitle(menuItem.getTitle());
+        // Close the navigation drawer
+        drawerLayout.closeDrawers();
+    }
+
+    private void startFragment(Class fragmentClass){
+        Fragment fragment = null;
+        try {
+            if(fragmentClass != null) {
+                fragment = (Fragment) fragmentClass.newInstance();
+                // Insert the fragment by replacing any existing fragment
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                fragmentManager.beginTransaction()
+                        .add(R.id.fragment_container, fragment) //todo, oppure replace?
+                        .commit();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+   /* @Override
+    protected void onPostCreate(Bundle savedInstanceState){
+        super.onPostCreate(savedInstanceState);
+        //Sync the toggle state after onRestoreInstanceState occurred
+        drawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig){
+        super.onConfigurationChanged(newConfig);
+        drawerToggle.onConfigurationChanged(newConfig);
+    }
+*/
+   /* @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_match_menu);
@@ -85,7 +227,7 @@ public class MatchMenuActivity extends AppCompatActivity {
                         intent.putExtra("result", editText.getText().toString());
                         // we want to retrieve the update
                         startActivityForResult(intent, REQUIRE_THEME);*/
-                        break;
+       /*                 break;
                 }
                 // close the drawer
                 drawerLayout.closeDrawer(drawerList);

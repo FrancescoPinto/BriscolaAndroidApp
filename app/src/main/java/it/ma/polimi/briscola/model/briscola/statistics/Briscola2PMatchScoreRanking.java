@@ -1,8 +1,10 @@
-package it.ma.polimi.briscola.model.briscola.twoplayers;
+package it.ma.polimi.briscola.model.briscola.statistics;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import it.ma.polimi.briscola.model.briscola.statistics.Briscola2PMatchRecord;
 
 /**
  * Class representing a ranking of Briscola2PMatchRecors of previously played matches. In the ranking, records are ordered according to the inverse of the compareTo method of Briscola2PMatchRecord logic, i.e. top ranked players are the humans (only humans) with the best scores.
