@@ -24,8 +24,9 @@ FUNZIONALITA' OFFERTA:
         2.4) Esci dalla partita corrente
         2.5) Riavvia la partita (in pratica inizia una nuova partita, ma a partita già avviata)
         2.6) METTI IN PAUSA
+        A FINE PARTITA SERVE UNA SCHERMATA PER SALVARE IL NOME DI PLAYER0
     3) history/statistics
-        3.1) Ranking delle partite passate
+        3.1) Ranking delle partite passate <- IN REALTA' ALLA FINE IO HO FATTO UNA ACTIVITY IN CUI VEDI TUTTE LE PARTITE FATTE, L'ALTRA UN RANKING SUI PUNTEGGI AGGREGATI DEI GIOCATORI
         3.3) lista dei record di gioco del giocatore
         3.4) Statistiche: numero di partite giocate, percentuale vinte, percentuale perse, percentuale pareggiate (in base al livello di difficoltà dell'AI?)
 PER

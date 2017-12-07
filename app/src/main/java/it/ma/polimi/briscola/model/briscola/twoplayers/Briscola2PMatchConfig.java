@@ -2,6 +2,7 @@ package it.ma.polimi.briscola.model.briscola.twoplayers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 import it.ma.polimi.briscola.model.briscola.BriscolaCardPointsAndRankingRules;
@@ -34,6 +35,10 @@ public class Briscola2PMatchConfig {
     private Briscola2PSurface surface;
     private List<Briscola2PHand> hands = new ArrayList<>();
     private List<Briscola2PPile> piles = new ArrayList<>();
+
+    public List<Briscola2PHand> getHands() {
+        return hands;
+    }
 
     //error messages
     private static final String wrongCurrentPlayer = "Wrong Current Player. Current Player should either be "+ PLAYER0 + " or " + PLAYER1,
@@ -252,12 +257,13 @@ public class Briscola2PMatchConfig {
      * Initialize first player. Initialization is made at random (coin toss).
      */
     public void initializeFirstPlayer(){
-        int coinTossResult = ThreadLocalRandom.current().nextInt(0, 2); //coin toss, Bernoulli random variable with p  = 0.5
+        int coinTossResult = new Random().nextInt(2); //coin toss, Bernoulli random variable with p  = 0.5
         if(coinTossResult == 0){
             currentPlayer = PLAYER0;
         }else{
             currentPlayer = PLAYER1;
         }
+
     }
 
     /**
@@ -317,13 +323,13 @@ public class Briscola2PMatchConfig {
      * @param winner the winner index, is either the public final int PLAYER0 or PLAYER1 provided by this class
      * @throws IllegalStateException if the surface is not completely filled
      */
-    public void clearSurface(int winner){
+    public List<NeapolitanCard> clearSurface(int winner){
         if(surface.size() != surface.getMaxNumCardsAllowedInList())
             throw new IllegalStateException(surfaceNotFilled);
 
         List<NeapolitanCard> cardsOnSurface = surface.clearCardList();
         piles.get(winner).appendAll(cardsOnSurface);
-
+        return cardsOnSurface;
     }
 
     /**
@@ -339,13 +345,19 @@ public class Briscola2PMatchConfig {
     /**
      * Draw cards for the new round. Should be called at the beginning of the round, after the current player has been set. If the deck is empty, the configuration is unaffected.
      */
-    public void drawCardsNewRound(){
+    public List<NeapolitanCard> drawCardsNewRound(){
         if(deck.isEmpty()) //if deck is empty, don't do anything.
-            return;
+            return null;
 
-        hands.get(currentPlayer).appendCard(deck.drawCardFromTop()); //first player draws a card
-        hands.get((currentPlayer+1)%2).appendCard(deck.drawCardFromTop()); //second player draws a card
+        NeapolitanCard c1 = deck.drawCardFromTop();
+        NeapolitanCard c2 = deck.drawCardFromTop();
+        hands.get(currentPlayer).appendCard(c1); //first player draws a card
+        hands.get((currentPlayer+1)%2).appendCard(c2); //second player draws a card
 
+        List<NeapolitanCard> newCards =  new ArrayList<NeapolitanCard>();
+        newCards.add(c1);
+        newCards.add(c2);
+        return newCards;
     }
 
     /**

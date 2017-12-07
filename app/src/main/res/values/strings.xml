@@ -48,5 +48,7 @@
     <string name="start_online_match">Start Online Match</string>
     <string name="resume_from_saved">Load Saved Match</string>
 
+    <string name="player1_turn">Other Turn</string>
+    <string name="player0_turn">Your Turn</string>
 
 </resources>

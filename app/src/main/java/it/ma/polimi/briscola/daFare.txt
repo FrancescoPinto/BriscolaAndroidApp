@@ -1,3 +1,17 @@
+DA FARE IN SETTIMANA:
+- Aggiungere l'immaginina del deck
+- Coprire le immagini delle carte avversarie e delle pile
+- togliere la briscola quando il deck è finito, e non generarne una nuova
+- risolvere il problema dei crash se premi troppo presto (ovvero blocca gli input, attivali e disattivali)
+- mettere fragment + activity, invece di sola activity
+- crea un menù di inizio match (ispirati al manuale) e un menu di pausa dove almeno mettere di poter terminare la partita
+- finita la partita, salva i dati sulla partita e chiedi all'utente il suo nome SE vuole salvare
+- inizia a guardare come fare l'online
+- inizia a collegare tutte le schermate
+- aggiungere audio
+- IA più intelligente
+
+
 NELLA SPECIFICA, PER LA UI LUI RICHIEDE ALMENO:
 - UI should contain navigation that allows to
     1) select options

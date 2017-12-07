@@ -72,6 +72,15 @@ public class MatchMenuActivity extends AppCompatActivity {
         setupDrawerContent(nvDrawer);
 
         Log.i("TAG1","Ho finito onCreate");
+
+
+        Fragment fragment = (Fragment) OfflineMenuFragment.newInstance();
+        // Insert the fragment by replacing any existing fragment
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .add(R.id.fragment_container, fragment) //todo, oppure replace?
+                .commit();
+
     }
 
     @Override
@@ -107,11 +116,16 @@ public class MatchMenuActivity extends AppCompatActivity {
         switch(menuItem.getItemId()) {
             case R.id.id_play_offline:
                 fragmentClass = OfflineMenuFragment.class;
-                startFragment(fragmentClass);
+                startFragment(fragmentClass,menuItem);
                 break;
             case R.id.id_play_online:
-                fragmentClass = OfflineMenuFragment.class;
-                startFragment(fragmentClass);
+                onBuildDialog(
+                        "questa deve diventare un fragment, ma fallo solo dopo che hai finito",//getString(R.string.exit_message),
+                        "temporaneo si",//getString(R.string.yes),
+                        "temporaneo no",//getString(R.string.no),
+                        true,
+                        false
+                ).show();
                 break;
             case R.id.id_ranking:
                 intent = new Intent(MatchMenuActivity.this, RankingActivity.class);
@@ -121,28 +135,37 @@ public class MatchMenuActivity extends AppCompatActivity {
                 intent = new Intent(MatchMenuActivity.this, PreviousMatchRecordsActivity.class);
                 startActivity(intent);
                 break;
-            case R.id.id_settings:
-                fragmentClass = RankingActivity.class;
-                startFragment(fragmentClass);
+            case R.id.id_settings: //questa deve diventare un'activity, ma fallo solo dopo che hai finito
+                onBuildDialog(
+                        "questa deve diventare un'activity, ma fallo solo dopo che hai finito",//getString(R.string.exit_message),
+                        "temporaneo si",//getString(R.string.yes),
+                        "temporaneo no",//getString(R.string.no),
+                        true,
+                        false
+                ).show();
                 break;
-            case R.id.id_game_rules:
-                fragmentClass = RankingActivity.class;
-                startFragment(fragmentClass);
+            case R.id.id_game_rules: //questo un dialog tooltip
+                onBuildDialog(
+                        "questa deve diventare un tooltip/tutorial/qualcosa, ma fallo solo dopo che hai finito",//getString(R.string.exit_message),
+                        "temporaneo si",//getString(R.string.yes),
+                        "temporaneo no",//getString(R.string.no),
+                        true,
+                        false
+                ).show();
                 break;
             default:
                 fragmentClass = RankingActivity.class;
-                startFragment(fragmentClass);
+                startFragment(fragmentClass,menuItem);
         }
 
-        // Highlight the selected item has been done by NavigationView
-        menuItem.setChecked(true);
+
         // Set action bar title
         setTitle(menuItem.getTitle());
         // Close the navigation drawer
         drawerLayout.closeDrawers();
     }
 
-    private void startFragment(Class fragmentClass){
+    private void startFragment(Class fragmentClass, MenuItem menuItem){
         Fragment fragment = null;
         try {
             if(fragmentClass != null) {
@@ -152,6 +175,8 @@ public class MatchMenuActivity extends AppCompatActivity {
                 fragmentManager.beginTransaction()
                         .add(R.id.fragment_container, fragment) //todo, oppure replace?
                         .commit();
+                // Highlight the selected item has been done by NavigationView
+                menuItem.setChecked(true);
             }
         } catch (Exception e) {
             e.printStackTrace();

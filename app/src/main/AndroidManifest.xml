@@ -9,18 +9,19 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MatchMenuActivity">
+        <activity android:name=".Briscola2PMatchActivity">
 
             <!-- <activity android:name=".MainActivity"> -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <!-- <activity android:name=".Briscola2PMatchActivity" android:theme = "@style/FullscreenActionBarStyle" /> -->
-        <activity android:name=".PreviousMatchRecordsActivity"/>
-        <activity android:name=".RankingActivity"/>
-
+        <activity android:name=".PreviousMatchRecordsActivity" />
+        <activity android:name=".RankingActivity" />
+        <activity android:name=".MatchMenuActivity"></activity>
     </application>
 
 </manifest>
