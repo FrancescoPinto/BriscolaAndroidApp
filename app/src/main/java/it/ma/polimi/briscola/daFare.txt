@@ -1,14 +1,19 @@
 DA FARE IN SETTIMANA:
-- Aggiungere l'immaginina del deck
-- Coprire le immagini delle carte avversarie e delle pile
-- togliere la briscola quando il deck è finito, e non generarne una nuova
-- risolvere il problema dei crash se premi troppo presto (ovvero blocca gli input, attivali e disattivali)
+- metti la briscola SOTTO il deck (visivamente), non sopra!
+- Aggiungere l'immaginina del deck <- IMPLEMENTATO, DA TESTARE
+- randomizzare (come in SoundInfo) il seme (ovvero creare un unico random da usare sempre) (lo lascio per ultimo, così mi è più facile testare)
+- RISOLVERE IL BUG DEL "se il giocatore avversario gioca la prima carta, e io clicco come un forsennato sulle mie carte COSI' che istantaneamente appena mi viene distribuita l'ultima carta dalla pesca, l'app crasha perché non riesce a trovare, nell'adjust, i valori della carta!"
+    TALE BUG, USANDO IL DEBUGGER, sembra scatenato dal fatto che l'adjust view viene invocato 3 volte! (PRESUMO: turno mio(o suo, è indifferente), turno suo (o mio, è indifferente) VINCE LUI quindi automaticamente invoca l'adjust, però non ha manco distribuito le carte, figurati se
+    sa dove si trova sulla superficie!), inoltre, continua a mettere sotto sforzo l'app cliccando come un forsennato
+- togliere la briscola quando il deck è finito, e non generarne una nuova <- IMPLEMENTATO, MA DEVI TESTARLO CON UN MATCH
 - mettere fragment + activity, invece di sola activity
 - crea un menù di inizio match (ispirati al manuale) e un menu di pausa dove almeno mettere di poter terminare la partita
 - finita la partita, salva i dati sulla partita e chiedi all'utente il suo nome SE vuole salvare
 - inizia a guardare come fare l'online
 - inizia a collegare tutte le schermate
-- aggiungere audio
+- aggiungere audio <- ora la musica deve partire nello splash screen e rimanere PER SEMPRE, proprio per andare di fino dovresti anche
+    ricalibrare i livelli di audio, perché alcuni suoni sono troppo sparati (SOPRATTUTTO LA VITTORIA DEL ROUND), ma questo fallo esternamente
+    pensare anche a cosa succede alla musica quando fai onPause, onUpdate ecc. ecc.
 - IA più intelligente
 
 

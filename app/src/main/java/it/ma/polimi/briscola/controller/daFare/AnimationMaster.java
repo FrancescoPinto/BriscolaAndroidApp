@@ -1,5 +1,7 @@
 package it.ma.polimi.briscola.controller.daFare;
 
+import android.animation.Animator;
+import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
@@ -9,11 +11,14 @@ import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.util.DisplayMetrics;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.ImageSwitcher;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.util.List;
 
+import it.ma.polimi.briscola.Briscola2PMatchActivity;
+import it.ma.polimi.briscola.R;
 import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PHand;
 
 import static java.security.AccessController.getContext;
@@ -54,11 +59,11 @@ public class AnimationMaster {
         cardDealer.playTogether(animation1,animation11);
         cardDealer.play(animation1).before(animation2);
         cardDealer.playTogether(animation2,animation22);*/
-        //cardDealer.playTogether(animation1,animation11);
-        //cardDealer.play(animation1).before(animation2);
-        //cardDealer.playTogether(animation2,animation22);
-        //cardDealer.start();
-        //todo: qui nel commento l'esempio della documentazione android, molto educativo: ti mostra come persino 2 AnimatorSet possono essere combinati
+    //cardDealer.playTogether(animation1,animation11);
+    //cardDealer.play(animation1).before(animation2);
+    //cardDealer.playTogether(animation2,animation22);
+    //cardDealer.start();
+    //todo: qui nel commento l'esempio della documentazione android, molto educativo: ti mostra come persino 2 AnimatorSet possono essere combinati
        /* ObjectAnimator animation1 = ObjectAnimator.ofFloat(card, "translationX", 100f);
         animation1.setDuration(1000);
         animation1.start();
@@ -75,21 +80,25 @@ public class AnimationMaster {
         animatorSet.start();
         */
 
-    public static AnimatorSet getTranslationAnimationSet(ImageView targetView, Point origin, Point target){
+    public static AnimatorSet getTranslationAnimationSet(ImageView targetView, Point origin, Point target, Briscola2PMatchActivity activity) {
+
+
         AnimatorSet translation = new AnimatorSet();
-        ObjectAnimator translationX = new ObjectAnimator().ofFloat(targetView,"translationX", target.x - origin.x);
+        ObjectAnimator translationX = new ObjectAnimator().ofFloat(targetView, "translationX", target.x - origin.x);
         translationX.setDuration(1000);
         translationX.setInterpolator(new AccelerateDecelerateInterpolator());
-        ObjectAnimator translationY = new ObjectAnimator().ofFloat(targetView,"translationY", target.y - origin.y);
+        ObjectAnimator translationY = new ObjectAnimator().ofFloat(targetView, "translationY", target.y - origin.y);
         translationY.setDuration(1000);
         translationY.setInterpolator(new AccelerateDecelerateInterpolator());
-        translation.playTogether(translationX,translationY);
+        translation.playTogether(translationX, translationY);
+        translation.addListener(new MoveCardAnimationListener(activity.getSoundManager()));
+
         return translation;
     }
 
+    /*public static AnimatorSet getTranslationAnimationSet(ImageSwitcher targetView, Point origin, Point target, boolean flip, int elevation) {
+        AnimatorSet translation = getTranslationAnimationSet(targetView, origin, target, flip, elevation);
+        return translation;
 
-
-
-
-
+    }*/
 }

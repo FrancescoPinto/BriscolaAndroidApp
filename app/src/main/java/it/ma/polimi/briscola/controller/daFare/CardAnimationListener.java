@@ -4,6 +4,7 @@ import android.animation.AnimatorSet;
 import android.graphics.Point;
 import android.support.constraint.ConstraintLayout;
 import android.view.View;
+import android.widget.ImageSwitcher;
 import android.widget.ImageView;
 
 import java.util.Map;

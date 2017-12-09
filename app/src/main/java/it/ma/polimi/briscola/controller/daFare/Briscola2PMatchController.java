@@ -144,11 +144,10 @@ public class Briscola2PMatchController {
         public AnimatorSet playFirstCard(int move){
             config.playCard(move);
             AnimatorSet playCard = activity.playFirstCard(move, config.getCurrentPlayer());
-            AnimatorSet adjust = activity.adjustCards(move, config.getCurrentPlayer());
             config.toggleCurrentPlayer();
             AnimatorSet displayCurrentPlayer = activity.displayCurrentPlayer(config.getCurrentPlayer());
             AnimatorSet playFirstCard = new AnimatorSet();
-            playFirstCard.playSequentially(playCard,adjust, displayCurrentPlayer);
+            playFirstCard.playSequentially(playCard, displayCurrentPlayer);
             playFirstCard.addListener(new Animator.AnimatorListener() {
                 @Override
                 public void onAnimationStart(Animator animator) {}
@@ -169,7 +168,6 @@ public class Briscola2PMatchController {
         public AnimatorSet playSecondCard(int move){
             config.playCard(move);
             AnimatorSet playCard = activity.playSecondCard(move, config.getCurrentPlayer());
-            AnimatorSet adjust = activity.adjustCards(move, config.getCurrentPlayer());
             AnimatorSet playSecondCard = new AnimatorSet();
             int roundWinner = config.chooseRoundWinner(); //choose round winner
             config.clearSurface(roundWinner);
@@ -194,9 +192,13 @@ public class Briscola2PMatchController {
                         }
                     }else if (!config.arePlayersHandsEmpty() && config.isDeckEmpty()){ //if the deck is empty, but players have cards in hand,don't do anything
                     }else if(!config.isDeckEmpty()){ //if deck is not empty, draw cards new round
+                        boolean lastDraw = false;
+                        if(config.getDeck().size() == 2)
+                            lastDraw = true;
+
                         config.drawCardsNewRound();
                         //cards have been collected from surface, new cards have been drawn
-                        animators.add(activity.drawCardsNewRound(config.getHands(), config.getCurrentPlayer()));
+                        animators.add(activity.drawCardsNewRound(config.getHands(), config.getCurrentPlayer(),lastDraw));
                     }
 
                     if(config.getCurrentPlayer() == config.PLAYER1){
@@ -214,7 +216,7 @@ public class Briscola2PMatchController {
                 @Override
                 public void onAnimationRepeat(Animator animator) {}
             });
-            playSecondCard.playSequentially(playCard,adjust, cleanSurface,displayCurrentPlayer);
+            playSecondCard.playSequentially(playCard, cleanSurface,displayCurrentPlayer);
             return playSecondCard;
 
 

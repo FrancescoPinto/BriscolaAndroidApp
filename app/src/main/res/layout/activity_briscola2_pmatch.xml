@@ -63,14 +63,7 @@
         android:layout_centerVertical="true"
         android:layout_alignParentStart="true">
 
-        <ImageView
-            android:id="@+id/deckSlot"
-            android:layout_width="75dp"
-            android:layout_height="110dp"
-            android:layout_alignParentTop="true"
-            android:layout_alignStart="@+id/briscolaSlot"
-            android:layout_marginStart="42dp"
-            app:srcCompat="@drawable/card_slot_shape" />
+
 
         <ImageView
             android:id="@+id/briscolaSlot"
@@ -80,6 +73,15 @@
             android:layout_alignParentTop="true"
             android:layout_marginStart="18dp"
             app:srcCompat="@drawable/card_slot_shape" />
+
+        <ImageView
+            android:id="@+id/deckSlot"
+            android:layout_width="75dp"
+            android:layout_height="110dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignStart="@+id/briscolaSlot"
+            android:layout_marginStart="42dp"
+            app:srcCompat="@drawable/default_card_background" />
 
         <ImageView
             android:id="@+id/surfaceSlot0"
