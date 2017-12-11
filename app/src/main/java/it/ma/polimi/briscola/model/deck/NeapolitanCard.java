@@ -11,6 +11,12 @@ public class NeapolitanCard implements Card{
 
     private NeapolitanCardSuit neapolitanCardSuit;
 
+    /**
+     * Instantiates an empty Neapolitan card. Can be used to model unknown value card.
+     */
+    public NeapolitanCard(){
+
+    }
 
     /**
      * Instantiates a new Neapolitan card from enum values of NeapolitanCardNumber and NeapolitanCardSuit
@@ -49,6 +55,7 @@ public class NeapolitanCard implements Card{
     public NeapolitanCard(char num, char suit){
         this(""+num,""+suit);
     }
+
 
 
     /**
@@ -98,7 +105,6 @@ public class NeapolitanCard implements Card{
      *
      * @return String representing the Card number, its value is among the cardNumber values in NeapolitanCardNumber enum
      */
-
     public NeapolitanCardNumbers getCardNumberEnum() {
         return neapolitanCardNumber;
     }

@@ -24,7 +24,7 @@ public class SoundManager {
     private static final String SOUNDS_PREF_KEY = "it.ma.polimi.briscola.sounds.boolean";
     private static final String MUSIC_PREF_KEY = "it.ma.polimi.briscola.music.boolean";
 
-    private static SoundManager sInstance;
+    private static SoundManager instance;
 
     //	private HashMap<GameEvent, SoundInfo> mSoundsMap;
     private HashMap<GameEvent, Integer> soundsMap;
@@ -37,13 +37,28 @@ public class SoundManager {
 
     private MediaPlayer backgroundPlayer;
 
-    public SoundManager(Context context) {
+    private SoundManager(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         soundEnabled = prefs.getBoolean(SOUNDS_PREF_KEY, true);
         musicEnabled = prefs.getBoolean(MUSIC_PREF_KEY, true);
         // I should use SoundPool.Builder on API 21 http://developer.android.com/reference/android/media/SoundPool.Builder.html
         this.context = context;
         loadIfNeeded();
+    }
+
+   /* public void refreshEnabledFlags(){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        soundEnabled = prefs.getBoolean(SOUNDS_PREF_KEY, true);
+        musicEnabled = prefs.getBoolean(MUSIC_PREF_KEY, true);
+    }*/
+    public static SoundManager getInstance(Context context){
+        if(instance == null)
+        {
+            instance = new SoundManager(context);
+            return instance;
+        }
+        else
+            return instance;
     }
 
     private void loadEventSound(Context context, GameEvent event, String... filename) {

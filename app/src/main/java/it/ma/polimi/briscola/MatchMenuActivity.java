@@ -3,6 +3,7 @@ package it.ma.polimi.briscola;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -14,9 +15,12 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 
+import it.ma.polimi.briscola.audio.SoundManager;
 import it.ma.polimi.briscola.view.fragments.OfflineMenuFragment;
+import it.ma.polimi.briscola.view.fragments.OnlineMenuFragment;
 
 
 public class MatchMenuActivity extends AppCompatActivity {
@@ -25,6 +29,10 @@ public class MatchMenuActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private NavigationView nvDrawer;
     private Toolbar toolbar;
+    private SoundManager soundManager;
+    public SoundManager getSoundManager() {
+        return soundManager;
+    }
 
     // Make sure to be using android.support.v7.app.ActionBarDrawerToggle version.
     // The android.support.v4.app.ActionBarDrawerToggle has been deprecated.
@@ -71,7 +79,13 @@ public class MatchMenuActivity extends AppCompatActivity {
 
         setupDrawerContent(nvDrawer);
 
-        Log.i("TAG1","Ho finito onCreate");
+
+        setVolumeControlStream(AudioManager.STREAM_MUSIC); //todo, spostare questo nell'activity! <------------------------
+        //todo DAVVERO IMPORTANTE SPOSTARE LA GESTIONE DEL SUONO NELL'ACTIVITY!!! <-------------------------------------------------
+        //todo OPPURE in una superActivity da cui erediteranno tutte le activity, o comunque trova un modo di passare il soundManager
+        //todo così che tutte le activity gestiscano l'audio in modo continuo (cioè se vado in performance, l'audio non si ferma)
+        soundManager = SoundManager.getInstance(getApplicationContext());
+        soundManager.resumeBgMusic();
 
 
         Fragment fragment = (Fragment) OfflineMenuFragment.newInstance();
@@ -119,13 +133,8 @@ public class MatchMenuActivity extends AppCompatActivity {
                 startFragment(fragmentClass,menuItem);
                 break;
             case R.id.id_play_online:
-                onBuildDialog(
-                        "questa deve diventare un fragment, ma fallo solo dopo che hai finito",//getString(R.string.exit_message),
-                        "temporaneo si",//getString(R.string.yes),
-                        "temporaneo no",//getString(R.string.no),
-                        true,
-                        false
-                ).show();
+                fragmentClass = OnlineMenuFragment.class;
+                startFragment(fragmentClass,menuItem);
                 break;
             case R.id.id_ranking:
                 intent = new Intent(MatchMenuActivity.this, RankingActivity.class);
@@ -136,13 +145,8 @@ public class MatchMenuActivity extends AppCompatActivity {
                 startActivity(intent);
                 break;
             case R.id.id_settings: //questa deve diventare un'activity, ma fallo solo dopo che hai finito
-                onBuildDialog(
-                        "questa deve diventare un'activity, ma fallo solo dopo che hai finito",//getString(R.string.exit_message),
-                        "temporaneo si",//getString(R.string.yes),
-                        "temporaneo no",//getString(R.string.no),
-                        true,
-                        false
-                ).show();
+                intent = new Intent(MatchMenuActivity.this, SettingsActivity.class);
+                startActivity(intent);
                 break;
             case R.id.id_game_rules: //questo un dialog tooltip
                 onBuildDialog(
@@ -174,6 +178,7 @@ public class MatchMenuActivity extends AppCompatActivity {
                 FragmentManager fragmentManager = getSupportFragmentManager();
                 fragmentManager.beginTransaction()
                         .add(R.id.fragment_container, fragment) //todo, oppure replace?
+                        .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
                         .commit();
                 // Highlight the selected item has been done by NavigationView
                 menuItem.setChecked(true);
@@ -182,6 +187,7 @@ public class MatchMenuActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
 
    /* @Override
     protected void onPostCreate(Bundle savedInstanceState){
@@ -335,14 +341,26 @@ public class MatchMenuActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        onBuildDialog(
-                "temporaneo, vuoi uscire",//getString(R.string.exit_message),
-                "temporaneo si",//getString(R.string.yes),
-                "temporaneo no",//getString(R.string.no),
-                true,
-                false
-        ).show();
+
+        if(getSupportFragmentManager().getBackStackEntryCount() > 1){
+            getSupportFragmentManager().popBackStack();
+        }else {
+            onBuildDialog(
+                    "temporaneo, vuoi uscire",//getString(R.string.exit_message),
+                    "temporaneo si",//getString(R.string.yes),
+                    "temporaneo no",//getString(R.string.no),
+                    true,
+                    false
+            ).show();
+        }
     }
+    /*@Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && getSupportFragmentManager().getBackStackEntryCount() > 1) {
+
+        }
+        return super.onKeyDown(keyCode, event);
+    }*/
 
 
 /*    private DrawerLayout drawerLayout;

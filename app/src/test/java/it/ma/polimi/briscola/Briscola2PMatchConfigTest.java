@@ -627,7 +627,7 @@ public class Briscola2PMatchConfigTest {
         configA = new Briscola2PMatchConfig(fullMatchArray[34]);
         configB = new Briscola2PMatchConfig(fullMatchArray[38]);
         assertTrue(configA.getCurrentPlayer() == configB.getCurrentPlayer()) ;
-        assertTrue(configA.getBriscolaSuit().equals(configB.getBriscolaSuit()));
+        assertTrue(configA.getBriscolaString().equals(configB.getBriscolaString()));
         assertTrue(configA.getDeck().equalTo(configB.getDeck()));
         assertTrue(configA.getSurface().equalTo(configB.getSurface()));
         System.out.println(configA.getHand(configA.PLAYER0) + " " + configB.getHand(configA.PLAYER0));

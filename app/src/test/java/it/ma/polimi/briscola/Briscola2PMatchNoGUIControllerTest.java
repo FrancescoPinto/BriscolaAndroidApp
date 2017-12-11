@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import it.ma.polimi.briscola.forfullrelease.Briscola2PMatchNoGUIController;
 import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMatchConfig;
-import it.ma.polimi.briscola.forfullrelease.ai.Briscola2PAIRandomPlayer;
+import it.ma.polimi.briscola.ai.Briscola2PAIRandomPlayer;
 
 import static junit.framework.Assert.assertTrue;
 
