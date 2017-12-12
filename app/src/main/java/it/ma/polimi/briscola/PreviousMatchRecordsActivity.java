@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -99,6 +100,7 @@ public class PreviousMatchRecordsActivity extends AppCompatActivity {
         public void bindRankingRow(Briscola2PMatchRecord data, int position){
             this.data = data;
             id.setText("#"+position);
+            Log.d("TAG",data.toString());
             player0Score.setText("Score: "+ data.getPlayer0Score());
             player1Score.setText("Score: "+ data.getPlayer1Score());
             namePlayer0.setText("Player: "+ data.getPlayer0Name());

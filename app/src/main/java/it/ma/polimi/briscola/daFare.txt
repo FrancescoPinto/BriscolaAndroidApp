@@ -1,11 +1,16 @@
 DA FARE IN SETTIMANA:
-- METTERE A FINE PARTITA IL SALVATAGGIO DEI DATI (con richiesta del nome)
-- Collegare BENE settings con il resto (ora se fai toggle e selezioni l'AI in realtà non succede proprio niente)
-- GIOCARE UN MATCH A 2 ONLINE PER TESTARE TUTTO
+- BUG: alla fine del match quando hai due carte in mano non te le riabilita per giocarle
+- BUG: la briscola te la dà coperta in mano e non la scopre quando la butti sul terreno
+- FAI I MENU DI GIOCO "a palline che rotolano", è carino, semplice, ti leva l'imbarazzo di quel cartone mostruoso
 - GESTIRE GLI ERRORI DI PARTITE ONLINE
+- C'E' qualcosa che non mi torna sia in OnlineBriscolaController che offline ... c'è il secondo if di quando pulisci
+(cioè l'if che contiene se la mano non è vuota ma il deck è vuoto) che non fa niente ... però a quello dopo hai messo
+isDeckEmpty() ... però dentro ci gestisci anche ciò che succede quando non è vuoto (e tutto si comporta correttamente)
+... C' E' DAVVERO QUALCOSA CHE NON VA
+- FAI DEI TEST CHE DISTRUGGONO E RICREANO IL DATABASE DA ZERO (per star tranquillo che se lo fa il prof. non crasha!)
+- FAI SI che se ranking e previousMatchRecords sono vuoti mostri all'utente "Non hai ancora giocato, non ci sono dati"
 - INSERIRE IL DELETE DELLA PARTITA PER FINIRE LA PARTITA (hai aggiunto il bottone, ora devi aggiungere la reazione)
 - METTERE UN PULSANTE TERMINA PARTITA/RIAVVIA PARTITA
-- SETTARE LE PREFERENZE
 - Aggiungere nei settings la velocità delle animazioni
 - metti la briscola SOTTO il deck (visivamente), non sopra!
 - randomizzare (come in SoundInfo) il seme (ovvero creare un unico random da usare sempre) (lo lascio per ultimo, così mi è più facile testare)
@@ -18,12 +23,18 @@ DA FARE IN SETTIMANA:
 - finita la partita, salva i dati sulla partita e chiedi all'utente il suo nome SE vuole salvare
 - inizia a guardare come fare l'online
 - inizia a collegare tutte le schermate
-- aggiungere audio <- ora la musica deve partire nello splash screen e rimanere PER SEMPRE, proprio per andare di fino dovresti anche
+-  la musica deve partire nello splash screen e rimanere PER SEMPRE, proprio per andare di fino dovresti anche
     ricalibrare i livelli di audio, perché alcuni suoni sono troppo sparati (SOPRATTUTTO LA VITTORIA DEL ROUND), ma questo fallo esternamente
     pensare anche a cosa succede alla musica quando fai onPause, onUpdate ecc. ecc.
     DA FARE: quando un fragment viene dismissed, i suoni delle carte continuano (mi sono assicurato però che il fragment sia distrutto)
     quindi il problema è che devi cancellare esplicitamente le animazioni ... (magari in qualcosa tipo onDestroy(), nell'onDetach
+    AUDIO: quando avvii una nuova activity (prova ad avviare e chiudere più volte settings, disattivando audio con lo switch)
+    l'audio smette <- ho provato a risolvere togliendo il pauseBackgroundMusic dall'onPause ... QUINDI
+    la soluzione è O trasformare SettingsActivity in un fragment ... oppure usare implementazione avanzata di un Service (cerca
+    su internet Background Music in all activities)
 - IA più intelligente
+- GESTIRE SE L'UTENTE AVVIA PIU' PARTITE (potrebbe crashare -> nel menu dell'avvio partita , PRIMA DI AVVIARE LA PARTITA, chiedi
+all'utente se vuole terminare la precedente, al che tu la termini??
 
 
 NELLA SPECIFICA, PER LA UI LUI RICHIEDE ALMENO:

@@ -12,8 +12,7 @@ import android.widget.Button;
 
 import it.ma.polimi.briscola.MatchMenuActivity;
 import it.ma.polimi.briscola.R;
-import it.ma.polimi.briscola.SettingsActivity;
-import it.ma.polimi.briscola.controller.offline.SettingsManager;
+import it.ma.polimi.briscola.persistency.SettingsManager;
 
 /**
  * Created by utente on 28/11/17.
@@ -37,7 +36,7 @@ public class OfflineMenuFragment extends Fragment {
         startOfflineMatch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Fragment fragment = Briscola2PMatchFragment.newInstance(false, SettingsManager.getDifficultyPreference(getActivity())); //false = not online
+                Fragment fragment = Briscola2PMatchFragment.newInstance(false, new SettingsManager(getActivity().getApplicationContext()).getDifficultyPreference()); //false = not online
                 fragment.setEnterTransition(new Slide(Gravity.RIGHT));
                 fragment.setExitTransition(new Slide(Gravity.LEFT));
 

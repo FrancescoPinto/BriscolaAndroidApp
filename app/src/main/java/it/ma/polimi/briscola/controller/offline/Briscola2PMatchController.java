@@ -11,9 +11,11 @@ import it.ma.polimi.briscola.ai.Briscola2PAIDumbGreedyPlayer;
 import it.ma.polimi.briscola.ai.Briscola2PAIPlayer;
 import it.ma.polimi.briscola.ai.Briscola2PAIRandomPlayer;
 import it.ma.polimi.briscola.ai.Briscola2PAISmarterGreedyPlayer;
+import it.ma.polimi.briscola.model.briscola.statistics.Briscola2PMatchRecord;
 import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMatchConfig;
 import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PPile;
 import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PSurface;
+import it.ma.polimi.briscola.persistency.SettingsManager;
 import it.ma.polimi.briscola.view.fragments.Briscola2PMatchFragment;
 
 /**
@@ -108,7 +110,7 @@ public class Briscola2PMatchController implements Briscola2PController{
                 public void onAnimationRepeat(Animator animator) {}
             });
 
-            initializationSequence.playSequentially(displayCurrentPlayer,dealFirstHand,initializeBriscola);
+            initializationSequence.playSequentially(dealFirstHand,initializeBriscola,displayCurrentPlayer);
             initializationSequence.start();
 
            /* if(config.getCurrentPlayer() == config.PLAYER1){
@@ -229,20 +231,32 @@ public class Briscola2PMatchController implements Briscola2PController{
                     List<Animator> animators = new ArrayList<Animator>();
                     if(config.arePlayersHandsEmpty() && config.isDeckEmpty()){ //if the match is finished, choose winner
                         switch(config.chooseMatchWinner()){
-                            case Briscola2PMatchConfig.PLAYER0: matchFragment.displayMatchOutcome("WINNER" + Briscola2PMatchConfig.PLAYER0 + config.computeScore(Briscola2PMatchConfig.PLAYER0)); break;
-                            case Briscola2PMatchConfig.PLAYER1: matchFragment.displayMatchOutcome("WINNER" + Briscola2PMatchConfig.PLAYER1 + config.computeScore(Briscola2PMatchConfig.PLAYER1)); break;
-                            case Briscola2PMatchConfig.DRAW: matchFragment.displayMatchOutcome("DRAW"); break;
+                            case Briscola2PMatchConfig.PLAYER0:  matchFragment.displayMatchWinner(Briscola2PMatchConfig.PLAYER0, config.computeScore(Briscola2PMatchConfig.PLAYER0)); break;
+                            case Briscola2PMatchConfig.PLAYER1: matchFragment.displayMatchWinner(Briscola2PMatchConfig.PLAYER1, config.computeScore(Briscola2PMatchConfig.PLAYER1)); break;
+                            case Briscola2PMatchConfig.DRAW: matchFragment.displayMatchWinner(Briscola2PMatchConfig.DRAW, Briscola2PMatchRecord.totPoints/2); break;
                             default: throw new RuntimeException("Error while computing the winner");
                         }
+                        //todo: va fatto il salavataggio dei dati per l'online? però il server non permette di salvare l'id remoto ...
+
+
+
                     }else if (!config.arePlayersHandsEmpty() && config.isDeckEmpty()){ //if the deck is empty, but players have cards in hand,don't do anything
                     }else if(!config.isDeckEmpty()){ //if deck is not empty, draw cards new round
+                        boolean noDraw = false;
                         boolean lastDraw = false;
                         if(config.getDeck().size() == 2)
                             lastDraw = true;
+                        if(config.getDeck().size() == 0)
+                            noDraw = true;
 
                         config.drawCardsNewRound();
                         //cards have been collected from surface, new cards have been drawn
-                        animators.add(matchFragment.drawCardsNewRound(config.getHands(), config.getCurrentPlayer(),lastDraw));
+                        if(noDraw){
+                            matchFragment.enablePlayer0CardsTouch(config.getHands(),config.getCurrentPlayer());
+                        }else {
+                            AnimatorSet drawCards = matchFragment.drawCardsNewRound(config.getHands(), config.getCurrentPlayer(), lastDraw);
+                            animators.add(drawCards);
+                        }
                     }
 
                     if(config.getCurrentPlayer() == config.PLAYER1){
@@ -297,4 +311,9 @@ public class Briscola2PMatchController implements Briscola2PController{
         public Briscola2PMatchConfig getConfig() {
             return config;
         }
+
+    @Override
+    public int getHandSize(int playerIndex) {
+        return config.getHand(playerIndex).size();
     }
+}

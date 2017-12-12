@@ -13,5 +13,6 @@ public interface Briscola2PController {
     public int countCardsOnSurface();
     public void playFirstCard(int cardIndex);
     public void playSecondCard(int cardIndex);
+    public int getHandSize(int playerIndex);
 
 }

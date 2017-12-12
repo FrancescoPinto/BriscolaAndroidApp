@@ -50,6 +50,7 @@ public class OnlineBriscola2PMatchController implements Briscola2PController {
     private static final String BASE_URL = "http://mobile17.ifmledit.org/api/";
     private BriscolaAPI briscolaAPI;
 
+    private static int turnsPlayed = 0;
     private final String authHeader = "APIKey 0c3828b9-b0d6-45c3-aa3b-a6d324561569",
             roomName = "Group01",
             contentTypePlainText = "text/plain";
@@ -335,11 +336,11 @@ public class OnlineBriscola2PMatchController implements Briscola2PController {
             @Override
             public void onAnimationEnd(Animator animator) {
                 AnimatorSet closeTurnAnimation;
-                if(config.arePlayersHandsEmpty() && config.isDeckEmpty()){ //if the match is finished, choose winner
+                if(turnsPlayed == 20){ //if the match is finished, choose winner
                     switch(config.chooseMatchWinner()){
-                        case Briscola2PMatchConfig.PLAYER0: matchFragment.displayMatchOutcome("WINNER" + Briscola2PMatchConfig.PLAYER0 + config.computeScore(Briscola2PMatchConfig.PLAYER0)); break;
-                        case Briscola2PMatchConfig.PLAYER1: matchFragment.displayMatchOutcome("WINNER" + Briscola2PMatchConfig.PLAYER1 + config.computeScore(Briscola2PMatchConfig.PLAYER1)); break;
-                        case Briscola2PMatchConfig.DRAW: matchFragment.displayMatchOutcome("DRAW"); break;
+                        case Briscola2PMatchConfig.PLAYER0: matchFragment.displayMatchWinner(Briscola2PMatchConfig.PLAYER0, config.computeScore(Briscola2PMatchConfig.PLAYER0)); break;
+                        case Briscola2PMatchConfig.PLAYER1: matchFragment.displayMatchWinner(Briscola2PMatchConfig.PLAYER1, config.computeScore(Briscola2PMatchConfig.PLAYER1)); break;
+                        case Briscola2PMatchConfig.DRAW: matchFragment.displayMatchWinner(Briscola2PMatchConfig.DRAW, config.computeScore(Briscola2PMatchConfig.PLAYER0)); break;
                         default: throw new RuntimeException("Error while computing the winner");
                     }
                 }else if (!config.arePlayersHandsEmpty() && config.isDeckEmpty()){ //if the deck is empty, but players have cards in hand,don't do anything
@@ -347,7 +348,23 @@ public class OnlineBriscola2PMatchController implements Briscola2PController {
                     //boolean lastDraw = false;
                     //if(config.getDeck().size() == 2)
                     //   lastDraw = true;
+                    turnsPlayed++; //since the API doesn't give info on the deck, count turns played to know whether lastDraw
+                    boolean noDraw = false;
+                    boolean lastDraw = false;
+                    if(turnsPlayed== 17) //total = 20 turns =20 - 3 without drawing new cards
+                        lastDraw = true;
+                    if(turnsPlayed== 18 || turnsPlayed == 19)
+                        noDraw = true;
 
+                    config.drawCardsNewRound();
+                    //cards have been collected from surface, new cards have been drawn
+                    if(noDraw){
+                        matchFragment.enablePlayer0CardsTouch(config.getHands(),config.getCurrentPlayer());
+                    }else {
+                        AnimatorSet drawCards = matchFragment.drawCardsNewRound(config.getHands(), config.getCurrentPlayer(), lastDraw);
+                        animators.add(drawCards);
+                    }
+                    CREDO IL PROBLEMA SIA CHE ERA FINITA LA PARTITA! QUINDI NON AVEVA CARTE DA PESCARE!
                     //config.drawCardsNewRound();
                     //cards have been collected from surface, new cards have been drawn
                     config.drawLocalPlayerCard();
@@ -375,5 +392,13 @@ public class OnlineBriscola2PMatchController implements Briscola2PController {
 
     public Briscola2PMinimalMatchConfig getConfig() {
         return config;
+    }
+
+    @Override
+    public int getHandSize(int playerIndex) {
+        if(playerIndex == Briscola2PMinimalMatchConfig.PLAYER0)
+            return config.getLocalPlayerHand().size();
+        else
+            return config.getRemotePlayerCardsCounter();
     }
 }

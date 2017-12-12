@@ -55,4 +55,15 @@
     <string name="player1_turn">Other Turn</string>
     <string name="player0_turn">Your Turn</string>
 
+    <string name="save_data_message">Hope you had fun! Please, type in your name, so we can keep track of your performance!</string>
+    <string name ="save">Save</string>
+    <string name ="type_your_name">Type your name here</string>
+    <string name ="mandatory_type_your_name">You MUST type your name here</string>
+    <string name="congrats_you_won">CONGRATULATIONS! \n YOU WON!</string>
+    <string name="draw">Meeeh! Just a \n DRAW</string>
+    <string name="you_lost">YOU LOSE</string>
+    <string name="who_won_with">%1$s won with %2$d points!</string>
+    <string name="none_won">It is a draw. 60 points each.</string>
+
+
 </resources>

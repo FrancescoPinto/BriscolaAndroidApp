@@ -11,8 +11,8 @@ import android.widget.RadioGroup;
 import android.widget.Switch;
 
 import it.ma.polimi.briscola.audio.SoundManager;
-import it.ma.polimi.briscola.controller.offline.DifficultyRadioButtonListener;
-import it.ma.polimi.briscola.controller.offline.SettingsManager;
+import it.ma.polimi.briscola.controller.offline.DifficultyRadioGroupListener;
+import it.ma.polimi.briscola.persistency.SettingsManager;
 
 /**
  * Created by utente on 28/11/17.
@@ -58,7 +58,7 @@ public class SettingsActivity extends AppCompatActivity{
        // result = intent.getStringExtra("result");
 
 
-        switch(SettingsManager.getDifficultyPreference(this)){
+        switch(new SettingsManager(getApplicationContext()).getDifficultyPreference()){
             case SettingsManager.EASY:easy.setChecked(true);break;
             case SettingsManager.MEDIUM:medium.setChecked(true);break;
             case SettingsManager.HARD:hard.setChecked(true);break;
@@ -72,14 +72,15 @@ public class SettingsActivity extends AppCompatActivity{
             RadioButton radioButton = (RadioButton) view;
             int difficulty;
             switch(i){
-                case SettingsManager.EASY:difficulty = 0;break;
-                case SettingsManager.MEDIUM:difficulty = 1;break;
-                case SettingsManager.HARD:difficulty = 2;break;
-                case SettingsManager.VERY_HARD:difficulty = 3;break;
+                case SettingsManager.EASY:difficulty = 0; radioButton.setTag(0); break;
+                case SettingsManager.MEDIUM:difficulty = 1; radioButton.setTag(1);break;
+                case SettingsManager.HARD:difficulty = 2; radioButton.setTag(2);break;
+                case SettingsManager.VERY_HARD:difficulty = 3; radioButton.setTag(3);break;
                 default: difficulty= 0;
             }
-            radioButton.setOnCheckedChangeListener(new DifficultyRadioButtonListener(this, difficulty));
         }
+
+        difficultyRadioGroup.setOnCheckedChangeListener(new DifficultyRadioGroupListener(this));
 
         audio.setChecked(SoundManager.getInstance(getApplicationContext()).getMusicStatus());
         sfx.setChecked(SoundManager.getInstance(getApplicationContext()).getSoundStatus());

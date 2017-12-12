@@ -219,6 +219,11 @@ public class Briscola2PMinimalMatchConfig {
     public void increaseRemotePlayerCardCounter(){
         remotePlayerCardsCounter++;
     }
+
+    public int getRemotePlayerCardsCounter() {
+        return remotePlayerCardsCounter;
+    }
+
     public int chooseRoundWinner(){
         String briscolaSuit = String.valueOf(briscolaString.charAt(1));
         if(surface.size() != 2) //if round is not finished, throw exception

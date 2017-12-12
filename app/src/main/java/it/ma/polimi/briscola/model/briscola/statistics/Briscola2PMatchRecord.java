@@ -14,6 +14,8 @@ public class Briscola2PMatchRecord implements Comparable<Briscola2PMatchRecord> 
      */
     public static final String computerPlayerName = "CPU";
 
+    public static final int totPoints = 120;
+
     private int id;
 
 
@@ -232,4 +234,8 @@ public class Briscola2PMatchRecord implements Comparable<Briscola2PMatchRecord> 
         }
     }
 
+    @Override
+    public String toString(){
+        return "p0="+player0Name+",p1"+player1Name+",s0="+player0Score+",s1="+player1Score;
+    }
 }

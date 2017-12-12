@@ -21,6 +21,7 @@ import android.view.MenuItem;
 import it.ma.polimi.briscola.audio.SoundManager;
 import it.ma.polimi.briscola.view.fragments.OfflineMenuFragment;
 import it.ma.polimi.briscola.view.fragments.OnlineMenuFragment;
+import it.ma.polimi.briscola.view.fragments.TestDatabaseClass;
 
 
 public class MatchMenuActivity extends AppCompatActivity {
@@ -137,8 +138,10 @@ public class MatchMenuActivity extends AppCompatActivity {
                 startFragment(fragmentClass,menuItem);
                 break;
             case R.id.id_ranking:
-                intent = new Intent(MatchMenuActivity.this, RankingActivity.class);
-               startActivity(intent);
+                fragmentClass = TestDatabaseClass.class;
+                startFragment(fragmentClass,menuItem);
+                //intent = new Intent(MatchMenuActivity.this, RankingActivity.class);
+                //startActivity(intent);
                 break;
             case R.id.id_performance:
                 intent = new Intent(MatchMenuActivity.this, PreviousMatchRecordsActivity.class);
