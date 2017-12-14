@@ -20,7 +20,7 @@ public class TestDatabaseClass extends Fragment{
 
         View mainView = inflater.inflate(R.layout.fragment_briscola_match, container, false); //todo, refactor del nome
 
-        SaveMatchDataDialog dialog = new SaveMatchDataDialog(getActivity(),68);
+        SaveMatchDataDialog dialog = new SaveMatchDataDialog(getActivity(),68,true);
         dialog.showDialog();
 
        // WinnerMatchDialog dialog = new WinnerMatchDialog();

@@ -2,7 +2,6 @@ package it.ma.polimi.briscola.view.dialog;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.graphics.Color;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -11,7 +10,7 @@ import android.widget.EditText;
 
 import it.ma.polimi.briscola.R;
 import it.ma.polimi.briscola.model.briscola.statistics.Briscola2PMatchRecord;
-import it.ma.polimi.briscola.persistency.SQLiteBriscola2PMatchRecordRepositoryImpl;
+import it.ma.polimi.briscola.persistency.SQLiteRepositoryImpl;
 
 /**
  * Created by utente on 11/12/17.
@@ -22,11 +21,13 @@ public class SaveMatchDataDialog {
     private final Activity activity;
     private EditText userName;
     private int player0MatchScore;
+    private boolean isOnline;
 
 
-    public SaveMatchDataDialog(Activity activity, int player0MatchScore){
+    public SaveMatchDataDialog(Activity activity, int player0MatchScore, boolean isOnline){
         this.activity = activity;
         this.player0MatchScore = player0MatchScore;
+        this.isOnline = isOnline;
     }
 
     public void showDialog(){
@@ -35,7 +36,7 @@ public class SaveMatchDataDialog {
             dialog.setCancelable(false);
             dialog.setCanceledOnTouchOutside(false);
 
-        dialog.setContentView(R.layout.save_match_data_dialog);
+        dialog.setContentView(R.layout.dialog_save_match_data);
 
             userName= (EditText) dialog.findViewById(R.id.your_name);
 
@@ -50,12 +51,12 @@ public class SaveMatchDataDialog {
                         //userName.setHintTextColor(Color.RED);
                         userName.setError(activity.getString(R.string.mandatory_type_your_name));
                     }else {
-                        SQLiteBriscola2PMatchRecordRepositoryImpl repo = new SQLiteBriscola2PMatchRecordRepositoryImpl(activity); //todo, sposta questo o nel controller o nel model (non dovresti fare operazioni logiche così complicate in una view!)
-                        repo.save(new Briscola2PMatchRecord(userName.getText().toString(),
-                                Briscola2PMatchRecord.computerPlayerName,
+                        SQLiteRepositoryImpl repo = new SQLiteRepositoryImpl(activity); //todo, sposta questo o nel controller o nel model (non dovresti fare operazioni logiche così complicate in una view!)
+                        repo.saveMatchRecord(new Briscola2PMatchRecord(userName.getText().toString(),
+                                isOnline?Briscola2PMatchRecord.remotePlayerDefault:Briscola2PMatchRecord.computerPlayerName,
                                 player0MatchScore,
                                 Briscola2PMatchRecord.totPoints - player0MatchScore));
-                        Log.d("TAG", "Just saved the " + repo.findAll().size() + "th record");
+                        Log.d("TAG", "Just saved the " + repo.findAllMatchRecords().size() + "th record");
                         dialog.dismiss();
                     }
                 }

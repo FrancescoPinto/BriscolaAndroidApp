@@ -8,6 +8,7 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.HTTP;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
@@ -40,8 +41,8 @@ Call<String> call = service.getStringScalar(body);
 Response<String> response = call.execute();
 String value = response.body();
      */
-        @DELETE
-        Call<StartedMatchDTO> stopMatch(@Url String url, @Header("Authorization") String credentials,
-                                        @Body String motivation);
+        @HTTP(method = "DELETE", hasBody = true)
+        Call<StartedMatchDTO> stopMatch(@Url String url, @Header("Authorization") String credentials,@Header("Content-Type") String type,
+                                        @Body RequestBody motivation);
 
 }

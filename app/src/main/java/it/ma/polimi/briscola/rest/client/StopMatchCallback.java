@@ -8,6 +8,7 @@ import retrofit2.Response;
  * Created by utente on 10/12/17.
  */
 
+//todo, eliminarlo? tanto non te ne frega se finisce bene o male lo stop?
 public class StopMatchCallback extends CallbackWithRetry{
     private OnlineBriscola2PMatchController controller;
 

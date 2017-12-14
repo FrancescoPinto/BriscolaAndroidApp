@@ -14,5 +14,6 @@ public interface Briscola2PController {
     public void playFirstCard(int cardIndex);
     public void playSecondCard(int cardIndex);
     public int getHandSize(int playerIndex);
-
+    public void forceMatchEnd();
+    public void resumeMatch();
 }

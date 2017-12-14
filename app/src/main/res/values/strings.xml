@@ -65,5 +65,22 @@
     <string name="who_won_with">%1$s won with %2$d points!</string>
     <string name="none_won">It is a draw. 60 points each.</string>
 
-
+    <string name="velocity_normal">Normal</string>
+    <string name="velocity_fast">Fast</string>
+    <string name="velocity_veryfast">Very Fast</string>
+    <string name="change_settings_warning">Changing difficulty will only affect newly started matches!</string>
+    <string name="waiting_for_match_to_start">Waiting for match to start</string>
+    <string name="sure_leave">Are you sure you want to leave?</string>
+    <string name = "yes">Yes</string>
+    <string name="no">No</string>
+    <string name="abandon">Abandoned the match</string>
+    <string name="terminated">Match terminated successfully</string>
+    <string name = "other_player">Other player</string>
+    <string name = "game_menu">Match menu</string>
+    <string name="warning_should_save">Performing this operation will interrupt the current match. Do you want to save?</string>
+    <string name="do_not_save">Don\'t Save</string>
+    <string name="load">Load</string>
+    <string name="type_config_name">Type Save Slot name</string>
+    <string name="mandatory_type_config_name">You MUST type Slot Save Name to Save</string>
+    <string name="delete">Delete</string>
 </resources>

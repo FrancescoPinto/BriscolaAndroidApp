@@ -35,7 +35,8 @@ public class Briscola2PMatchConfig {
     private Briscola2PSurface surface;
     private List<Briscola2PHand> hands = new ArrayList<>();
     private List<Briscola2PPile> piles = new ArrayList<>();
-
+    private int id;
+    private String name;
     public List<Briscola2PHand> getHands() {
         return hands;
     }
@@ -52,6 +53,14 @@ public class Briscola2PMatchConfig {
                                 inconsistentSurfaceForRound = "The surface is in an inconsistent state, could not evaluate the round winner";
 
     private static final int totPoints = 120; //the total of the points of a deck
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     /**
      * Instantiates a new empty Briscola 2 Players Match Configuration. Before the configuration can be used, it must be brought programmatically to a consistent state by using the class' initialization methods, called in proper order.
@@ -92,6 +101,20 @@ public class Briscola2PMatchConfig {
         this.hands.add(new Briscola2PHand(tokens[3])); //hands1
         this.piles.add(new Briscola2PPile(tokens[4]));// pile0
         this.piles.add(new Briscola2PPile(tokens[5])); // pile1
+    }
+
+    public Briscola2PMatchConfig(String configuration, int id, String name){
+        this(configuration);
+        this.id = id;
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     /**
@@ -512,6 +535,19 @@ public class Briscola2PMatchConfig {
 
         return ""+ currentPlayer + briscolaSuit + deck + "."+ surface + "."+hands.get(PLAYER0)+"."+hands.get(PLAYER1)+"."+piles.get(PLAYER0)+"."+piles.get(PLAYER1);
 
+    }
+
+    public int getNumberTurnsElapsed(){
+        int totalPilesSize = piles.get(PLAYER0).size() + piles.get(PLAYER1).size();
+        return totalPilesSize/2 + 1; //first turn -> empty piles, second turn -> 2 cards in piles etc.
+
+    }
+
+    public NeapolitanCard inferBriscolaIfInDeck(){
+        if(deck.size() >= 2)
+            return deck.getCard(deck.size()-1);
+        else
+            return null; //briscola is in players hands
     }
 
 }

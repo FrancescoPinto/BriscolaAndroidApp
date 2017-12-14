@@ -36,6 +36,7 @@ public class OpponentPlayedCardCallback extends CallbackWithRetry<OpponentCardDT
 
     @Override
     public void onResponse(Call<OpponentCardDTO> call, Response<OpponentCardDTO> response) {
+        success = true;
         if(response.isSuccessful()) {
             OpponentCardDTO opponent = response.body();
             Log.d("TAG", "Opponent played "+ opponent.getOpponent() + " , you received "+ opponent.getCard());

@@ -5,6 +5,11 @@
         <item android:title="@string/game">
             <menu>
                 <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/id_game_menu"
+                    android:icon="@drawable/ic_play_offline"
+                    android:title="@string/game_menu" />
+              <!--  <group android:checkableBehavior="single">
                     <item
                         android:id="@+id/id_play_offline"
                         android:icon="@drawable/ic_play_offline_black_48dp"
@@ -13,6 +18,7 @@
                         android:id="@+id/id_play_online"
                         android:icon="@drawable/ic_play_online_black_48dp"
                         android:title="@string/play_online" />
+                </group> -->
                 </group>
             </menu>
         </item>

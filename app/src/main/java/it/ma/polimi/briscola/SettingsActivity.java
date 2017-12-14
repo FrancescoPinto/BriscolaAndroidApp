@@ -9,9 +9,11 @@ import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Switch;
+import android.widget.Toast;
 
 import it.ma.polimi.briscola.audio.SoundManager;
 import it.ma.polimi.briscola.controller.offline.DifficultyRadioGroupListener;
+import it.ma.polimi.briscola.controller.offline.VelocityRadioGroupListener;
 import it.ma.polimi.briscola.persistency.SettingsManager;
 
 /**
@@ -24,6 +26,9 @@ public class SettingsActivity extends AppCompatActivity{
     private Switch audio, sfx;
     private RadioGroup difficultyRadioGroup;
     private RadioButton easy, medium, hard, veryHard;
+
+    private RadioGroup velocityRadioGroup;
+    private RadioButton normal, fast, veryFast;
 
 
     @Override
@@ -57,8 +62,9 @@ public class SettingsActivity extends AppCompatActivity{
         Intent intent = getIntent();
        // result = intent.getStringExtra("result");
 
+        SettingsManager settingsManager = new SettingsManager(getApplicationContext());
 
-        switch(new SettingsManager(getApplicationContext()).getDifficultyPreference()){
+        switch(settingsManager.getDifficultyPreference()){
             case SettingsManager.EASY:easy.setChecked(true);break;
             case SettingsManager.MEDIUM:medium.setChecked(true);break;
             case SettingsManager.HARD:hard.setChecked(true);break;
@@ -70,17 +76,45 @@ public class SettingsActivity extends AppCompatActivity{
         for (int i = 0; i < difficultyRadioGroup.getChildCount(); i++) {
             View view = difficultyRadioGroup.getChildAt(i);
             RadioButton radioButton = (RadioButton) view;
-            int difficulty;
             switch(i){
-                case SettingsManager.EASY:difficulty = 0; radioButton.setTag(0); break;
-                case SettingsManager.MEDIUM:difficulty = 1; radioButton.setTag(1);break;
-                case SettingsManager.HARD:difficulty = 2; radioButton.setTag(2);break;
-                case SettingsManager.VERY_HARD:difficulty = 3; radioButton.setTag(3);break;
-                default: difficulty= 0;
+                case SettingsManager.EASY: radioButton.setTag(0); break;
+                case SettingsManager.MEDIUM: radioButton.setTag(1);break;
+                case SettingsManager.HARD: radioButton.setTag(2);break;
+                case SettingsManager.VERY_HARD: radioButton.setTag(3);break;
+                default:
             }
         }
 
         difficultyRadioGroup.setOnCheckedChangeListener(new DifficultyRadioGroupListener(this));
+
+        velocityRadioGroup = (RadioGroup) findViewById(R.id.velocity_radio_group);
+        normal = (RadioButton) findViewById(R.id.velocity_normal);
+        fast = (RadioButton) findViewById(R.id.velocity_fast);
+        veryFast = (RadioButton) findViewById(R.id.velocity_very_fast);
+
+
+        switch(settingsManager.getVelocityPreference()){
+            case SettingsManager.NORMAL:normal.setChecked(true);break;
+            case SettingsManager.FAST:fast.setChecked(true);break;
+            case SettingsManager.VERYFAST:veryFast.setChecked(true);break;
+            default: normal.setChecked(true);
+
+        }
+        // set the listeners for each checkboxes
+        for (int i = 0; i < velocityRadioGroup.getChildCount(); i++) {
+            View view = velocityRadioGroup.getChildAt(i);
+            RadioButton radioButton = (RadioButton) view;
+            switch(i){
+                case SettingsManager.NORMAL: radioButton.setTag(0); break;
+                case SettingsManager.FAST: radioButton.setTag(1);break;
+                case SettingsManager.VERYFAST:radioButton.setTag(2);break;
+                default: radioButton.setTag(0);
+            }
+        }
+
+        Toast.makeText(this,R.string.change_settings_warning,Toast.LENGTH_LONG).show();
+
+        velocityRadioGroup.setOnCheckedChangeListener(new VelocityRadioGroupListener(this));
 
         audio.setChecked(SoundManager.getInstance(getApplicationContext()).getMusicStatus());
         sfx.setChecked(SoundManager.getInstance(getApplicationContext()).getSoundStatus());
@@ -138,7 +172,7 @@ public class SettingsActivity extends AppCompatActivity{
         Intent intent = new Intent(MainSettingsActivity.this, MainCalculatorActivity.class);
         intent.putExtra("theme_color", color);
         setResult(RESULT_OK, intent);
-        // save the current
+        // saveMatchRecord the current
         finish();
     }*/
 

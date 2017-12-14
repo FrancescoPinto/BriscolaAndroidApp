@@ -36,6 +36,7 @@ public class PlayCardCallback extends CallbackWithRetry<NextTurnCardDTO>{
 
     @Override
     public void onResponse(Call<NextTurnCardDTO> call, Response<NextTurnCardDTO> response) {
+        success = true;
         if(response.isSuccessful()) {
             Log.d("TAG", "Success playCardRequest, next turn card is" + response.body().getCard());
             NextTurnCardDTO nextTurn = response.body();

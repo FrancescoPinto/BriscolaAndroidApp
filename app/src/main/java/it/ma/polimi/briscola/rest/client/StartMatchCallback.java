@@ -34,6 +34,7 @@ public class StartMatchCallback extends CallbackWithRetry<StartedMatchDTO>{
 
     @Override
     public void onResponse(Call<StartedMatchDTO> call, Response<StartedMatchDTO> response) {
+        success = true;
         if(response.isSuccessful()) {
             StartedMatchDTO started = response.body();
             controller.manageStartedMatch(started);

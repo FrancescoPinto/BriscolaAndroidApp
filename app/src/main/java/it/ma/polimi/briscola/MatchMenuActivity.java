@@ -13,15 +13,14 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.MenuItem;
 
 import it.ma.polimi.briscola.audio.SoundManager;
-import it.ma.polimi.briscola.view.fragments.OfflineMenuFragment;
-import it.ma.polimi.briscola.view.fragments.OnlineMenuFragment;
-import it.ma.polimi.briscola.view.fragments.TestDatabaseClass;
+import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMatchConfig;
+import it.ma.polimi.briscola.persistency.SettingsManager;
+import it.ma.polimi.briscola.view.fragments.Briscola2PMatchFragment;
+import it.ma.polimi.briscola.view.fragments.MenuFragment;
 
 
 public class MatchMenuActivity extends AppCompatActivity {
@@ -31,9 +30,12 @@ public class MatchMenuActivity extends AppCompatActivity {
     private NavigationView nvDrawer;
     private Toolbar toolbar;
     private SoundManager soundManager;
+    private MenuItem onlineMenuItem, offlineMenuItem, matchMenu;
     public SoundManager getSoundManager() {
         return soundManager;
     }
+
+    private final String menuFragmentTag ="game_menu";
 
     // Make sure to be using android.support.v7.app.ActionBarDrawerToggle version.
     // The android.support.v4.app.ActionBarDrawerToggle has been deprecated.
@@ -60,7 +62,7 @@ public class MatchMenuActivity extends AppCompatActivity {
         drawerLayout = (DrawerLayout) findViewById(R.id.id_drawerLayout);
         //todo se proprio sarai costretto a fare questo drawer con adapter scritto a mano, tieni bene a mente
         //        che ilt uo vecchio adapter era inutilmente complicato: l'adapter ' deve avere solo una lista di elementi,
-        //        prendi a modello l'implementazione' di adapter e holder che hai fatto per le recyclerView in RankingActivity
+        //        prendi a modello l'implementazione' di adapter e holder che hai fatto per le recyclerView in SavedConfigActivity
         //        QUINDI, se vuoi dei SEPARATORI, molto semplicemente salvi nell'adapter ' delle costanti (che rappresentano
         //gli indici di dove si troveranno, nell'UNICA' lista, i nomi dei separatori, e setterai la view in quel modo)
         // Enabling the Drawer button
@@ -89,12 +91,22 @@ public class MatchMenuActivity extends AppCompatActivity {
         soundManager.resumeBgMusic();
 
 
-        Fragment fragment = (Fragment) OfflineMenuFragment.newInstance();
+
+       // offlineMenuItem = nvDrawer.findViewById(R.id.id_play_offline);
+       // onlineMenuItem = nvDrawer.findViewById(R.id.id_play_online);
+        matchMenu = nvDrawer.findViewById(R.id.id_game_menu);
+
+
+        //startFragment(OfflineMenuFragment.class, offlineMenuItem);
+
+        startFragment(MenuFragment.class, matchMenu,menuFragmentTag);
+
+       /* Fragment fragment = (Fragment) OfflineMenuFragment.newInstance();
         // Insert the fragment by replacing any existing fragment
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .add(R.id.fragment_container, fragment) //todo, oppure replace?
-                .commit();
+                .commit();*/
 
     }
 
@@ -129,18 +141,25 @@ public class MatchMenuActivity extends AppCompatActivity {
         Intent intent;
         Class fragmentClass;
         switch(menuItem.getItemId()) {
-            case R.id.id_play_offline:
+            case R.id.id_game_menu:
+                fragmentClass = MenuFragment.class;
+                startFragment(fragmentClass,menuItem, menuFragmentTag);
+                break;
+           /* case R.id.id_play_offline:
                 fragmentClass = OfflineMenuFragment.class;
                 startFragment(fragmentClass,menuItem);
                 break;
             case R.id.id_play_online:
                 fragmentClass = OnlineMenuFragment.class;
                 startFragment(fragmentClass,menuItem);
-                break;
+                break;*/
             case R.id.id_ranking:
+                fragmentClass = SavedConfigActivity.class;
+                startFragment(fragmentClass,menuItem,"saved_config");
+                /*
                 fragmentClass = TestDatabaseClass.class;
-                startFragment(fragmentClass,menuItem);
-                //intent = new Intent(MatchMenuActivity.this, RankingActivity.class);
+                startFragment(fragmentClass,menuItem, "ranking");*/
+                //intent = new Intent(MatchMenuActivity.this, SavedConfigActivity.class);
                 //startActivity(intent);
                 break;
             case R.id.id_performance:
@@ -161,8 +180,8 @@ public class MatchMenuActivity extends AppCompatActivity {
                 ).show();
                 break;
             default:
-                fragmentClass = RankingActivity.class;
-                startFragment(fragmentClass,menuItem);
+                fragmentClass = MenuFragment.class;
+                startFragment(fragmentClass,menuItem, menuFragmentTag);
         }
 
 
@@ -172,15 +191,18 @@ public class MatchMenuActivity extends AppCompatActivity {
         drawerLayout.closeDrawers();
     }
 
-    private void startFragment(Class fragmentClass, MenuItem menuItem){
+    private void startFragment(Class fragmentClass, MenuItem menuItem, String tag){
         Fragment fragment = null;
         try {
             if(fragmentClass != null) {
                 fragment = (Fragment) fragmentClass.newInstance();
                 // Insert the fragment by replacing any existing fragment
                 FragmentManager fragmentManager = getSupportFragmentManager();
+                if(fragmentManager.findFragmentByTag(menuFragmentTag) != null && tag.equals(menuFragmentTag)){
+                    return;
+                }
                 fragmentManager.beginTransaction()
-                        .add(R.id.fragment_container, fragment) //todo, oppure replace?
+                        .add(R.id.fragment_container, fragment, tag) //todo, oppure replace?
                         .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
                         .commit();
                 // Highlight the selected item has been done by NavigationView
@@ -192,6 +214,41 @@ public class MatchMenuActivity extends AppCompatActivity {
     }
 
 
+
+    public void replaceWithMatchMenu(){
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        Fragment oldMatch = fragmentManager.findFragmentByTag("offline_match");
+        if(oldMatch != null)
+            fragmentManager.beginTransaction().remove(oldMatch).commit();
+
+        oldMatch = fragmentManager.findFragmentByTag("online_match");
+        if(oldMatch != null)
+            fragmentManager.beginTransaction().remove(oldMatch).commit();
+
+        startFragment(MenuFragment.class, matchMenu, menuFragmentTag);
+    }
+
+    public void loadMatch(Briscola2PMatchConfig config){
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        Fragment oldMatch = fragmentManager.findFragmentByTag("offline_match");
+        if(oldMatch != null)
+            fragmentManager.beginTransaction().remove(oldMatch).commit();
+
+        oldMatch = fragmentManager.findFragmentByTag("online_match");
+        if(oldMatch != null)
+            fragmentManager.beginTransaction().remove(oldMatch).commit();
+
+        Fragment oldFragment = fragmentManager.findFragmentByTag("saved_config");
+        if(oldFragment != null)
+            fragmentManager.beginTransaction().remove(oldFragment).commit();
+
+        Briscola2PMatchFragment fragment = Briscola2PMatchFragment.newInstance(config,new SettingsManager(getApplicationContext()).getDifficultyPreference());
+        fragmentManager.beginTransaction()
+                .add(R.id.fragment_container, fragment, "offline_match") //todo, oppure replace?
+                .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                .commit();
+    };
    /* @Override
     protected void onPostCreate(Bundle savedInstanceState){
         super.onPostCreate(savedInstanceState);
@@ -357,6 +414,28 @@ public class MatchMenuActivity extends AppCompatActivity {
             ).show();
         }
     }
+
+    public void exitMatch(boolean isOnline){
+        Fragment oldMatch;
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        Class newFragment;
+        if(isOnline) {
+            oldMatch = fragmentManager.findFragmentByTag("online_match");
+        }
+        else {
+            oldMatch = fragmentManager.findFragmentByTag("offline_match");
+        }
+
+        newFragment = MenuFragment.class;
+
+        if(oldMatch != null)
+            fragmentManager.beginTransaction().remove(oldMatch).commit();
+
+        if(newFragment!= null)
+            startFragment(newFragment, isOnline?onlineMenuItem:offlineMenuItem, isOnline?"online_match":"offline_match");
+
+    }
+
     /*@Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK && getSupportFragmentManager().getBackStackEntryCount() > 1) {

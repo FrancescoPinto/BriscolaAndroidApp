@@ -4,18 +4,14 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
-import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import it.ma.polimi.briscola.R;
 import it.ma.polimi.briscola.model.briscola.statistics.Briscola2PMatchRecord;
 import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMatchConfig;
-import it.ma.polimi.briscola.persistency.SQLiteBriscola2PMatchRecordRepositoryImpl;
 import it.ma.polimi.briscola.view.fragments.Briscola2PMatchFragment;
 
 /**
@@ -34,7 +30,7 @@ public class WinnerMatchDialog {
         dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);
 
-        dialog.setContentView(R.layout.winner_match_dialog);
+        dialog.setContentView(R.layout.dialog_winner_match);
 
         TextView congrats_or_ops= (TextView) dialog.findViewById(R.id.congrats_or_ops);
 
@@ -44,19 +40,24 @@ public class WinnerMatchDialog {
         if(winnerPlayer == Briscola2PMatchConfig.PLAYER0) {
             congrats_or_ops.setText(R.string.congrats_you_won);
             messageTV.setText(activity.getString(R.string.who_won_with,"You",score));
-            messageTV.setBackgroundColor(Color.GREEN);
+            congrats_or_ops.setBackgroundColor(Color.GREEN);
+            congrats_or_ops.setTextColor(Color.WHITE);
 
         }
         else if(winnerPlayer == Briscola2PMatchConfig.DRAW) {
             congrats_or_ops.setText(R.string.draw);
             messageTV.setText(activity.getString(R.string.none_won));
-            messageTV.setBackgroundColor(Color.BLUE);
+            congrats_or_ops.setBackgroundColor(Color.BLUE);
+            congrats_or_ops.setTextColor(Color.WHITE);
+
 
         }
         else if(winnerPlayer == Briscola2PMatchConfig.PLAYER1) {
             congrats_or_ops.setText(R.string.you_lost);
-            messageTV.setText(activity.getString(R.string.who_won_with,"Other player", score));
-            messageTV.setBackgroundColor(Color.RED);
+            messageTV.setText(activity.getString(R.string.who_won_with,fragment.getString(R.string.other_player), score));
+            congrats_or_ops.setBackgroundColor(Color.RED);
+            congrats_or_ops.setTextColor(Color.WHITE);
+
         }
 
 

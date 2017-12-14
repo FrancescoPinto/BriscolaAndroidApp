@@ -1,0 +1,37 @@
+MainMenu:
+    MenuFragment:
+                Offline
+                Online
+                Load
+                    Offline
+    SettingsActivity
+    PreviousMatchesActivity
+    StatisticsActivity (accorperei le statistiche dentro i previous matches)
+
+
+SettingsActivity, Statistics/PreviousMatchesActivity e SavedConfigACTIVITY ( convertilo da fragment)
+devono funzionare in questo modo: ci accedi e FINE DELLA STORIA, premi il tasto indietro per ritornare alla schermata principale
+SE VUOI CARICARE UNA NUOVA PARTITA FORZI PROGRAMMATICAMENTE IL DISMISS della SavedConfigACTIVITY e ritorni un result alla MatchMenuActivity
+dicendole che vuoi che sia avviato un fragment che carichi una vecchia partita
+
+Invece MatchMenu, Offline ed Online sono FRAGMENTS contenuti nella stessa activity (la matchMenu)
+e lo schema è:
+MatchMenu -> Offline|Online
+Offline -> MatchMenu
+Online -> MatchMenu
+(e ovviametne tutti hanno in comune la possibilità di accedere alle altre activities, che però hanno navigazione elementare indietro
+quindi non creano problemi di fragments)
+Regole di attivazione dei fragments:
+1) se sono in MatchMenu non posso avviare altri MatchMenu sopra di quello
+2) Se sono Offline per avviare un altro matchOffline o Online devo avviare il menu
+3) se sono in un menu SOPRA una partita offline/Online ALLORA avviare una nuova partita  online/offline cancella la precedente (l'utente va avvisato)
+    IDEA: potrei disabilitare la possibilità di attivare un Menu durante la partita, vincolando il giocatore a fare prima Exit ...
+4) se sono in una partita online prima d
+
+
+    MainMenu:
+        push MenuFragment:
+                push Offline
+                push Online
+                push Load
+                        push Offline

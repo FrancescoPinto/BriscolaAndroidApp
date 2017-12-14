@@ -10,12 +10,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import it.ma.polimi.briscola.model.briscola.statistics.Briscola2PAggregatedData;
 import it.ma.polimi.briscola.model.briscola.statistics.Briscola2PMatchRecord;
-import it.ma.polimi.briscola.persistency.SQLiteBriscola2PMatchRecordRepositoryImpl;
+import it.ma.polimi.briscola.persistency.SQLiteRepositoryImpl;
 
 /**
  * Created by utente on 28/11/17.
@@ -41,8 +39,8 @@ public class PreviousMatchRecordsActivity extends AppCompatActivity {
     private void updateUI(){
 
         //todo, riabilita
-        SQLiteBriscola2PMatchRecordRepositoryImpl repo = new SQLiteBriscola2PMatchRecordRepositoryImpl(this); //todo, sposta questo o nel controller o nel model (non dovresti fare operazioni logiche così complicate in una view!)
-        List<Briscola2PMatchRecord> records = repo.findAll();
+        SQLiteRepositoryImpl repo = new SQLiteRepositoryImpl(this); //todo, sposta questo o nel controller o nel model (non dovresti fare operazioni logiche così complicate in una view!)
+        List<Briscola2PMatchRecord> records = repo.findAllMatchRecords();
         //List<Briscola2PMatchRecord> records = new ArrayList<>();
 
         adapter = new MatchRecordAdapter(records);

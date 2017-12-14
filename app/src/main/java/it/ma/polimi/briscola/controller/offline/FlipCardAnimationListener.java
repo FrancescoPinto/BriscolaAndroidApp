@@ -31,11 +31,11 @@ public class FlipCardAnimationListener implements Animator.AnimatorListener {
         String[] cardTag = ((String) card.getTag()).split(";");
         if (Boolean.valueOf(cardTag[1])) {//is covered
             card.setImageResource(Integer.valueOf(cardTag[0]));
-            card.setTag(card.getId() + ";" + false);
+            card.setTag(cardTag[0] + ";" + false);
             //todo, inserire animazione migliore di flip
         } else { //is not covered
             card.setImageResource(R.drawable.default_card_background);
-            card.setTag(card.getId() + ";" + true);
+            card.setTag(cardTag[0] + ";" + true);
 
         }
         soundManager.playSoundForGameEvent(GameEvent.FlipCard);

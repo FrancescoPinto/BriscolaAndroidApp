@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import it.ma.polimi.briscola.R;
 import it.ma.polimi.briscola.ai.Briscola2PAIPlayer;
 import it.ma.polimi.briscola.ai.Briscola2PAIRandomPlayer;
 import it.ma.polimi.briscola.controller.offline.Briscola2PController;
@@ -50,7 +51,7 @@ public class OnlineBriscola2PMatchController implements Briscola2PController {
     private static final String BASE_URL = "http://mobile17.ifmledit.org/api/";
     private BriscolaAPI briscolaAPI;
 
-    private static int turnsPlayed = 0;
+    private int currentRound = 1;
     private final String authHeader = "APIKey 0c3828b9-b0d6-45c3-aa3b-a6d324561569",
             roomName = "Group01",
             contentTypePlainText = "text/plain";
@@ -179,6 +180,9 @@ public class OnlineBriscola2PMatchController implements Briscola2PController {
 
     }
     public void manageError(String error, String message) {
+        //todo, gestire meglio le cose da qui per gli errori, in particolare mostrare solo messagi d'errore utili (timeout altro giocatore, abbandono ecc.)
+       //il message: timeout è uno di quelli
+        //presumo Game Terminated nell'error sia
         matchFragment.onBuildDialog("Error: " + error + ". Message: " + message,
                 "Ok",
                 null,
@@ -236,7 +240,7 @@ public class OnlineBriscola2PMatchController implements Briscola2PController {
             }
         });
 
-        initializationSequence.playSequentially(displayCurrentPlayer, dealFirstHand, initializeBriscola);
+        initializationSequence.playSequentially(dealFirstHand, initializeBriscola,displayCurrentPlayer);
         initializationSequence.start();
     }
 
@@ -329,54 +333,57 @@ public class OnlineBriscola2PMatchController implements Briscola2PController {
         Log.d("TAG", "prepeared beautiful clean surfacea animation, lasts: " + cleanSurface.getDuration());
         config.setCurrentPlayer(roundWinner);
         matchFragment.showToast("Current player = " + config.getCurrentPlayer() + ", roundWInner = "+roundWinner);
-        AnimatorSet displayCurrentPlayer = matchFragment.displayCurrentPlayer(config.getCurrentPlayer());
-        displayCurrentPlayer.addListener(new Animator.AnimatorListener() {
+        final AnimatorSet displayCurrentPlayer = matchFragment.displayCurrentPlayer(config.getCurrentPlayer());
+        cleanSurface.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animator) {}
             @Override
             public void onAnimationEnd(Animator animator) {
-                AnimatorSet closeTurnAnimation;
-                if(turnsPlayed == 20){ //if the match is finished, choose winner
+                AnimatorSet closeTurnAnimation = new AnimatorSet();
+                List<Animator> animators = new ArrayList<Animator>();
+
+                if(currentRound == 20){ //if the match is finished, choose winner
+                    RequestBody body =
+                            RequestBody.create(MediaType.parse("text/plain"), matchFragment.getString(R.string.terminated));
+                    briscolaAPI.stopMatch(url,authHeader,contentTypePlainText,body);
                     switch(config.chooseMatchWinner()){
                         case Briscola2PMatchConfig.PLAYER0: matchFragment.displayMatchWinner(Briscola2PMatchConfig.PLAYER0, config.computeScore(Briscola2PMatchConfig.PLAYER0)); break;
                         case Briscola2PMatchConfig.PLAYER1: matchFragment.displayMatchWinner(Briscola2PMatchConfig.PLAYER1, config.computeScore(Briscola2PMatchConfig.PLAYER1)); break;
                         case Briscola2PMatchConfig.DRAW: matchFragment.displayMatchWinner(Briscola2PMatchConfig.DRAW, config.computeScore(Briscola2PMatchConfig.PLAYER0)); break;
                         default: throw new RuntimeException("Error while computing the winner");
                     }
-                }else if (!config.arePlayersHandsEmpty() && config.isDeckEmpty()){ //if the deck is empty, but players have cards in hand,don't do anything
-                }else if(!config.isDeckEmpty()){ //if deck is not empty, draw cards new round
+                }else if (currentRound == 19 || currentRound == 18){ //if the deck is empty, but players have cards in hand,don't do anything
+                    currentRound++;
+                    matchFragment.enablePlayer0CardsTouch(config.getHands(),config.getCurrentPlayer());
+                    if(config.getCurrentPlayer() == config.PLAYER1){
+                        //animators.add(playFirstCard(player1.chooseMove(config)));
+                        briscolaAPI.getOpponentPlayedCard(url, authHeader).enqueue(opponentPlayedCardCallback);
+                    }
+                }else if(currentRound <= 17){ //if deck is not empty, draw cards new round
                     //boolean lastDraw = false;
                     //if(config.getDeck().size() == 2)
                     //   lastDraw = true;
-                    turnsPlayed++; //since the API doesn't give info on the deck, count turns played to know whether lastDraw
-                    boolean noDraw = false;
+                    currentRound++; //since the API doesn't give info on the deck, count turns played to know whether lastDraw
                     boolean lastDraw = false;
-                    if(turnsPlayed== 17) //total = 20 turns =20 - 3 without drawing new cards
+                    if(currentRound == 18) // 20th turn (1card -> 0 card, no draw at turn start), 19th turn (2cards->1card, no draw), 18 turn (3cards->2cards, last draw)
                         lastDraw = true;
-                    if(turnsPlayed== 18 || turnsPlayed == 19)
-                        noDraw = true;
 
-                    config.drawCardsNewRound();
-                    //cards have been collected from surface, new cards have been drawn
-                    if(noDraw){
-                        matchFragment.enablePlayer0CardsTouch(config.getHands(),config.getCurrentPlayer());
-                    }else {
-                        AnimatorSet drawCards = matchFragment.drawCardsNewRound(config.getHands(), config.getCurrentPlayer(), lastDraw);
-                        animators.add(drawCards);
-                    }
-                    CREDO IL PROBLEMA SIA CHE ERA FINITA LA PARTITA! QUINDI NON AVEVA CARTE DA PESCARE!
                     //config.drawCardsNewRound();
                     //cards have been collected from surface, new cards have been drawn
+                    matchFragment.showToast("Current round (after draw):  "+ currentRound);
                     config.drawLocalPlayerCard();
                     config.increaseRemotePlayerCardCounter();
-                    closeTurnAnimation = matchFragment.drawCardsNewRound(config.getHands(), config.getCurrentPlayer(),false); //TODO, sistemare come calcolare il lastdraw in base al comportamento dell'api del prof
-                    closeTurnAnimation.start();
+                    AnimatorSet drawCards = matchFragment.drawCardsNewRound(config.getHands(), config.getCurrentPlayer(),lastDraw); //TODO, sistemare come calcolare il lastdraw in base al comportamento dell'api del prof
+                    animators.add(drawCards);
+                    if(config.getCurrentPlayer() == config.PLAYER1){
+                        //animators.add(playFirstCard(player1.chooseMove(config)));
+                        briscolaAPI.getOpponentPlayedCard(url, authHeader).enqueue(opponentPlayedCardCallback);
+                    }
                 }
 
-                if(config.getCurrentPlayer() == config.PLAYER1){
-                    //animators.add(playFirstCard(player1.chooseMove(config)));
-                    briscolaAPI.getOpponentPlayedCard(url, authHeader).enqueue(opponentPlayedCardCallback);
-                }
+                animators.add(displayCurrentPlayer);
+                closeTurnAnimation.playSequentially(animators);
+                closeTurnAnimation.start();
 
 
             }
@@ -386,7 +393,7 @@ public class OnlineBriscola2PMatchController implements Briscola2PController {
             public void onAnimationRepeat(Animator animator) {}
         });
 
-        playSecondCard.playSequentially(playCard, cleanSurface,displayCurrentPlayer);
+        playSecondCard.playSequentially(playCard, cleanSurface);
         playSecondCard.start();
     }
 
@@ -400,5 +407,16 @@ public class OnlineBriscola2PMatchController implements Briscola2PController {
             return config.getLocalPlayerHand().size();
         else
             return config.getRemotePlayerCardsCounter();
+    }
+
+    public void forceMatchEnd(){
+        RequestBody body =
+                RequestBody.create(MediaType.parse("text/plain"), matchFragment.getString(R.string.abandon));
+        briscolaAPI.stopMatch(url,authHeader,contentTypePlainText,body);
+    }
+
+    @Override
+    public void resumeMatch(){
+        throw new IllegalStateException(); //should not call this for Online matches
     }
 }
