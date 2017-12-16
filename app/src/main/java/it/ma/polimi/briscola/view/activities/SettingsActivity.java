@@ -1,9 +1,10 @@
-package it.ma.polimi.briscola;
+package it.ma.polimi.briscola.view.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
@@ -11,6 +12,7 @@ import android.widget.RadioGroup;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import it.ma.polimi.briscola.R;
 import it.ma.polimi.briscola.audio.SoundManager;
 import it.ma.polimi.briscola.controller.offline.DifficultyRadioGroupListener;
 import it.ma.polimi.briscola.controller.offline.VelocityRadioGroupListener;
@@ -45,7 +47,7 @@ public class SettingsActivity extends AppCompatActivity{
         easy = (RadioButton) findViewById(R.id.difficulty_easy);
         medium = (RadioButton) findViewById(R.id.difficutly_intermediate);
         hard = (RadioButton) findViewById(R.id.difficulty_hard);
-        veryHard = (RadioButton) findViewById(R.id.difficulty_very_hard);
+        //veryHard = (RadioButton) findViewById(R.id.difficulty_very_hard);
 
         audio = (Switch) findViewById(R.id.toggle_audio_switch);
         sfx = (Switch) findViewById(R.id.toggle_sfx_switch);
@@ -68,7 +70,7 @@ public class SettingsActivity extends AppCompatActivity{
             case SettingsManager.EASY:easy.setChecked(true);break;
             case SettingsManager.MEDIUM:medium.setChecked(true);break;
             case SettingsManager.HARD:hard.setChecked(true);break;
-            case SettingsManager.VERY_HARD:veryHard.setChecked(true);break;
+           // case SettingsManager.VERY_HARD:veryHard.setChecked(true);break;
             default: easy.setChecked(true);
 
         }
@@ -80,7 +82,7 @@ public class SettingsActivity extends AppCompatActivity{
                 case SettingsManager.EASY: radioButton.setTag(0); break;
                 case SettingsManager.MEDIUM: radioButton.setTag(1);break;
                 case SettingsManager.HARD: radioButton.setTag(2);break;
-                case SettingsManager.VERY_HARD: radioButton.setTag(3);break;
+              //  case SettingsManager.VERY_HARD: radioButton.setTag(3);break;
                 default:
             }
         }
@@ -146,6 +148,15 @@ public class SettingsActivity extends AppCompatActivity{
        // resultPreview.setText(result);
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home){
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
     /*@Override
     public void onBackPressed() {
         AlertDialog dialog = new AlertDialog.Builder(this)

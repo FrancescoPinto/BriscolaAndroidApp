@@ -76,11 +76,23 @@
     <string name="abandon">Abandoned the match</string>
     <string name="terminated">Match terminated successfully</string>
     <string name = "other_player">Other player</string>
-    <string name = "game_menu">Match menu</string>
+    <string name = "game_menu">Game Menu</string>
     <string name="warning_should_save">Performing this operation will interrupt the current match. Do you want to save?</string>
     <string name="do_not_save">Don\'t Save</string>
     <string name="load">Load</string>
     <string name="type_config_name">Type Save Slot name</string>
     <string name="mandatory_type_config_name">You MUST type Slot Save Name to Save</string>
     <string name="delete">Delete</string>
+    <string name="interrupt_match_no_save">This action will interrupt the current match. Do you want to continue?</string>
+    <string name="waiting_for_other_player">Waiting to find another player</string>
+    <string name="stop_waiting">Stop Waiting</string>
+
+    <string name = "label_match_won">Number Matches Won: </string>
+    <string name = "label_match_lost">Number Matches Lost: </string>
+    <string name = "label_match_draw">Number Matches Draw: </string>
+    <string name = "label_match_online">Number Matches Online: </string>
+    <string name = "label_match_played">Number Matches Played: </string>
+    <string name = "data_about_previous_matches">Data About Previous Matches</string>
+    <string name="velocity">Velocity</string>
+    <string name="saved_data_label">Here you are the saved matches</string>
 </resources>

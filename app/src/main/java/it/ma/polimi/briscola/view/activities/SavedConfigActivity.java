@@ -1,11 +1,12 @@
-package it.ma.polimi.briscola;
+package it.ma.polimi.briscola.view.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -13,9 +14,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import it.ma.polimi.briscola.MatchMenuActivity;
 import it.ma.polimi.briscola.R;
-import it.ma.polimi.briscola.model.briscola.statistics.Briscola2PAggregatedData;
 import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMatchConfig;
 import it.ma.polimi.briscola.persistency.SQLiteRepositoryImpl;
 
@@ -27,7 +26,8 @@ public class SavedConfigActivity extends AppCompatActivity {
 
     private RecyclerView savedConfigRecyclerView;
     private SavedConfigAdapter adapter;
-    private MatchMenuActivity matchMenuActivity;
+
+    public static final String EXTRA_LOAD_CONFIG = "it.ma.polimi.briscola.savedConfig.config";
 
 
     @Override
@@ -44,8 +44,6 @@ public class SavedConfigActivity extends AppCompatActivity {
         savedConfigRecyclerView = (RecyclerView) findViewById(R.id.saved_config_recyclerview);
         savedConfigRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        matchMenuActivity = (MatchMenuActivity) getActivity();
-
         updateUI();
         //    return mainView;
 
@@ -55,8 +53,7 @@ public class SavedConfigActivity extends AppCompatActivity {
 
     private void updateUI(){
 
-        //todo riabilita
-        SQLiteRepositoryImpl repo = new SQLiteRepositoryImpl(getActivity());
+        SQLiteRepositoryImpl repo = new SQLiteRepositoryImpl(this);
         List<Briscola2PMatchConfig> savedConfig = repo.findAllMatchConfig();
 
         adapter = new SavedConfigAdapter(savedConfig);
@@ -77,7 +74,7 @@ public class SavedConfigActivity extends AppCompatActivity {
 
         @Override
         public SavedConfig onCreateViewHolder(ViewGroup parent, int viewType){
-            LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
+            LayoutInflater layoutInflater = LayoutInflater.from(SavedConfigActivity.this);
             View view = layoutInflater.inflate(R.layout.list_item_saved_config, parent, false);
             return new SavedConfig(view);
         }
@@ -105,12 +102,19 @@ public class SavedConfigActivity extends AppCompatActivity {
             //view.setOnClickListener(this); <- not needed
 
             name = (TextView) view.findViewById(R.id.name_saved_config);
-            position = (TextView) view.findViewById(R.id.id_saved_config);
+            position = (TextView) view.findViewById(R.id.identifier_saved_config);
             load = (Button) view.findViewById(R.id.load_button);
             load.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    matchMenuActivity.loadMatch(data);
+                    Intent intent = new Intent();//getIntent();//new Intent(SavedConfigActivity.this,MatchMenuActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable(EXTRA_LOAD_CONFIG,data);
+                    intent.putExtras(bundle);
+                    setResult(RESULT_OK, intent);
+                    finish();
+                   // QUI C'è ' un errore per cui non ritorna e fa load ...
+                    //matchMenuActivity.loadMatch(data); //todo ritornare il result dell'activity con il comando "avvia match loadato"
                 }
             });
 
@@ -118,7 +122,7 @@ public class SavedConfigActivity extends AppCompatActivity {
             cancel.setOnClickListener(new View.OnClickListener(){
                 @Override
                 public void onClick(View view){
-                    SQLiteRepositoryImpl repo = new SQLiteRepositoryImpl(getActivity());
+                    SQLiteRepositoryImpl repo = new SQLiteRepositoryImpl(SavedConfigActivity.this);
                     repo.deleteMatchConfig(data.getId());
                     adapter.savedConfigRows.remove(getAdapterPosition());
                     adapter.notifyDataSetChanged();
@@ -133,6 +137,9 @@ public class SavedConfigActivity extends AppCompatActivity {
             this.position.setText(""+position);
         }
 
-
     }
+
+
+
+    //todo, gestire i ritorni indietro non ben fatti
 }

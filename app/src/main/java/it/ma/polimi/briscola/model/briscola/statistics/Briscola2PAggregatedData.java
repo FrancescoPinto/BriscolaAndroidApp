@@ -11,41 +11,42 @@ import java.util.List;
 
 public class Briscola2PAggregatedData implements Comparable {
 
-    private String playerName;
     private int numberOfMatchesPlayed,
                 numberOfMatchesWinned,
                 numberOfDraws,
+                numberOfMatchesOnline,
                 totalScore; //contains the total number of points made by the player (no matter if he won or lost)
 
-    //todo ATTENZIONE, poiché i match online non ritornano identificatori, il ranking è fatto solo da giocatori diversi
-    //todo che usano lo stesso dispositivo! Quindi basta chiedere il player0
-    //IMPORTANTE: l'argomento todo CONTIENE SOLO DI UN UTENTE
-    public Briscola2PAggregatedData(List<Briscola2PMatchRecord> userPreviousMatches) { //todo, dovrai passare SOLO quelli di un utente
+
+    public Briscola2PAggregatedData(List<Briscola2PMatchRecord> userPreviousMatches) {
         if(userPreviousMatches.isEmpty())
             throw new IllegalArgumentException("No records in the argument");
 
-        playerName = userPreviousMatches.get(0).getPlayer0Name();
-        numberOfMatchesPlayed = totalScore = numberOfMatchesWinned = numberOfDraws = 0;
+        numberOfMatchesPlayed = totalScore = numberOfMatchesWinned = numberOfDraws = numberOfMatchesOnline= 0;
 
         for(Briscola2PMatchRecord mr : userPreviousMatches){
             String temp = mr.getWinnerName();
             if( temp == null)
                 numberOfDraws++;
-            else if(temp.equals(playerName))
+            else if(temp.equals(mr.getPlayer0Name()))
                 numberOfMatchesWinned++;
+
+            if(mr.getPlayer1Name().equals(Briscola2PMatchRecord.remotePlayerDefault))
+                numberOfMatchesOnline++;
 
             numberOfMatchesPlayed++;
             totalScore+=mr.getPlayer0Score();
         }
     }
 
-    public String getPlayerName() {
-        return playerName;
+    public int getNumberOfMatchesOnline() {
+        return numberOfMatchesOnline;
     }
 
-    public void setPlayerName(String playerName) {
-        this.playerName = playerName;
+    public void setNumberOfMatchesOnline(int numberOfMatchesOnline) {
+        this.numberOfMatchesOnline = numberOfMatchesOnline;
     }
+
 
     public int getNumberOfMatchesPlayed() {
         return numberOfMatchesPlayed;

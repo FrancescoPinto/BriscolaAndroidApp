@@ -8,7 +8,7 @@ import java.util.Set;
 
 
 
-import it.ma.polimi.briscola.SlotIndices;
+import it.ma.polimi.briscola.view.fragments.SlotIndices;
 import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMatchConfig;
 import it.ma.polimi.briscola.view.fragments.Briscola2PMatchFragment;
 

@@ -1,5 +1,12 @@
 package it.ma.polimi.briscola.rest.client;
 
+import android.util.Log;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+
 import it.ma.polimi.briscola.controller.online.OnlineBriscola2PMatchController;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -26,10 +33,17 @@ public class StopMatchCallback extends CallbackWithRetry{
         @Override
         public void onResponse(Call call, Response response) {
             if(response.isSuccessful()) {
+                Log.d("TAG","Match Cancelled");
                 //todo
               //  controller.endMatch();
             } else {
-             //   controller.manageError(response.errorBody());
+                try {
+                    JSONObject error = new JSONObject(response.errorBody().string());
+                    Log.d("TAG","Error on Match Cancelled");
+                    controller.manageError(error.getString("error"), error.getString("message"));
+                }catch(IOException |JSONException e){
+                    e.printStackTrace();
+                }
             }
         }
 }

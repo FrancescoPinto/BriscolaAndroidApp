@@ -1,46 +1,36 @@
 DA FARE IN SETTIMANA:
-- se invochi più volte il menù, si sovrappongono e si inscurisce, non va bene
+--- ONLINE
 - quando avvii un match online, non puoi tornare indietro se il match non si avvia, perché blocchi gli input!
-- SISTEMARE LA QUESTIONE DEL MENU' (INFATTI IN CERTI CONTESTI NON LO APRE) facendo bene il popStack() etc.
-- se metti il menù sopra una partita, i listener non si bloccano sotto, e se clicchi in zona carta si attivano i comportamenti dell carte
+- fai il test Menu->Match->Menu->Load CON INIZIO di partita online)
+- quando uno dei giocatori online abbandona, e l'altro fa una mossa, il server manda comunque roba ... il problema è
+    che non c'è modo di sapere se l'altro ha abbandonato lato client ...) il problema è che l'app crasha perché
+    giustamente sei uscito e hai fatto il detach.
+- CONTROLLARE TUTTI I POSSIBILI CRASH DEL GIOCO ONLINE
 - rimuovi il dialog nell'online quando giochi la prima carta (è il dialog che riprova la request)
     INDAGA SULLE COMPARSE "STRANE" DEI DIALOG, magari loggando tutta la partita alla ricerca di roba folle
        infatti si potrebbe creare un disallineamento tra interfaccia e stato sul server che produce
        errori e manco te ne accorgi
-- CONTROLLARE che la comunicazione tra fragment e activities e fragment e fragment sia fatta con i giusti crismi
-(ovvero usare gli Intent (e non passare i valori!), usare gli onResult() ecc. ecc.)
-- gestire i back button con popStackTrace ecc.
-- CAPIRE IL PERCHE' DEI CRASH DOVUTI ALL'APERTURA DI DIALOG NON CUSTOM!!! (workaround: usa solo custom dialog ...)
-- potrait e landscape, diversi dispositivi
-- metti anche l'opzione per mostrare  il punteggio corrente di ciascuno
-- anima meglio Your Turn e il contatore di turni, sistema la textView
-- fare un refactor del codice, e iniziare a documentare
-- per qualche ragione la scritta "Your Turn" scompare subito quando la prima carta è giocata dall'avversario!
-    credo il problema sia dovuto al fatto che viene chiamato il showCurrentPlayer del turno del player1 ... chea ppunto, cancella
-    DIREI DI FARE COSI': REFACTOR DI DISPLAY CURRENTPLAYER che diventa DISPLAYISPLAYER0TURN, DA INVOCARE SOLO QUANDO E' TURNO DI PLAYER0
-- FAI I MENU DI GIOCO "a palline che rotolano", è carino, semplice, ti leva l'imbarazzo di quel cartone mostruoso
 - GESTIRE GLI ERRORI DI PARTITE ONLINE <- attento alle cadute di connessione, fanno sembrare ci siano bug
-- C'E' qualcosa che non mi torna sia in OnlineBriscolaController che offline ... c'è il secondo if di quando pulisci
-(cioè l'if che contiene se la mano non è vuota ma il deck è vuoto) che non fa niente ... però a quello dopo hai messo
-isDeckEmpty() ... però dentro ci gestisci anche ciò che succede quando non è vuoto (e tutto si comporta correttamente)
 - nell'online c'è qualcosa che non va nell'adjust, controlla bene (ho visto buco in mezzo, terza carta non possa (probabilmente
 perché appena pescata ma non giunta in tempo ... usa la soluzione che hai fatto in Offlinecontroller ... (puoi interagire solo
 dopo displayCurrentPlayer ... e presumo anche dopo fine dell'animazione della pesca??? non ricord, controlla
 per rapidità, cerca tutte le manipolazioni di isPlaying o gli usi di GameInteractionEnabler
 ... C' E' DAVVERO QUALCOSA CHE NON VA
-- fai qualche altro check sull'ultimo turno (sia online che offline) sia nel caso in cui tu peschi la briscola, che nel caso in cui l'avversario pesca la briscola
-- FAI DEI TEST CHE DISTRUGGONO E RICREANO IL DATABASE DA ZERO <- I.e. disinstalla l'app
-- FAI SI che se ranking e previousMatchRecords sono vuoti mostri all'utente "Non hai ancora giocato, non ci sono dati"
-- INSERIRE IL DELETE DELLA PARTITA PER FINIRE LA PARTITA (hai aggiunto il bottone, ora devi aggiungere la reazione)
-- METTERE UN PULSANTE TERMINA PARTITA/RIAVVIA PARTITA
-- metti la briscola SOTTO il deck (visivamente), non sopra!
+- anima tutte le cardview così che sembri tutto più "giocoso"
+- testare il Drawer in varie API
+- IA più intelligente
 - randomizzare (come in SoundInfo) il seme (ovvero creare un unico random da usare sempre) (lo lascio per ultimo, così mi è più facile testare)
-- RISOLVERE IL BUG DEL "se il giocatore avversario gioca la prima carta, e io clicco come un forsennato sulle mie carte COSI' che istantaneamente appena mi viene distribuita l'ultima carta dalla pesca, l'app crasha perché non riesce a trovare, nell'adjust, i valori della carta!"
-    TALE BUG, USANDO IL DEBUGGER, sembra scatenato dal fatto che l'adjust view viene invocato 3 volte! (PRESUMO: turno mio(o suo, è indifferente), turno suo (o mio, è indifferente) VINCE LUI quindi automaticamente invoca l'adjust, però non ha manco distribuito le carte, figurati se
-    sa dove si trova sulla superficie!), inoltre, continua a mettere sotto sforzo l'app cliccando come un forsennato
-- togliere la briscola quando il deck è finito, e non generarne una nuova <- IMPLEMENTATO, MA DEVI TESTARLO CON UN MATCH
-- menu di pausa dove almeno mettere di poter terminare la partita
 - anima il menu di inizio match
+- FAI SI che se ranking e previousMatchRecords sono vuoti mostri all'utente "Non hai ancora giocato, non ci sono dati"
+- METTERE AUDIO ANCHE IN ALTRE ACTIVITY
+- far sì che quando premi Back se c'è un fragment che non sia il primissimo menù, venga poppato, altrimenti fai uscire dall'app
+- potrait e landscape, diversi dispositivi
+- metti anche l'opzione per mostrare  il punteggio corrente di ciascuno
+- anima meglio Your Turn e il contatore di turni, sistema la textView
+- fare un refactor del codice, e iniziare a documentare
+- FAI I MENU DI GIOCO "a palline che rotolano", è carino, semplice, ti leva l'imbarazzo di quel cartone mostruoso
+- FAI DEI TEST CHE DISTRUGGONO E RICREANO IL DATABASE DA ZERO <- I.e. disinstalla l'app
+- metti la briscola SOTTO il deck (visivamente), non sopra!
 -  la musica deve partire nello splash screen e rimanere PER SEMPRE, proprio per andare di fino dovresti anche
     ricalibrare i livelli di audio, perché alcuni suoni sono troppo sparati (SOPRATTUTTO LA VITTORIA DEL ROUND), ma questo fallo esternamente
     pensare anche a cosa succede alla musica quando fai onPause, onUpdate ecc. ecc.
@@ -50,15 +40,23 @@ per rapidità, cerca tutte le manipolazioni di isPlaying o gli usi di GameIntera
     l'audio smette <- ho provato a risolvere togliendo il pauseBackgroundMusic dall'onPause ... QUINDI
     la soluzione è O trasformare SettingsActivity in un fragment ... oppure usare implementazione avanzata di un Service (cerca
     su internet Background Music in all activities)
-- IA più intelligente
-- GESTIRE SE L'UTENTE AVVIA PIU' PARTITE (potrebbe crashare -> nel menu dell'avvio partita , PRIMA DI AVVIARE LA PARTITA, chiedi
-all'utente se vuole terminare la precedente, al che tu la termini??
+
 
 
 ROBA CHE SEMBRA A POSTO MA POTREBBE NON ESSERLO:
 - BUG: il comportamento della briscola dovrebbe essere ok, SOLO RICONTROLLA A RALLENTATORE IL CASO IN CUI L'AVVERSARIO BUTTA LA
 BRISCOLA A TERRA, se non sbaglio scompare (così veloce non ce l'ho fatta a vederla!)
-
+- CAPIRE IL PERCHE' DEI CRASH DOVUTI ALL'APERTURA DI DIALOG NON CUSTOM!!! (workaround: usa solo custom dialog ...)
+- per qualche ragione la scritta "Your Turn" scompare subito quando la prima carta è giocata dall'avversario!
+    credo il problema sia dovuto al fatto che viene chiamato il showCurrentPlayer del turno del player1 ... chea ppunto, cancella
+    DIREI DI FARE COSI': REFACTOR DI DISPLAY CURRENTPLAYER che diventa DISPLAYISPLAYER0TURN, DA INVOCARE SOLO QUANDO E' TURNO DI PLAYER0
+- C'E' qualcosa che non mi torna sia in OnlineBriscolaController che offline ... c'è il secondo if di quando pulisci
+(cioè l'if che contiene se la mano non è vuota ma il deck è vuoto) che non fa niente ... però a quello dopo hai messo
+isDeckEmpty() ... però dentro ci gestisci anche ciò che succede quando non è vuoto (e tutto si comporta correttamente)
+- RISOLVERE IL BUG DEL "se il giocatore avversario gioca la prima carta, e io clicco come un forsennato sulle mie carte COSI' che istantaneamente appena mi viene distribuita l'ultima carta dalla pesca, l'app crasha perché non riesce a trovare, nell'adjust, i valori della carta!"
+    TALE BUG, USANDO IL DEBUGGER, sembra scatenato dal fatto che l'adjust view viene invocato 3 volte! (PRESUMO: turno mio(o suo, è indifferente), turno suo (o mio, è indifferente) VINCE LUI quindi automaticamente invoca l'adjust, però non ha manco distribuito le carte, figurati se
+    sa dove si trova sulla superficie!), inoltre, continua a mettere sotto sforzo l'app cliccando come un forsennato
+- sistemare il drawer
 
 NELLA SPECIFICA, PER LA UI LUI RICHIEDE ALMENO:
 - UI should contain navigation that allows to

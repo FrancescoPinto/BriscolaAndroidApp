@@ -6,7 +6,7 @@
     <color name="colorTransparent">#8a3f51b5</color>
     <color name="whiteTransparent">#8aFFFFFF</color>
     <color name="lighterWhiteTransparent">#3aFFFFFF</color>
-
+    <color name = "pureTransparent">#00000000</color>
 
     <color name="black_overlay">#66000000</color>
 

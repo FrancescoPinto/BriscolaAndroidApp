@@ -1,4 +1,4 @@
-package it.ma.polimi.briscola;
+package it.ma.polimi.briscola.view.activities;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -6,12 +6,15 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.List;
 
+import it.ma.polimi.briscola.R;
+import it.ma.polimi.briscola.model.briscola.statistics.Briscola2PAggregatedData;
 import it.ma.polimi.briscola.model.briscola.statistics.Briscola2PMatchRecord;
 import it.ma.polimi.briscola.persistency.SQLiteRepositoryImpl;
 
@@ -22,6 +25,8 @@ import it.ma.polimi.briscola.persistency.SQLiteRepositoryImpl;
 public class PreviousMatchRecordsActivity extends AppCompatActivity {
     private RecyclerView matchRecordRecyclerView;
     private MatchRecordAdapter adapter;
+    private TextView numMatchPlayed, numMatchWon, numMatchLost, numMatchDraw, numMatchOnline;
+    SQLiteRepositoryImpl repo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +35,24 @@ public class PreviousMatchRecordsActivity extends AppCompatActivity {
         // init the view
         matchRecordRecyclerView = (RecyclerView) findViewById(R.id.match_record_recyclerview);
         matchRecordRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        repo = new SQLiteRepositoryImpl(this);
+
+        Briscola2PAggregatedData statistics = new Briscola2PAggregatedData(repo.findAllMatchRecords());
+
+        numMatchPlayed = (TextView) findViewById(R.id.num_match_played);
+        numMatchPlayed.setText(""+statistics.getNumberOfMatchesPlayed());
+
+        numMatchWon = (TextView) findViewById(R.id.num_match_won);
+        numMatchWon.setText(""+statistics.getNumberOfMatchesWinned());
+
+        numMatchLost = (TextView) findViewById(R.id.num_match_lost);
+        numMatchLost.setText(""+(statistics.getNumberOfMatchesPlayed()-statistics.getNumberOfMatchesWinned()-statistics.getNumberOfDraws()));
+
+        numMatchDraw = (TextView) findViewById(R.id.num_match_draw);
+        numMatchDraw.setText(""+statistics.getNumberOfDraws());
+
+        numMatchOnline = (TextView) findViewById(R.id.num_match_online);
+        numMatchOnline.setText(""+statistics.getNumberOfMatchesOnline());
 
         updateUI();
 
@@ -39,7 +62,7 @@ public class PreviousMatchRecordsActivity extends AppCompatActivity {
     private void updateUI(){
 
         //todo, riabilita
-        SQLiteRepositoryImpl repo = new SQLiteRepositoryImpl(this); //todo, sposta questo o nel controller o nel model (non dovresti fare operazioni logiche così complicate in una view!)
+         //todo, sposta questo o nel controller o nel model (non dovresti fare operazioni logiche così complicate in una view!)
         List<Briscola2PMatchRecord> records = repo.findAllMatchRecords();
         //List<Briscola2PMatchRecord> records = new ArrayList<>();
 
@@ -111,5 +134,15 @@ public class PreviousMatchRecordsActivity extends AppCompatActivity {
         }*/
     }
 
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home){
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
 }

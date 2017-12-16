@@ -18,6 +18,7 @@ public abstract class CallbackWithRetry<T> implements Callback<T> {
     private int retryCount = 0;
 
     boolean success = false;
+    boolean shouldStop = false;
 
     @Override
     public void onFailure(final Call<T> call, Throwable t) {
@@ -27,6 +28,7 @@ public abstract class CallbackWithRetry<T> implements Callback<T> {
             new Handler().postDelayed(new Runnable(){
                                           @Override
                                           public void run() {
+                                              if(!shouldStop)
                                               call.clone().enqueue(CallbackWithRetry.this);
 
                                           }
@@ -48,5 +50,7 @@ public abstract class CallbackWithRetry<T> implements Callback<T> {
     }
 
     public abstract void onFailedAfterRetry(Throwable t);
-
+    public void shouldStopRetrying(boolean shouldStop){
+        this.shouldStop = shouldStop;
+    }
 }

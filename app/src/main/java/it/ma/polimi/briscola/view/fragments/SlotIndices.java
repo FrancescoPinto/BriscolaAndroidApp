@@ -1,4 +1,4 @@
-package it.ma.polimi.briscola;
+package it.ma.polimi.briscola.view.fragments;
 
 import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMatchConfig;
 

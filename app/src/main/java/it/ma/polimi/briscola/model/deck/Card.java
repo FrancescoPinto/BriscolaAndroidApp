@@ -1,10 +1,12 @@
 package it.ma.polimi.briscola.model.deck;
 
+import java.io.Serializable;
+
 /**
  * Interface representing a card.
  * @author Francesco Pinto
  */
-public interface Card {
+public interface Card  extends Serializable {
 
     /**
      * Gets card suit.

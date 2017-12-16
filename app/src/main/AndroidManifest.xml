@@ -9,8 +9,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MatchMenuActivity"
-            android:screenOrientation="portrait">
+        <activity android:name=".view.activities.MatchMenuActivity"
+            android:screenOrientation="portrait"
+            android:theme = "@style/NoActionBarTheme">
 
             <!-- <activity android:name=".MainActivity"> -->
             <intent-filter>
@@ -20,12 +21,18 @@
             </intent-filter>
         </activity>
         <!-- <activity android:name=".Briscola2PMatchActivity" android:theme = "@style/FullscreenActionBarStyle" /> -->
-        <activity android:name=".PreviousMatchRecordsActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".SavedConfigActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".SettingsActivity"
-            android:screenOrientation="portrait"/>
+        <activity android:name=".view.activities.PreviousMatchRecordsActivity"
+            android:screenOrientation="portrait"
+            android:parentActivityName=".view.activities.MatchMenuActivity"
+            android:label="@string/statistics"/>
+        <activity android:name=".view.activities.SavedConfigActivity"
+            android:screenOrientation="portrait"
+            android:parentActivityName=".view.activities.MatchMenuActivity"
+            android:label="@string/resume_from_saved"/>
+        <activity android:name=".view.activities.SettingsActivity"
+            android:screenOrientation="portrait"
+            android:parentActivityName=".view.activities.MatchMenuActivity"
+            android:label="@string/app_settings"/>
     </application>
 
 </manifest>

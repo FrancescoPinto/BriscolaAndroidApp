@@ -2,6 +2,7 @@ package it.ma.polimi.briscola.model.briscola.twoplayers;
 
 import android.util.Log;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +16,7 @@ import it.ma.polimi.briscola.rest.client.dto.StartedMatchDTO;
  * Created by utente on 10/12/17.
  */
 
-public class Briscola2PMinimalMatchConfig {
+public class Briscola2PMinimalMatchConfig implements Serializable {
     /**
      * The constant PLAYER0 is an index used to represent the Local Player (i.e. the human player on the local device)
      */

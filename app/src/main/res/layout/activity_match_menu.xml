@@ -8,7 +8,25 @@
     android:background="@color/white"
     android:id="@+id/id_drawerLayout">
     <!-- the main content -->
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@drawable/background_shape"
+        android:id="@+id/layout"
+        >
+    <include
+        layout="@layout/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <FrameLayout android:id = "@+id/fragment_container"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+    </LinearLayout>
+
+   <!-- <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/layout"
@@ -17,10 +35,10 @@
         android:background="@drawable/background_shape"
         android:orientation="horizontal"
         tools:context="it.ma.polimi.briscola.Briscola2PMatchActivity">
-    <FrameLayout android:id = "@+id/fragment_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-    </RelativeLayout>
+
+    </RelativeLayout>  --><!-- This LinearLayout represents the contents of the screen  -->
+
+
 
     <!-- ATTENZIONE: il drawerLayout dovrebbe avere SOLO due figli!!! SE INSERISCI QUESTO, crasha ... mettilo programmaticamente!
     <android.support.design.widget.FloatingActionButton

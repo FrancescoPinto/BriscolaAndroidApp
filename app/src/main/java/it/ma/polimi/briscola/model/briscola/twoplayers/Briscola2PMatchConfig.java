@@ -1,5 +1,6 @@
 package it.ma.polimi.briscola.model.briscola.twoplayers;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -16,7 +17,7 @@ import it.ma.polimi.briscola.model.deck.UniformProbabilityShuffler;
  *
  * @author Francesco Pinto
  */
-public class Briscola2PMatchConfig {
+public class Briscola2PMatchConfig implements Serializable{
 
     /**
      * The constant PLAYER0 is an index used to represent the Local Player (i.e. the human player on the local device)

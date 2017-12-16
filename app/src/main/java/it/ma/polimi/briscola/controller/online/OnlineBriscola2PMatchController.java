@@ -212,7 +212,7 @@ public class OnlineBriscola2PMatchController implements Briscola2PController {
         //Todo, modificare il display delle carte, così che se passi un nome invalido lui non se ne frega ...
         AnimatorSet dealFirstHand = matchFragment.getDealFirstHandAnimatorSet(config.getCurrentPlayer(), config.getHands());
         AnimatorSet initializeBriscola = matchFragment.getInitializeBriscolaAnimatorSet(new NeapolitanCard(config.getBriscolaString().charAt(0), config.getBriscolaString().charAt(1)));
-        AnimatorSet displayCurrentPlayer = matchFragment.displayCurrentPlayer(config.getCurrentPlayer());
+       // AnimatorSet displayCurrentPlayer = matchFragment.displayIsPlayer0Turn(config.getCurrentPlayer());
         //animators.add(dealFirstHand);
         //animators.add(initializeBriscola);
         matchFragment.showToast("Current player is " + config.getCurrentPlayer());
@@ -240,7 +240,13 @@ public class OnlineBriscola2PMatchController implements Briscola2PController {
             }
         });
 
-        initializationSequence.playSequentially(dealFirstHand, initializeBriscola,displayCurrentPlayer);
+        if(config.getCurrentPlayer() == config.PLAYER0) {
+            AnimatorSet displayIsPlayer0Turn = matchFragment.displayIsPlayer0Turn(config.getCurrentPlayer());
+            initializationSequence.playSequentially(dealFirstHand, initializeBriscola, displayIsPlayer0Turn);
+        }else{
+            initializationSequence.playSequentially(dealFirstHand, initializeBriscola);
+        }
+       // initializationSequence.playSequentially(dealFirstHand, initializeBriscola,displayCurrentPlayer);
         initializationSequence.start();
     }
 
@@ -266,9 +272,17 @@ public class OnlineBriscola2PMatchController implements Briscola2PController {
 
     public void auxiliaryPlayFirstCard(AnimatorSet playCard){
         config.toggleCurrentPlayer();
-        AnimatorSet displayCurrentPlayer = matchFragment.displayCurrentPlayer(config.getCurrentPlayer());
+        //AnimatorSet displayCurrentPlayer = matchFragment.displayIsPlayer0Turn(config.getCurrentPlayer());
         AnimatorSet playFirstCard = new AnimatorSet();
-        playFirstCard.playSequentially(playCard, displayCurrentPlayer);
+        //AnimatorSet playFirstCard = new AnimatorSet();
+        if(config.getCurrentPlayer() == config.PLAYER0) {
+            AnimatorSet displayIsPlayer0Turn = matchFragment.displayIsPlayer0Turn(config.getCurrentPlayer());
+            playFirstCard.playSequentially(playCard, displayIsPlayer0Turn);
+        }else{
+            AnimatorSet hideIsPlayer0Turn = matchFragment.hidIsPlayer0Turn(/*config.getCurrentPlayer()*/);
+            playFirstCard.playSequentially(hideIsPlayer0Turn, playCard);
+        }
+       // playFirstCard.playSequentially(playCard, displayCurrentPlayer);
         playFirstCard.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animator) {}
@@ -333,7 +347,9 @@ public class OnlineBriscola2PMatchController implements Briscola2PController {
         Log.d("TAG", "prepeared beautiful clean surfacea animation, lasts: " + cleanSurface.getDuration());
         config.setCurrentPlayer(roundWinner);
         matchFragment.showToast("Current player = " + config.getCurrentPlayer() + ", roundWInner = "+roundWinner);
-        final AnimatorSet displayCurrentPlayer = matchFragment.displayCurrentPlayer(config.getCurrentPlayer());
+        AnimatorSet hideIsPlayer0Turn = matchFragment.hidIsPlayer0Turn();
+
+        //   final AnimatorSet displayCurrentPlayer = matchFragment.displayIsPlayer0Turn(config.getCurrentPlayer());
         cleanSurface.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animator) {}
@@ -358,7 +374,11 @@ public class OnlineBriscola2PMatchController implements Briscola2PController {
                     if(config.getCurrentPlayer() == config.PLAYER1){
                         //animators.add(playFirstCard(player1.chooseMove(config)));
                         briscolaAPI.getOpponentPlayedCard(url, authHeader).enqueue(opponentPlayedCardCallback);
+                    }  else{
+                        AnimatorSet displayIsPlayer0Turn = matchFragment.displayIsPlayer0Turn(config.getCurrentPlayer());
+                        animators.add(displayIsPlayer0Turn);
                     }
+
                 }else if(currentRound <= 17){ //if deck is not empty, draw cards new round
                     //boolean lastDraw = false;
                     //if(config.getDeck().size() == 2)
@@ -378,10 +398,13 @@ public class OnlineBriscola2PMatchController implements Briscola2PController {
                     if(config.getCurrentPlayer() == config.PLAYER1){
                         //animators.add(playFirstCard(player1.chooseMove(config)));
                         briscolaAPI.getOpponentPlayedCard(url, authHeader).enqueue(opponentPlayedCardCallback);
+                    }else{
+                        AnimatorSet displayIsPlayer0Turn = matchFragment.displayIsPlayer0Turn(config.getCurrentPlayer());
+                        animators.add(displayIsPlayer0Turn);
                     }
                 }
 
-                animators.add(displayCurrentPlayer);
+                //animators.add(displayCurrentPlayer);
                 closeTurnAnimation.playSequentially(animators);
                 closeTurnAnimation.start();
 
@@ -393,7 +416,7 @@ public class OnlineBriscola2PMatchController implements Briscola2PController {
             public void onAnimationRepeat(Animator animator) {}
         });
 
-        playSecondCard.playSequentially(playCard, cleanSurface);
+        playSecondCard.playSequentially(playCard, cleanSurface,hideIsPlayer0Turn);
         playSecondCard.start();
     }
 
@@ -418,5 +441,12 @@ public class OnlineBriscola2PMatchController implements Briscola2PController {
     @Override
     public void resumeMatch(){
         throw new IllegalStateException(); //should not call this for Online matches
+    }
+
+    public void stopCallbacks(){
+        opponentPlayedCardCallback.shouldStopRetrying(true);
+        playCardCallback.shouldStopRetrying(true);
+        startMatchCallback.shouldStopRetrying(true);
+        stopMatchCallback.shouldStopRetrying(true);
     }
 }

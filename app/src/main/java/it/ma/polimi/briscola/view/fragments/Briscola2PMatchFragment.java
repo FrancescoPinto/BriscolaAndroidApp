@@ -3,10 +3,13 @@ package it.ma.polimi.briscola.view.fragments;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,10 +30,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import it.ma.polimi.briscola.MatchMenuActivity;
+import it.ma.polimi.briscola.view.MatchMenuActivityActions;
+import it.ma.polimi.briscola.view.activities.Briscola2PMatchActivity;
+import it.ma.polimi.briscola.view.activities.MatchMenuActivity;
 import it.ma.polimi.briscola.R;
-import it.ma.polimi.briscola.SettingsActivity;
-import it.ma.polimi.briscola.SlotIndices;
 import it.ma.polimi.briscola.audio.SoundManager;
 import it.ma.polimi.briscola.controller.offline.Briscola2PController;
 import it.ma.polimi.briscola.controller.offline.Briscola2PMatchController;
@@ -41,13 +44,14 @@ import it.ma.polimi.briscola.controller.offline.GameInteractionEnabler;
 import it.ma.polimi.briscola.controller.offline.ImageNameBuilder;
 import it.ma.polimi.briscola.controller.offline.MoveCardAnimationListener;
 import it.ma.polimi.briscola.controller.online.OnlineBriscola2PMatchController;
-import it.ma.polimi.briscola.model.briscola.statistics.Briscola2PMatchRecord;
 import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PHand;
 import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMatchConfig;
 import it.ma.polimi.briscola.model.deck.NeapolitanCard;
 import it.ma.polimi.briscola.persistency.SettingsManager;
-import it.ma.polimi.briscola.view.dialog.SaveConfigDataDialog;
+import it.ma.polimi.briscola.view.dialog.SaveConfigDataDialogFragment;
 import it.ma.polimi.briscola.view.dialog.SaveMatchDataDialog;
+import it.ma.polimi.briscola.view.dialog.WaitDialogFragment;
+import it.ma.polimi.briscola.view.dialog.WarningExitDialogFragment;
 import it.ma.polimi.briscola.view.dialog.WinnerMatchDialog;
 
 /**
@@ -70,6 +74,16 @@ public class Briscola2PMatchFragment extends Fragment {
     private int animationVelocizationFactor;
     private int turnCounter;
     private boolean isOnline, isResume;
+    private int difficulty;
+    public static final String MATCH_CONFIG = "it.ma.polimi.briscola.resume.config",
+                               IS_ONLINE = "it.ma.polimi.briscola.resume.is_online",
+                                IS_RESUME = "it.ma.polimi.briscola.resume.resume";
+
+    public static final String DIFFICULTY = "it.ma.polimi.briscola.offline.difficulty";
+
+    private static final int REQUEST_EXIT = 100, REQUEST_SAVE = 101, REQUEST_STOP_WAITING = 102;
+    private static final String DIALOG_EXIT = "DialogExit", DIALOG_SAVE = "DialogSave", DIALOG_WAIT = "DialogWait";
+
     public SoundManager getSoundManager() {
         return soundManager;
     }
@@ -84,30 +98,31 @@ public class Briscola2PMatchFragment extends Fragment {
         return cards;
     }
 
-
-
     public static Briscola2PMatchFragment newInstance(boolean isOnline, Integer difficulty){ //pass null if offline
+        Bundle args = new Bundle();
+        args.putBoolean(IS_ONLINE,isOnline);
+        args.putBoolean(IS_RESUME,false);
+        args.putInt(DIFFICULTY, difficulty);
         Briscola2PMatchFragment fragment =  new Briscola2PMatchFragment();
-        if(isOnline)
-            fragment.controller = new OnlineBriscola2PMatchController(fragment);
-        else
-            fragment.controller = new Briscola2PMatchController(fragment, difficulty);
+        fragment.setArguments(args);
 
-        fragment.isOnline = isOnline;
         return fragment;
     }
-
     public static Briscola2PMatchFragment newInstance(Briscola2PMatchConfig config, Integer difficulty){ //pass null if offline
+        Bundle args = new Bundle();
+        args.putSerializable(MATCH_CONFIG,config);
+        args.putBoolean(IS_ONLINE,false);
+        args.putBoolean(IS_RESUME,true);
+        args.putInt(DIFFICULTY, difficulty);
         Briscola2PMatchFragment fragment =  new Briscola2PMatchFragment();
+        fragment.setArguments(args);
+        return fragment;
 
-        fragment.controller = new Briscola2PMatchController(config, fragment, difficulty);
+       /* fragment.controller = new Briscola2PMatchController(config, fragment, difficulty);
         fragment.isOnline = false;
         fragment.isResume = true;
-        return fragment;
+        return fragment;*/
     }
-
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -118,6 +133,16 @@ public class Briscola2PMatchFragment extends Fragment {
         soundManager = activity.getSoundManager();
 
         layout = (RelativeLayout) mainView.findViewById(R.id.layout);
+
+        isOnline = getArguments().getBoolean(IS_ONLINE);
+        isResume = getArguments().getBoolean(IS_RESUME);
+        difficulty = getArguments().getInt(DIFFICULTY);
+
+        if(isOnline)
+            controller = new OnlineBriscola2PMatchController(this);
+        else
+            controller = new Briscola2PMatchController(this, difficulty);
+
 
         slots.put(SlotIndices.Player0Card0, mainView.findViewById(R.id.player0Card0Slot));
         slots.put(SlotIndices.Player0Card1, mainView.findViewById(R.id.player0Card1Slot));
@@ -142,7 +167,11 @@ public class Briscola2PMatchFragment extends Fragment {
         exit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(isOnline){
+                FragmentManager manager = getFragmentManager();
+                WarningExitDialogFragment dialog = WarningExitDialogFragment.newInstance(isOnline,Briscola2PMatchActivity.EXIT_BUTTON);
+                dialog.setTargetFragment(Briscola2PMatchFragment.this,REQUEST_EXIT);
+                dialog.show(manager, DIALOG_EXIT);
+                /* if(isOnline){
                     AlertDialog.Builder builder = new AlertDialog.Builder(Briscola2PMatchFragment.this.getActivity());
                     builder.setMessage(getString(R.string.sure_leave));
                     builder.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
@@ -169,9 +198,9 @@ public class Briscola2PMatchFragment extends Fragment {
                     builder.create().show();
                 }
                 else {
-                    SaveConfigDataDialog dialog = new SaveConfigDataDialog((MatchMenuActivity) getActivity(), ((Briscola2PMatchController) controller).getConfig(), SaveConfigDataDialog.EXIT_BUTTON);
+                    SaveConfigDataDialogFragment dialog = new SaveConfigDataDialogFragment((MatchMenuActivity) getActivity(), ((Briscola2PMatchController) controller).getConfig(), SaveConfigDataDialogFragment.EXIT_BUTTON);
                     dialog.showDialog();
-                }
+                }*/
 
             }
         });
@@ -207,8 +236,13 @@ public class Briscola2PMatchFragment extends Fragment {
 
                 if(!isResume)  //new match
                     controller.startNewMatch(); //controller = new Briscola2PMatchController(Briscola2PMatchFragment.this);
-                                   //todo, uyna volta che il layout è stato inizializzato, fai "start game" (porta qui dentro il controller)
-                //if isResume, then the method
+                //todo, uyna volta che il layout è stato inizializzato, fai "start game" (porta qui dentro il controller)
+                else{
+                    controller = new Briscola2PMatchController(
+                            (Briscola2PMatchConfig) getArguments().getSerializable(MATCH_CONFIG),
+                            Briscola2PMatchFragment.this, difficulty);
+                    controller.resumeMatch();
+                }
                 layout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
         });
@@ -218,8 +252,6 @@ public class Briscola2PMatchFragment extends Fragment {
         return mainView;
 
     }
-
-
     public AnimatorSet getDealFirstHandAnimatorSet(int firstPlayerIndex, List<Briscola2PHand> playersHands){
         Briscola2PHand firstPlayer = playersHands.get(firstPlayerIndex);
         Briscola2PHand secondPlayer = playersHands.get((firstPlayerIndex+1)%2);
@@ -267,45 +299,7 @@ public class Briscola2PMatchFragment extends Fragment {
         return dealFirstHand;
 
     }
-
-   /* public AnimatorSet getDealFirstHandAnimatorSet(int firstPlayerIndex, Briscola2PHand localPlayerHand) {
-
-        AnimatorSet dealFirstHand = new AnimatorSet();
-        List<Animator> animators = new ArrayList<>();
-        SlotIndices[] slotIndices = SlotIndices.values();
-
-        for(int i = 0,j = 6; i < 3; i++, j-=2){
-
-            if(firstPlayerIndex == Briscola2PMatchConfig.PLAYER0){
-                cards.put(slotIndices[i+3],positionCardOnScreen(localPlayerHand.getCard(i), slotCoordinates.get(SlotIndices.DeckSlot), elevationLevels[j]));
-                cards.put(slotIndices[i+7],positionCardOnScreen(new NeapolitanCard(), slotCoordinates.get(SlotIndices.DeckSlot), elevationLevels[j-1]));
-                AnimatorSet player0Animation = AnimationMaster.getTranslationAnimationSet(cards.get(slotIndices[i+3]),slotCoordinates.get(SlotIndices.DeckSlot),slotCoordinates.get(slotIndices[i+3]), this);
-                player0Animation.addListener(new FlipCardAnimationListener(cards.get(slotIndices[i+3]),soundManager));
-                animators.add(player0Animation);
-                animators.add(AnimationMaster.getTranslationAnimationSet(cards.get(slotIndices[i+7]),slotCoordinates.get(SlotIndices.DeckSlot),slotCoordinates.get(slotIndices[i+7]),this));
-            }else if(firstPlayerIndex == Briscola2PMatchConfig.PLAYER1) {
-                cards.put(slotIndices[i+7],positionCardOnScreen(new NeapolitanCard(), slotCoordinates.get(SlotIndices.DeckSlot), elevationLevels[j]));
-                cards.put(slotIndices[i+3],positionCardOnScreen(localPlayerHand.getCard(i), slotCoordinates.get(SlotIndices.DeckSlot), elevationLevels[j-1]));
-                AnimatorSet player0Animation = AnimationMaster.getTranslationAnimationSet(cards.get(slotIndices[i+3]),slotCoordinates.get(SlotIndices.DeckSlot),slotCoordinates.get(slotIndices[i+3]),this);
-                player0Animation.addListener(new FlipCardAnimationListener(cards.get(slotIndices[i+3]),soundManager));
-                animators.add(AnimationMaster.getTranslationAnimationSet(cards.get(slotIndices[i+7]),slotCoordinates.get(SlotIndices.DeckSlot),slotCoordinates.get(slotIndices[i+7]),this));
-                animators.add(player0Animation);
-            }
-
-        }
-
-        cards.get(SlotIndices.Player0Card0).setOnClickListener(new CardAnimationListener(Briscola2PMatchFragment.this));
-        cards.get(SlotIndices.Player0Card1).setOnClickListener(new CardAnimationListener(Briscola2PMatchFragment.this));
-        cards.get(SlotIndices.Player0Card2).setOnClickListener(new CardAnimationListener(Briscola2PMatchFragment.this));
-
-        dealFirstHand.playSequentially(animators);
-        dealFirstHand.setStartDelay(1000);
-
-        return dealFirstHand;
-    }*/
-
-
-        public AnimatorSet getInitializeBriscolaAnimatorSet(NeapolitanCard briscola){
+    public AnimatorSet getInitializeBriscolaAnimatorSet(NeapolitanCard briscola){
         cards.put(SlotIndices.BriscolaSlot, positionCardOnScreen(briscola, slotCoordinates.get(SlotIndices.DeckSlot), elevationLevels[0],true));
         AnimatorSet initialize = getTranslationAnimationSet(cards.get(SlotIndices.BriscolaSlot),slotCoordinates.get(SlotIndices.DeckSlot),slotCoordinates.get(SlotIndices.BriscolaSlot));
         initialize.addListener(new FlipCardAnimationListener(cards.get(SlotIndices.BriscolaSlot),soundManager));
@@ -313,7 +307,6 @@ public class Briscola2PMatchFragment extends Fragment {
         initialize.setStartDelay(300);
         return initialize;
     }
-
     private AnimatorSet playCard(int cardIndex, int currentPlayer, SlotIndices destinationSlot){
 
         AnimatorSet playCard = new AnimatorSet();
@@ -365,7 +358,6 @@ public class Briscola2PMatchFragment extends Fragment {
         playCard.setStartDelay(500);
         return playCard;
     }
-
     public AnimatorSet playFirstCard(int cardIndex, int currentPlayer){
         return playCard(cardIndex,currentPlayer,SlotIndices.SurfaceSlot0);
     }
@@ -373,7 +365,6 @@ public class Briscola2PMatchFragment extends Fragment {
         return  playCard(cardIndex,currentPlayer,SlotIndices.SurfaceSlot1);
 
     }
-
     public AnimatorSet playFirstCard(String card, int currentPlayer){
         String cardName = ImageNameBuilder.getFrenchCardImageName(new NeapolitanCard(card.charAt(0),card.charAt(1)));
         Log.d("TAG", "I converted card "+ card + " into "+ cardName);
@@ -391,9 +382,6 @@ public class Briscola2PMatchFragment extends Fragment {
         return  playCard(0,currentPlayer,SlotIndices.SurfaceSlot1);
 
     }
-
-
-
     public AnimatorSet adjustCards(int cardIndex, int currentPlayer, int playerHandLength){
         AnimatorSet adjust = new AnimatorSet();
         List<Animator> adjustCards = new ArrayList<>();
@@ -421,7 +409,6 @@ public class Briscola2PMatchFragment extends Fragment {
         adjust.playSequentially(adjustCards);
         return adjust;
     }
-
     public AnimatorSet cleanSurface(int winner){
         AnimatorSet cleanSurface = new AnimatorSet();
         ImageView card0 = cards.remove(SlotIndices.SurfaceSlot0);
@@ -448,16 +435,15 @@ public class Briscola2PMatchFragment extends Fragment {
         cleanSurface.setStartDelay(300);
         return cleanSurface;
     }
-
-    public AnimatorSet displayCurrentPlayer(int currentPlayer){
+    public AnimatorSet displayIsPlayer0Turn(int currentPlayer){
         ObjectAnimator displayCurrentPlayer;
         if(currentPlayer ==Briscola2PMatchConfig.PLAYER0){
             displayCurrentPlayer = ObjectAnimator.ofFloat(player0Turn, "alpha", 1f);//0f, 1f);
             displayCurrentPlayer.setDuration(200);
             displayCurrentPlayer.addListener(new GameInteractionEnabler(controller,true));
-        }else if(currentPlayer == Briscola2PMatchConfig.PLAYER1){
-            displayCurrentPlayer= ObjectAnimator.ofFloat(player0Turn, "alpha",0f);//0f,1f);
-            displayCurrentPlayer.setDuration(200);
+        //}else if(currentPlayer == Briscola2PMatchConfig.PLAYER1){
+        //    displayCurrentPlayer= ObjectAnimator.ofFloat(player0Turn, "alpha",0f);//0f,1f);
+       //     displayCurrentPlayer.setDuration(200);
         } else
             throw new IllegalStateException();
         AnimatorSet animation = new AnimatorSet();
@@ -465,7 +451,17 @@ public class Briscola2PMatchFragment extends Fragment {
         return animation;
     }
 
-
+    public AnimatorSet hidIsPlayer0Turn(){
+        ObjectAnimator displayCurrentPlayer;
+        // if(currentPlayer == Briscola2PMatchConfig.PLAYER1){
+               displayCurrentPlayer= ObjectAnimator.ofFloat(player0Turn, "alpha",0f);//0f,1f);
+                displayCurrentPlayer.setDuration(200);
+       // } else
+       //     throw new IllegalStateException();
+        AnimatorSet animation = new AnimatorSet();
+        animation.play(displayCurrentPlayer);
+        return animation;
+    }
     public AnimatorSet drawCardsNewRound(List<Briscola2PHand> playersHands, int firstPlayerIndex, boolean lastDraw){
 
             Briscola2PHand firstPlayer = playersHands.get(firstPlayerIndex);
@@ -535,7 +531,6 @@ public class Briscola2PMatchFragment extends Fragment {
             return dealTwoCards;
 
     }
-
     public void enablePlayer0CardsTouch(List<Briscola2PHand> playersHands, int firstPlayerIndex){
         switch(playersHands.get((firstPlayerIndex == Briscola2PMatchConfig.PLAYER0)?firstPlayerIndex:(firstPlayerIndex+1)%2).size()){
             case 3:;cards.get(SlotIndices.Player0Card2).setOnClickListener(new CardAnimationListener(this));
@@ -545,8 +540,6 @@ public class Briscola2PMatchFragment extends Fragment {
         turnCounter++;
         turnCounterDisplayer.setText("Turn "+turnCounter);
     }
-
-
     @Override
     public void onResume() { //todo, sistemare onResume e onPause per tutto (animazioni, audio ecc. ecc. ecc.)
         super.onResume();
@@ -564,8 +557,6 @@ public class Briscola2PMatchFragment extends Fragment {
         }
 
     }
-
-
     @Override
     public void onPause() {
         super.onPause();
@@ -577,14 +568,11 @@ public class Briscola2PMatchFragment extends Fragment {
         }*/
         soundManager.pauseBgMusic();
     }
-
-
     @Override
     public void onDetach(){
         super.onDetach();
 
     }
-
     public void onShowMessage(String message) {
         onBuildDialog(
                 message,
@@ -594,8 +582,6 @@ public class Briscola2PMatchFragment extends Fragment {
                 false
         ).show();
     }
-
-
     /**
      * Build and AlertDialog instance
      *
@@ -635,18 +621,15 @@ public class Briscola2PMatchFragment extends Fragment {
         builder.setCancelable(false);
         return builder.create();
     }
-
     public void displayMatchWinner(int player, int score) {
         WinnerMatchDialog dialog = new WinnerMatchDialog();
         dialog.buildDialog(getActivity(),player,score,this);
         dialog.show();
 
     }
-
     public void showToast(String string){
         Toast.makeText(activity,string,Toast.LENGTH_LONG).show();
     }
-
     private ImageView positionCardOnScreen(NeapolitanCard c, Point initialPosition, int elevation, boolean isCovered){
         String cardName = ImageNameBuilder.getFrenchCardImageName(c);
         int resID = getResources().getIdentifier(cardName, "drawable", activity.getPackageName());
@@ -687,45 +670,41 @@ public class Briscola2PMatchFragment extends Fragment {
 
         return card;
     }
-
     public void waitingToFindOnlinePlayer(){
-        progress = new ProgressBar(getActivity());//,null,android.R.attr.indeterminateProgressStyle);
+        FragmentManager manager = getFragmentManager();
+        WaitDialogFragment dialog = WaitDialogFragment.newInstance();
+        dialog.setTargetFragment(Briscola2PMatchFragment.this, REQUEST_STOP_WAITING);
+        dialog.show(manager, DIALOG_WAIT);
+
+       /* progress = new ProgressBar(getActivity());//,null,android.R.attr.indeterminateProgressStyle);
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(100,100);
         params.addRule(RelativeLayout.CENTER_IN_PARENT);
         layout.addView(progress,params);
         progress.setVisibility(View.VISIBLE);  //To show ProgressBar
 
         getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);*/
 
     }
-
     public void foundOnlinePlayer(){
-
-        getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-        progress.setVisibility(View.GONE);     // To Hide ProgressBar
+        FragmentManager manager = getFragmentManager();
+       WaitDialogFragment found =  (WaitDialogFragment) manager.findFragmentByTag(DIALOG_WAIT);
+        if(found != null){
+            found.dismiss();
+        }
+        //getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        //progress.setVisibility(View.GONE);     // To Hide ProgressBar
 
     }
-
-
-/*    public void forceMatchEnd(){ //chiama l'api
-        if(isOnline){
-            controller.forceMatchEnd();
-            activity.exitMatch(isOnline);
-        }
-    }*/
-
     public void manageError(int errorCode){
         //todo, usare l'errorCode per diversificare la gestione
 
 
     }
-
     public void saveMatchData(int player0Points){
         SaveMatchDataDialog dialog = new SaveMatchDataDialog(getActivity(),player0Points,isOnline);
         dialog.showDialog();
     }
-
     private AnimatorSet getTranslationAnimationSet(ImageView targetView, Point origin, Point target) {
 
 
@@ -741,14 +720,12 @@ public class Briscola2PMatchFragment extends Fragment {
 
         return translation;
     }
-
     public void loadPiles(boolean pile0IsEmpty, boolean pile1IsEmpty){
         if(!pile0IsEmpty)
-        positionCardOnScreen(new NeapolitanCard(), slotCoordinates.get(SlotIndices.Player0PileSlot),elevationLevels[elevationLevels.length],true);
+        positionCardOnScreen(new NeapolitanCard(), slotCoordinates.get(SlotIndices.Player0PileSlot),elevationLevels[elevationLevels.length-1],true);
         if(!pile1IsEmpty)
-        positionCardOnScreen(new NeapolitanCard(), slotCoordinates.get(SlotIndices.Player1PileSlot),elevationLevels[elevationLevels.length],true);
+        positionCardOnScreen(new NeapolitanCard(), slotCoordinates.get(SlotIndices.Player1PileSlot),elevationLevels[elevationLevels.length-1],true);
     }
-
     public void loadSurface(List<NeapolitanCard> surfaceCards){
         int size = surfaceCards.size();
         if(size >= 1){
@@ -760,7 +737,6 @@ public class Briscola2PMatchFragment extends Fragment {
             cards.put(SlotIndices.SurfaceSlot1, secondCard);
         }
     }
-
     public void loadHands(List<Briscola2PHand> playersHands, int numberTurnsElapsed){
 
         Briscola2PHand player0 = playersHands.get(Briscola2PMatchConfig.PLAYER0);
@@ -791,16 +767,77 @@ public class Briscola2PMatchFragment extends Fragment {
 
 
     }
-
     public void loadBriscolaIfNeeded(NeapolitanCard briscola){
         if(briscola != null) //birscola still on surface, not in players hands (if in hands, loadHands will take care of that
         cards.put(SlotIndices.BriscolaSlot,positionCardOnScreen(briscola,slotCoordinates.get(SlotIndices.BriscolaSlot),elevationLevels[0],false));
     }
-
     public void loadCurrentPlayer(int currentPlayer){
-        displayCurrentPlayer(currentPlayer).start();
+        displayIsPlayer0Turn(currentPlayer).start();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data){
+        if(resultCode != Activity.RESULT_OK){
+            return;
+        }
+
+        if(requestCode == REQUEST_EXIT){ //button exit pressed
+
+            MatchMenuActivityActions action = (MatchMenuActivityActions) data.getSerializableExtra(WarningExitDialogFragment.EXTRA_ACTION);
+            int motivation = data.getIntExtra(WarningExitDialogFragment.EXTRA_MOTIVATION, Briscola2PMatchActivity.EXIT_BUTTON);
+            Briscola2PMatchConfig loadConfig = (Briscola2PMatchConfig) data.getSerializableExtra(WarningExitDialogFragment.EXTRA_LOAD_CONFIG);
+
+            if(action == MatchMenuActivityActions.STOP_ONLINE){
+                controller.forceMatchEnd(); //invoca rest api
+                handleExit(motivation,loadConfig);
+
+               // ((Briscola2PMatchActivity) getActivity()).exitMatch(,motivation); //true = isOnline
+            }else if(action == MatchMenuActivityActions.WARN_STOP_OFFLINE){
+                FragmentManager manager = getFragmentManager();
+                SaveConfigDataDialogFragment dialog = SaveConfigDataDialogFragment.newInstance(((Briscola2PMatchController) controller).getConfig(),motivation);
+                dialog.setTargetFragment(Briscola2PMatchFragment.this, REQUEST_SAVE);
+                dialog.show(manager,DIALOG_SAVE);
+            }
+
+        }else if(requestCode == REQUEST_SAVE){ //offline match to be saved has been saved, now continue handling exit
+
+            MatchMenuActivityActions action = (MatchMenuActivityActions) data.getSerializableExtra(SaveConfigDataDialogFragment.EXTRA_ACTION);
+            int motivation = data.getIntExtra(SaveConfigDataDialogFragment.EXTRA_MOTIVATION, Briscola2PMatchActivity.EXIT_BUTTON);
+            Briscola2PMatchConfig loadConfig = (Briscola2PMatchConfig) data.getSerializableExtra(SaveConfigDataDialogFragment.EXTRA_LOAD_CONFIG);
+
+            if(action == MatchMenuActivityActions.STOP_OFFLINE){
+                handleExit(motivation,loadConfig);
+            }
+
+        }else if(requestCode == REQUEST_STOP_WAITING){
+            boolean stopWaiting = data.getBooleanExtra(WaitDialogFragment.EXTRA_STOP_WAITING,false);
+            if(stopWaiting){
+                ((OnlineBriscola2PMatchController) controller).stopCallbacks();
+                ((MatchMenuActivity)getActivity()).startMenu(false);
+            }
+        }
     }
 
 
+    private void handleExit(int motivation, Briscola2PMatchConfig loadConfig){
+        switch(motivation){
+            case Briscola2PMatchActivity.EXIT_BUTTON: ((Briscola2PMatchActivity) getActivity()).startMenu(false); break;
+            case Briscola2PMatchActivity.START_NEW_OFFLINE:  ((Briscola2PMatchActivity) getActivity()).startOfflineMatch();  break;
+            case Briscola2PMatchActivity.START_NEW_ONLINE:  ((Briscola2PMatchActivity) getActivity()).startOnlineMatch(); break;
+            case Briscola2PMatchActivity.LOAD_OLD_MATCH :
+               // if(loadConfig == null) throw new IllegalArgumentException();
+                ((Briscola2PMatchActivity) getActivity()).showSavedMatches();break;
+            default: return;
+        }
+    }
 
+    public void handleMatchInterrupt(int motivation){
+        FragmentManager manager = getFragmentManager();
+        WarningExitDialogFragment dialog = WarningExitDialogFragment.newInstance(isOnline, motivation);
+        dialog.setTargetFragment(Briscola2PMatchFragment.this, REQUEST_EXIT);
+      //  manager.beginTransaction().add(R.id.fragment_container,dialog).commitAllowingStateLoss();
+        dialog.show(manager, DIALOG_EXIT); //todo, riprisinta
+        //todo, quando farai la versione orizzontale, guarda: https://stackoverflow.com/questions/30424319/commitallowingstateloss-on-dialogfragment
+        //todo, per ora per evitare la illgalStateException faccio commitAllowingStateLoss
+    }
 }

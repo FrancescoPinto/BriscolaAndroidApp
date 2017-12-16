@@ -1,5 +1,6 @@
 package it.ma.polimi.briscola.model.deck;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -8,7 +9,7 @@ import java.util.List;
  * @param <CARD> the type parameter, extends Card
  * @author Francesco Pinto
  */
-public interface CardListWrapper<CARD extends Card> {
+public interface CardListWrapper<CARD extends Card> extends Serializable {
     /**
      * Establishes whether the two cards lists contain the same cards in the same order.
      *

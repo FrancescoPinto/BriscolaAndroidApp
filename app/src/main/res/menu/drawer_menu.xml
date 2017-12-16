@@ -25,10 +25,10 @@
         <item android:title="@string/statistics">
             <menu>
                 <group android:checkableBehavior="single">
-                    <item
-                        android:id="@+id/id_ranking"
+                    <!--<item
+                        android:id="@+id/id_saved_config"
                         android:icon="@drawable/ic_ranking_black_48dp"
-                        android:title="@string/ranking" />
+                        android:title="@string/resume_from_saved" />-->
                     <item
                         android:id="@+id/id_performance"
                         android:icon="@drawable/ic_performance_summary_black_48dp"
@@ -44,10 +44,10 @@
                         android:id="@+id/id_settings"
                         android:icon="@drawable/ic_settings_black"
                         android:title="@string/app_settings" />
-                    <item
+                  <!--  <item
                         android:id="@+id/id_game_rules"
                         android:icon="@drawable/ic_info_outline_black_48dp"
-                        android:title="@string/game_rules" />
+                        android:title="@string/game_rules" />-->
                 </group>
             </menu>
         </item>

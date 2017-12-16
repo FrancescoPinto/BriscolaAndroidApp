@@ -1,5 +1,6 @@
 package it.ma.polimi.briscola.model.briscola.twoplayers;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +12,7 @@ import it.ma.polimi.briscola.model.deck.NeapolitanCard;
  *
  * @author Francesco Pinto
  */
-public class Briscola2PPile extends AbstractCardListWrapper<NeapolitanCard> {
+public class Briscola2PPile extends AbstractCardListWrapper<NeapolitanCard> implements Serializable {
 
 
     /**
