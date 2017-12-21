@@ -7,7 +7,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
-import it.ma.polimi.briscola.controller.online.OnlineBriscola2PMatchController;
+import it.ma.polimi.briscola.controller.OnlineBriscola2PMatchController;
 import it.ma.polimi.briscola.rest.client.dto.NextTurnCardDTO;
 import retrofit2.Call;
 import retrofit2.Response;

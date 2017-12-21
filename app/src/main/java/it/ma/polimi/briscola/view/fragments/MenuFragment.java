@@ -2,20 +2,13 @@ package it.ma.polimi.briscola.view.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.transition.Slide;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 
-import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMatchConfig;
 import it.ma.polimi.briscola.view.activities.Briscola2PMatchActivity;
-import it.ma.polimi.briscola.view.activities.MatchMenuActivity;
 import it.ma.polimi.briscola.R;
-import it.ma.polimi.briscola.persistency.SettingsManager;
-import it.ma.polimi.briscola.view.dialog.WarningExitDialogFragment;
 
 /**
  * Created by utente on 13/12/17.
@@ -51,7 +44,7 @@ public class MenuFragment extends Fragment {
         startOfflineMatch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) { //todo, anziché settare la difficulty qui, fallo nel newInstance, assegnandolo all'oggeto fragment che istanzi!
-                Briscola2PMatchFragment match = activity.getOldMatches();
+                Briscola2PMatchFragment match = activity.getMatchesFragments();
                 if(match == null) {
                     activity.startOfflineMatch();
                 }else{
@@ -90,13 +83,13 @@ public class MenuFragment extends Fragment {
             @Override
             public void onClick(View view) {
 
-                Briscola2PMatchFragment match = activity.getOldMatches();
+                Briscola2PMatchFragment match = activity.getMatchesFragments();
                 if(match == null) {
                     activity.showSavedMatches();
                 }else{
                     match.handleMatchInterrupt(Briscola2PMatchActivity.LOAD_OLD_MATCH);
                 }
-                /*((MatchMenuActivity) getActivity()).onBuildDialog(
+                /*((MatchActivity) getActivity()).onBuildDialog(
                         "Sorry, no time to implement this",//getString(R.string.exit_message),
                         "Ok",//getString(R.string.yes),
                         null,//getString(R.string.no),
@@ -112,7 +105,7 @@ public class MenuFragment extends Fragment {
         startOnlineMatch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Briscola2PMatchFragment match = activity.getOldMatches();
+                Briscola2PMatchFragment match = activity.getMatchesFragments();
                 if(match == null) {
                     activity.startOnlineMatch();
                 }else{

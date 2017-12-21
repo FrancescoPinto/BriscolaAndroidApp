@@ -1,9 +1,8 @@
 package it.ma.polimi.briscola.rest.client.callbacks;
 
 import android.os.Handler;
-import android.support.v4.app.Fragment;
 
-import it.ma.polimi.briscola.controller.online.OnlineBriscola2PMatchController;
+import it.ma.polimi.briscola.controller.OnlineBriscola2PMatchController;
 import retrofit2.Call;
 import retrofit2.Callback;
 

@@ -14,7 +14,6 @@ import it.ma.polimi.briscola.R;
 import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMatchConfig;
 import it.ma.polimi.briscola.persistency.SQLiteRepositoryImpl;
 import it.ma.polimi.briscola.view.MatchMenuActivityActions;
-import it.ma.polimi.briscola.view.activities.MatchMenuActivity;
 
 /**
  * Fragment representing a Save Configuration Dialog. Asks the user whether he/she wants to save the data.

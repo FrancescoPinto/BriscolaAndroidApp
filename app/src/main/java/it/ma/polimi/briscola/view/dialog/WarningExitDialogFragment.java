@@ -6,19 +6,13 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.EditText;
 
 import it.ma.polimi.briscola.R;
-import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMatchConfig;
-import it.ma.polimi.briscola.persistency.SQLiteRepositoryImpl;
 import it.ma.polimi.briscola.view.MatchMenuActivityActions;
 import it.ma.polimi.briscola.view.activities.Briscola2PMatchActivity;
-import it.ma.polimi.briscola.view.activities.MatchMenuActivity;
-import android.content.DialogInterface;
 
 /**
  * Fragment representing a WarningExitDialogFragment. Warns the user that the action he desires to perform will interrupt the current match

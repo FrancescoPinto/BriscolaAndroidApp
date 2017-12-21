@@ -2,7 +2,6 @@ package it.ma.polimi.briscola.view.dialog;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -14,10 +13,10 @@ import android.widget.TextView;
 
 import it.ma.polimi.briscola.R;
 import it.ma.polimi.briscola.audio.GameEvent;
-import it.ma.polimi.briscola.audio.SoundManager;
+import it.ma.polimi.briscola.audio.SoundService;
 import it.ma.polimi.briscola.model.briscola.statistics.Briscola2PMatchRecord;
 import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMatchConfig;
-import it.ma.polimi.briscola.view.fragments.Briscola2PMatchFragment;
+import it.ma.polimi.briscola.view.activities.MatchActivity;
 
 /**
  * Fragment representing a WinnerMatchDialogFragment. Shows the outcome of a match to the user (who won, with how many points).
@@ -81,7 +80,7 @@ public class WinnerMatchDialogFragment extends DialogFragment {
 
 
         TextView messageTV = (TextView) dialog.findViewById(R.id.who_won_points);
-        SoundManager soundManager = SoundManager.getInstance(getActivity());
+        SoundService soundManager = ((MatchActivity) getActivity()).getSoundManager();
 
         //based on the winner index, show different messages and play different end-match sounds
         if(winnerPlayer == Briscola2PMatchConfig.PLAYER0) {

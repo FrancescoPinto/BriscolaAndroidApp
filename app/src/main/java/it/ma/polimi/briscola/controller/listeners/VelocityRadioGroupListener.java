@@ -7,33 +7,27 @@ import android.widget.RadioGroup;
 import it.ma.polimi.briscola.persistency.SettingsManager;
 
 /**
- * Created by utente on 10/12/17.
+ * The VelocityRadioGroupListener is a listener that saves the velocity preference of the player when it interacts with the RadioGroup
+ *
+ * @author Francesco Pinto
  */
-
 public class VelocityRadioGroupListener implements RadioGroup.OnCheckedChangeListener {
 
-    //implements CompoundButton.OnCheckedChangeListener {
 
       private final Activity activity;
       public VelocityRadioGroupListener(Activity activity) {
           this.activity = activity;
       }
-     /* @Override
-      public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-          new SettingsManager(activity).setDifficultyPreference(difficulty);
-      }
-*/
-    // This overrides the radiogroup onCheckListene
+
+    @Override
     public void onCheckedChanged(RadioGroup group, int checkedId) {
         // This will get the radiobutton that has changed in its check state
         RadioButton checkedRadioButton = (RadioButton) group.findViewById(checkedId);
-        // This puts the value (true/false) into the variable
         boolean isChecked = checkedRadioButton.isChecked();
         // If the radiobutton that has changed in check state is now checked...
         if (isChecked) {
-            int tag = (Integer) checkedRadioButton.getTag();
-            // Changes the textview's text to "Checked: example radiobutton text"
-            new SettingsManager(activity).setVelocityPreference(tag);
+            int tag = (Integer) checkedRadioButton.getTag(); //retrieve the velocity id
+            new SettingsManager(activity).setVelocityPreference(tag); //save
         }
     }
 }

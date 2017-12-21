@@ -1,4 +1,4 @@
-package it.ma.polimi.briscola.controller.online;
+package it.ma.polimi.briscola.controller;
 
 import android.animation.Animator;
 import android.animation.AnimatorSet;
@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import it.ma.polimi.briscola.R;
-import it.ma.polimi.briscola.controller.offline.Briscola2PController;
 import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMatchConfig;
 import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMinimalMatchConfig;
 import it.ma.polimi.briscola.model.deck.NeapolitanCard;
@@ -387,7 +386,7 @@ public class OnlineBriscola2PMatchController implements Briscola2PController {
                 }else if (currentRound == 19 || currentRound == 18){ //if the deck is empty, but players have cards in hand,don't do anything
                     currentRound++;
                     config.setCurrentRound(currentRound);
-                    matchFragment.enablePlayer0CardsTouch(config.getHands(),config.getCurrentPlayer());
+                    matchFragment.putPlayer0CardsTouchListeners(config.getHands(),config.getCurrentPlayer());
                     if(config.getCurrentPlayer() == config.PLAYER1){
                         //animators.add(playFirstCard(player1.chooseMove(config)));
                         briscolaAPI.getOpponentPlayedCard(url, authHeader).enqueue(opponentPlayedCardCallback);
@@ -473,7 +472,7 @@ public class OnlineBriscola2PMatchController implements Briscola2PController {
         stopMatchCallback.shouldStopRetrying(true);
     }
 
-    public int inferTurnsElapsed(){
+    public int getTurnsElapsed(){
         return currentRound;
     }
 

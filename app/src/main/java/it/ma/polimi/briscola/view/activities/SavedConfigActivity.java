@@ -116,7 +116,7 @@ public class SavedConfigActivity extends AppCompatActivity {
             load.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = new Intent();//getIntent();//new Intent(SavedConfigActivity.this,MatchMenuActivity.class);
+                    Intent intent = new Intent();//getIntent();//new Intent(SavedConfigActivity.this,MatchActivity.class);
                     Bundle bundle = new Bundle();
                     bundle.putSerializable(EXTRA_LOAD_CONFIG,data);
                     intent.putExtras(bundle);

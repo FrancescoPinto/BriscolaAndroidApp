@@ -3,17 +3,23 @@ package it.ma.polimi.briscola.controller.listeners;
 import android.animation.Animator;
 
 import it.ma.polimi.briscola.audio.GameEvent;
-import it.ma.polimi.briscola.audio.SoundManager;
+import it.ma.polimi.briscola.audio.SoundService;
 
 /**
- * Created by utente on 09/12/17.
+ * The MoveCardAnimationListener is an AnimationListener that overrides onAnimationStart to play a sound when animation start (mainly, a card translation)
+ *
+ * @author Francesco Pinto
  */
-
 public class MoveCardAnimationListener implements Animator.AnimatorListener {
 
-    private final SoundManager soundManager;
+    private final SoundService soundManager;
 
-    public MoveCardAnimationListener(SoundManager soundManager){
+    /**
+     * Instantiates a new Move card animation listener.
+     *
+     * @param soundManager the sound manager
+     */
+    public MoveCardAnimationListener(SoundService soundManager){
         super();
         this.soundManager = soundManager;
     }

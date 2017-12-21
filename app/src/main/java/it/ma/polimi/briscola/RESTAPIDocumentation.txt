@@ -1,11 +1,4 @@
-package it.ma.polimi.briscola.controller.online;
-
-/**
- * Created by utente on 09/12/17.
- */
-
-public class OnlineController {
-   /* Ogni richiesta deve avere authorization header del tipo:
+ /* Ogni richiesta deve avere authorization header del tipo:
     APIKey key;
 
     se per qualsiasi ragione il messaggio è malformato, 401 Unauthorized
@@ -59,5 +52,3 @@ public class OnlineController {
 
         LEGGI IL SUO ESEMPIO DI USO PER CAPIRE COSA FARE
     */
-
-}

@@ -5,9 +5,11 @@ import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PPile;
 import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PSurface;
 
 /**
- * Created by utente on 19/12/17.
+ * Class that allows to play a Briscola 2-players match by manipulating a Briscola 2 player match configuration. It is a class that collects convenience methods that handle the match game logic, so that clients of this class can play a match without a GUI and do not need to be concerned with direct manipulation of the configuration in order to play the match.
+ * This class exposes methods for starting a new match, resuming a saved match (based on a string configuration), let the players make moves.
+ *
+ * @author Francesco Pinto
  */
-
 
 public class Briscola2PMatchNoGUIController {
     private Briscola2PMatchConfig config;

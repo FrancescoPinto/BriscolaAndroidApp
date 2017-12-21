@@ -7,8 +7,9 @@
         android:icon="@mipmap/briscola_launcher_icon"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".view.activities.MatchMenuActivity"
+        android:theme="@style/AppTheme"
+        android:name=".BriscolaApplication">
+        <activity android:name=".view.activities.MatchActivity"
             android:theme = "@style/NoActionBarTheme">
 
             <!-- <activity android:name=".MainActivity"> -->
@@ -20,13 +21,13 @@
         </activity>
         <!-- <activity android:name=".Briscola2PMatchActivity" android:theme = "@style/FullscreenActionBarStyle" /> -->
         <activity android:name=".view.activities.PreviousMatchRecordsActivity"
-            android:parentActivityName=".view.activities.MatchMenuActivity"
+            android:parentActivityName=".view.activities.MatchActivity"
             android:label="@string/statistics"/>
         <activity android:name=".view.activities.SavedConfigActivity"
-            android:parentActivityName=".view.activities.MatchMenuActivity"
+            android:parentActivityName=".view.activities.MatchActivity"
             android:label="@string/resume_from_saved"/>
         <activity android:name=".view.activities.SettingsActivity"
-            android:parentActivityName=".view.activities.MatchMenuActivity"
+            android:parentActivityName=".view.activities.MatchActivity"
             android:label="@string/app_settings"/>
         <service android:name=".audio.SoundService"  android:enabled="true"></service>
     </application>

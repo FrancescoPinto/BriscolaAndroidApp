@@ -1,7 +1,11 @@
 package it.ma.polimi.briscola.view.activities;
 
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
@@ -12,8 +16,9 @@ import android.widget.RadioGroup;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import it.ma.polimi.briscola.BriscolaApplication;
 import it.ma.polimi.briscola.R;
-import it.ma.polimi.briscola.audio.SoundManager;
+import it.ma.polimi.briscola.audio.SoundService;
 import it.ma.polimi.briscola.controller.listeners.DifficultyRadioGroupListener;
 import it.ma.polimi.briscola.controller.listeners.VelocityRadioGroupListener;
 import it.ma.polimi.briscola.persistency.SettingsManager;
@@ -31,7 +36,9 @@ public class SettingsActivity extends AppCompatActivity{
 
     private RadioGroup velocityRadioGroup;
     private RadioButton normal, fast, veryFast;
+    private boolean musicIsBound;
 
+    private SoundService soundManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,8 +60,6 @@ public class SettingsActivity extends AppCompatActivity{
         sfx = (Switch) findViewById(R.id.toggle_sfx_switch);
 
 
-        Log.d("TAG", "Sono dai settings e ho audio "+SoundManager.getInstance(getApplicationContext()).getMusicStatus() + " e sfx "+
-                SoundManager.getInstance(getApplicationContext()).getSoundStatus());
        // Button saveButton = (Button) findViewById(R.id.id_save_button);
        // saveButton.setOnClickListener(new UpdateColorListener(this, this));
 
@@ -118,25 +123,23 @@ public class SettingsActivity extends AppCompatActivity{
 
         velocityRadioGroup.setOnCheckedChangeListener(new VelocityRadioGroupListener(this));
 
-        audio.setChecked(SoundManager.getInstance(getApplicationContext()).getMusicStatus());
-        sfx.setChecked(SoundManager.getInstance(getApplicationContext()).getSoundStatus());
+        soundManager = ((BriscolaApplication) getApplication()).getSoundManager();
+
+        audio.setChecked(soundManager.getMusicStatus());
+        sfx.setChecked(soundManager.getSoundStatus());
 
         audio.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                SoundManager.getInstance(getApplicationContext()).toggleMusicStatus();
-                Log.d("TAG", "Sono dai settings e ho audio "+SoundManager.getInstance(getApplicationContext()).getMusicStatus() + " e sfx "+
-                        SoundManager.getInstance(getApplicationContext()).getSoundStatus());
+                soundManager.toggleMusicStatus();
             }
         });
 
         sfx.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-               SoundManager.getInstance(getApplicationContext()).toggleSoundStatus();
-                Log.d("TAG", "Sono dai settings e ho audio "+SoundManager.getInstance(getApplicationContext()).getMusicStatus() + " e sfx "+
-                        SoundManager.getInstance(getApplicationContext()).getSoundStatus());
-           }
+                soundManager.toggleSoundStatus();
+            }
         });
     }
 
