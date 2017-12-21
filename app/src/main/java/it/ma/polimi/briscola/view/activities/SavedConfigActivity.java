@@ -6,10 +6,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import java.util.List;
@@ -27,13 +27,16 @@ public class SavedConfigActivity extends AppCompatActivity {
     private RecyclerView savedConfigRecyclerView;
     private SavedConfigAdapter adapter;
 
+    private TextView noAvailable;
+
     public static final String EXTRA_LOAD_CONFIG = "it.ma.polimi.briscola.savedConfig.config";
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_saved_config);
+        setContentView(R.layout.activity_saved_config);
 
         //@Override
         // public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -41,6 +44,7 @@ public class SavedConfigActivity extends AppCompatActivity {
         // init the view
         //    View mainView = inflater.inflate(R.layout.fragment_saved_config, container, false);
 
+        noAvailable = (TextView) findViewById(R.id.no_items_saved_matches);
         savedConfigRecyclerView = (RecyclerView) findViewById(R.id.saved_config_recyclerview);
         savedConfigRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -55,6 +59,11 @@ public class SavedConfigActivity extends AppCompatActivity {
 
         SQLiteRepositoryImpl repo = new SQLiteRepositoryImpl(this);
         List<Briscola2PMatchConfig> savedConfig = repo.findAllMatchConfig();
+
+        if(savedConfig.isEmpty())
+            noAvailable.setVisibility(View.VISIBLE);
+        else
+            noAvailable.setVisibility(View.GONE);
 
         adapter = new SavedConfigAdapter(savedConfig);
         savedConfigRecyclerView.setAdapter(adapter);

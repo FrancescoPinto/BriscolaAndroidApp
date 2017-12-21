@@ -152,4 +152,11 @@ public class MenuFragment extends Fragment {
 
     }
 
+    public boolean getIsOverlay(){
+        return isOverlay;
+    }
+
+    public void setIsOverlay(boolean isOverlay){
+        this.isOverlay = isOverlay;
+    }
 }

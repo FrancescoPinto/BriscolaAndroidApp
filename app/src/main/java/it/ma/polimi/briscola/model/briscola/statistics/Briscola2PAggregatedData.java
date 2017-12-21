@@ -19,8 +19,6 @@ public class Briscola2PAggregatedData implements Comparable {
 
 
     public Briscola2PAggregatedData(List<Briscola2PMatchRecord> userPreviousMatches) {
-        if(userPreviousMatches.isEmpty())
-            throw new IllegalArgumentException("No records in the argument");
 
         numberOfMatchesPlayed = totalScore = numberOfMatchesWinned = numberOfDraws = numberOfMatchesOnline= 0;
 

@@ -14,8 +14,8 @@ import android.widget.Toast;
 
 import it.ma.polimi.briscola.R;
 import it.ma.polimi.briscola.audio.SoundManager;
-import it.ma.polimi.briscola.controller.offline.DifficultyRadioGroupListener;
-import it.ma.polimi.briscola.controller.offline.VelocityRadioGroupListener;
+import it.ma.polimi.briscola.controller.listeners.DifficultyRadioGroupListener;
+import it.ma.polimi.briscola.controller.listeners.VelocityRadioGroupListener;
 import it.ma.polimi.briscola.persistency.SettingsManager;
 
 /**

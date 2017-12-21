@@ -13,9 +13,9 @@ import it.ma.polimi.briscola.model.deck.NeapolitanCardSuit;
 public class Briscola2PAIDumbGreedyPlayer extends AbstractBriscola2PAIPlayer {
 
 
-    public int chooseMove(Briscola2PMatchConfig configuration){
+    public int chooseMove(Briscola2PMatchConfig configuration, int playerIndex){
         config = configuration;
-        myHand = config.getHand(config.PLAYER1);
+        myHand = config.getHand(playerIndex);
 
 
         if(config.getSurface().size() == 0){

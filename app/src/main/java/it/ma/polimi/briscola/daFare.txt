@@ -1,3 +1,5 @@
+DOCUMENTAZIONE FATTA COMPLETA: DIALOG,
+
 DA FARE IN SETTIMANA:
 --- ONLINE
 - quando avvii un match online, non puoi tornare indietro se il match non si avvia, perché blocchi gli input!
@@ -16,21 +18,29 @@ perché appena pescata ma non giunta in tempo ... usa la soluzione che hai fatto
 dopo displayCurrentPlayer ... e presumo anche dopo fine dell'animazione della pesca??? non ricord, controlla
 per rapidità, cerca tutte le manipolazioni di isPlaying o gli usi di GameInteractionEnabler
 ... C' E' DAVVERO QUALCOSA CHE NON VA
+   //todo IMPORTANTISSIMO: togliere il retained
+   - del back button ora devi solo rimuovere il dialog brutto e sostituirlo con uno bello e permetter all'utente di uscire
+   - togli il background scuro al menu?? o almeno fallo più chiaro ...
+   -- SISTEMARE LA QUESTIONE DEL DRAWER (ovvero che resta checked)
+    -       fare l'IA' avanzata
+    - controllare l'online e debuggarlo
+   // anima le cards delle schermate statiche e il menu di inizio match
+   - refactor del codice e documentazione
+  l'activity coi fragment non dovrebbe essere una FragmentActivity?
+- controllare che i match online chiudano bene e salvino correttamente i dati
+- cambiare i bottoni circolari nel menu e nel caricamento con delle icone a sfondo bianco o comunque qualcosa più carino (va bene nel match che restino così)
 - anima tutte le cardview così che sembri tutto più "giocoso"
 - testare il Drawer in varie API
-- IA più intelligente
-- randomizzare (come in SoundInfo) il seme (ovvero creare un unico random da usare sempre) (lo lascio per ultimo, così mi è più facile testare)
-- anima il menu di inizio match
-- FAI SI che se ranking e previousMatchRecords sono vuoti mostri all'utente "Non hai ancora giocato, non ci sono dati"
-- METTERE AUDIO ANCHE IN ALTRE ACTIVITY
+- sistemare l'audio service per bene (ovvero creare la comunicazione in modo opportuno https://www.codeproject.com/Articles/258176/Adding-Background-Music-to-Android-App
+    tu hai usato un workaround, fa anche riferimento a quello che dice il prof. nelle slides Service)
 - far sì che quando premi Back se c'è un fragment che non sia il primissimo menù, venga poppato, altrimenti fai uscire dall'app
-- potrait e landscape, diversi dispositivi
+- testare i passaggi in landscape nel caso di online
+- mettere tutte le cose (dimensioni) in @dimen ecc., così i colori, ecc. ecc. ecc.
 - metti anche l'opzione per mostrare  il punteggio corrente di ciascuno
 - anima meglio Your Turn e il contatore di turni, sistema la textView
 - fare un refactor del codice, e iniziare a documentare
 - FAI I MENU DI GIOCO "a palline che rotolano", è carino, semplice, ti leva l'imbarazzo di quel cartone mostruoso
 - FAI DEI TEST CHE DISTRUGGONO E RICREANO IL DATABASE DA ZERO <- I.e. disinstalla l'app
-- metti la briscola SOTTO il deck (visivamente), non sopra!
 -  la musica deve partire nello splash screen e rimanere PER SEMPRE, proprio per andare di fino dovresti anche
     ricalibrare i livelli di audio, perché alcuni suoni sono troppo sparati (SOPRATTUTTO LA VITTORIA DEL ROUND), ma questo fallo esternamente
     pensare anche a cosa succede alla musica quando fai onPause, onUpdate ecc. ecc.
@@ -57,6 +67,8 @@ isDeckEmpty() ... però dentro ci gestisci anche ciò che succede quando non è 
     TALE BUG, USANDO IL DEBUGGER, sembra scatenato dal fatto che l'adjust view viene invocato 3 volte! (PRESUMO: turno mio(o suo, è indifferente), turno suo (o mio, è indifferente) VINCE LUI quindi automaticamente invoca l'adjust, però non ha manco distribuito le carte, figurati se
     sa dove si trova sulla superficie!), inoltre, continua a mettere sotto sforzo l'app cliccando come un forsennato
 - sistemare il drawer
+- randomizzare (come in SoundInfo) il seme (ovvero creare un unico random da usare sempre) (lo lascio per ultimo, così mi è più facile testare)
+   //  QUESTO DOVREI AVERLO FATTO IMPLICITAMENTE FACENDO IL REPLACE CON IL FRAGMENT MANAGER A FINE PARTITA (automaticamente fa replace con menu)->: togliere retained fragment quando la partita termina o viene abbandonata (chiusa quando si gestisce un exit dalla partita)
 
 NELLA SPECIFICA, PER LA UI LUI RICHIEDE ALMENO:
 - UI should contain navigation that allows to

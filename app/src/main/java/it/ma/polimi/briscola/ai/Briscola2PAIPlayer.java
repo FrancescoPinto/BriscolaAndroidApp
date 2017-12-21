@@ -14,5 +14,5 @@ public interface Briscola2PAIPlayer {
      * @param config Object representing the match configuration
      * @return The choosen move, i.e. an integer among {0,1,2} representing the card to be played
      */
-    public int chooseMove(Briscola2PMatchConfig config);
+    public int chooseMove(Briscola2PMatchConfig config, int playerIndex);
 }

@@ -1,5 +1,6 @@
 package it.ma.polimi.briscola.ai;
 
+import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMatchConfig;
@@ -11,13 +12,15 @@ import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMatchConfig;
  */
 
 public class Briscola2PAIRandomPlayer implements Briscola2PAIPlayer {
+    private static Random random = new Random();
     @Override
-    public int chooseMove(Briscola2PMatchConfig config) {
-        int max = config.getHand(config.PLAYER1).size();
+    public int chooseMove(Briscola2PMatchConfig config, int playerIndex) {
+        int max = config.getHand(playerIndex).size();
         if(max == 0)
             return 0;
         else
-            return ThreadLocalRandom.current().nextInt(0, max);
+            return random.nextInt(max);
+            //return ThreadLocalRandom.current().nextInt(0, max);
 
     }
 }

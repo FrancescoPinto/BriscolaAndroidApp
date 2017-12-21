@@ -1,11 +1,18 @@
 package it.ma.polimi.briscola.ai;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import it.ma.polimi.briscola.model.briscola.BriscolaCardPointsAndRankingRules;
 import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PHand;
 import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMatchConfig;
+import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PPile;
 import it.ma.polimi.briscola.model.deck.NeapolitanCard;
 import it.ma.polimi.briscola.model.deck.NeapolitanCardSuit;
 
@@ -16,6 +23,9 @@ import it.ma.polimi.briscola.model.deck.NeapolitanCardSuit;
 public abstract class AbstractBriscola2PAIPlayer implements Briscola2PAIPlayer {
     Briscola2PHand myHand;
     Briscola2PMatchConfig config;
+    float suitProbabilities[] = new float[] {0f,0f,0f,0f};
+    int batonsIndex = 0, cupsIndex = 1, goldsIndex = 2, swordsIndex = 3;
+    final int cardsPerSuit = 10;
 
     public int findCardPositionInHand(NeapolitanCard c) {
         for (int i = 0; i < myHand.size(); i++)
@@ -25,6 +35,73 @@ public abstract class AbstractBriscola2PAIPlayer implements Briscola2PAIPlayer {
         throw new IllegalArgumentException("The argument is not contained in hand");
     }
 
+    public void computeSuitProbabilities(int playerIndex){
+        List<NeapolitanCard> cardsInPiles = config.getPile(Briscola2PMatchConfig.PLAYER0).getCardList();
+        cardsInPiles.addAll(config.getPile(Briscola2PMatchConfig.PLAYER1).getCardList());
+        cardsInPiles.addAll(config.getHand(playerIndex).getCardList());
+
+        int batons = 0;
+        int cups = 0;
+        int golds = 0;
+        int swords = 0;
+
+        for(NeapolitanCard c: cardsInPiles){
+            switch (c.getCardSuitEnum()){
+                case BATONS: batons++; break;
+                case CUPS: cups++; break;
+                case GOLDS: golds++; break;
+                case SWORDS: swords++;break;
+            }
+        }
+
+        suitProbabilities[batonsIndex] = (cardsPerSuit-batons)/cardsPerSuit;
+        suitProbabilities[cupsIndex] = (cardsPerSuit-cups)/cardsPerSuit;
+        suitProbabilities[goldsIndex] = (cardsPerSuit-golds)/cardsPerSuit;
+        suitProbabilities[swordsIndex] = (cardsPerSuit-swords)/cardsPerSuit;
+
+    }
+
+    public NeapolitanCardSuit getMinAdversaryProbabilitySuitInMyHand(){
+        Map<NeapolitanCardSuit, Float> probabilitiesInHand = new HashMap<>();
+        for(NeapolitanCardSuit suit: getCardSuitInMyHand()){
+            float probability;
+            switch(suit){
+                case BATONS: probability = suitProbabilities[batonsIndex]; break;
+                case CUPS: probability = suitProbabilities[cupsIndex]; break;
+                case GOLDS: probability = suitProbabilities[goldsIndex]; break;
+                case SWORDS: probability = suitProbabilities[swordsIndex]; break;
+                default: probability = 0;
+            }
+            probabilitiesInHand.put(suit,probability);
+        }
+        float min = Collections.min(probabilitiesInHand.values());
+        for(NeapolitanCardSuit suit:probabilitiesInHand.keySet()){
+            if(probabilitiesInHand.get(suit) == min)
+                return suit;
+        }
+
+        return null;
+    }
+
+    public float getAdversaryProbabilityTrump(NeapolitanCardSuit trumpSuit){
+        float probability;
+        switch(trumpSuit){
+            case BATONS: probability = suitProbabilities[batonsIndex]; break;
+            case CUPS: probability = suitProbabilities[cupsIndex]; break;
+            case GOLDS: probability = suitProbabilities[goldsIndex]; break;
+            case SWORDS: probability = suitProbabilities[swordsIndex]; break;
+            default: probability = 0;
+        }
+        return probability;
+    }
+
+    public Set<NeapolitanCardSuit> getCardSuitInMyHand(){
+        Set<NeapolitanCardSuit> cardSuitsInHand = new HashSet<>();
+        for(NeapolitanCard c: myHand.getCardList()){
+            cardSuitsInHand.add(c.getCardSuitEnum());
+        }
+        return cardSuitsInHand;
+    }
     //prende carta a miglior punteggio, a parità di punteggio prende quella con peggior rank
     public NeapolitanCard getBestPointValuedCard(List<NeapolitanCard> cards) { //a pari pointvalue butto quella con rank peggiore (più grande)
 
@@ -105,8 +182,8 @@ public abstract class AbstractBriscola2PAIPlayer implements Briscola2PAIPlayer {
 
     }
 
-    public NeapolitanCard getMinimumPointValueNotTrumpWithThreshold(NeapolitanCardSuit suit, int maxThreshold){
-        List<NeapolitanCard> cards = getCardsNotOfSuitInHand(suit);
+    public NeapolitanCard getMinimumPointValueNotTrumpWithThreshold(NeapolitanCardSuit trumpSuit, int maxThreshold){
+        List<NeapolitanCard> cards = getCardsNotOfSuitInHand(trumpSuit);
         if(cards.isEmpty())
             return null;
 
@@ -207,6 +284,9 @@ public abstract class AbstractBriscola2PAIPlayer implements Briscola2PAIPlayer {
     }
 
     public NeapolitanCard getWorstPointValuedCardInHand(){
+        if(myHand.isEmpty()){
+            throw new IllegalStateException("Empty hand");
+        }
         NeapolitanCard worstCard = myHand.getCardList().get(0);
         for(NeapolitanCard c:myHand.getCardList())
             if (BriscolaCardPointsAndRankingRules.getPointValue(c.getCardNumber()) < BriscolaCardPointsAndRankingRules.getPointValue(worstCard.getCardNumber()))

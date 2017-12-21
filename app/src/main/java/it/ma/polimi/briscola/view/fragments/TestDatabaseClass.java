@@ -7,8 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import it.ma.polimi.briscola.R;
-import it.ma.polimi.briscola.view.dialog.SaveMatchDataDialog;
-import it.ma.polimi.briscola.view.dialog.WinnerMatchDialog;
 
 /**
  * Created by utente on 12/12/17.
@@ -20,8 +18,8 @@ public class TestDatabaseClass extends Fragment{
 
         View mainView = inflater.inflate(R.layout.fragment_briscola_match, container, false); //todo, refactor del nome
 
-        SaveMatchDataDialog dialog = new SaveMatchDataDialog(getActivity(),68,true);
-        dialog.showDialog();
+        //SaveFinishedMatchRecordDialogFragment dialog = new SaveFinishedMatchRecordDialogFragment(getActivity(),68,true);
+       // dialog.showDialog();
 
        // WinnerMatchDialog dialog = new WinnerMatchDialog();
        // dialog.buildDialog(getActivity(), 1, 67, this);

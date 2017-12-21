@@ -16,11 +16,13 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
 import it.ma.polimi.briscola.R;
 import it.ma.polimi.briscola.audio.SoundManager;
+import it.ma.polimi.briscola.audio.SoundService;
 import it.ma.polimi.briscola.controller.offline.Briscola2PController;
 import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMatchConfig;
 import it.ma.polimi.briscola.persistency.SettingsManager;
@@ -34,9 +36,9 @@ public class MatchMenuActivity extends AppCompatActivity implements Briscola2PMa
     /** the DrawerLayout */
     private DrawerLayout drawerLayout;
     private NavigationView nvDrawer;
+    private Menu menu;
     private Toolbar toolbar;
     private SoundManager soundManager;
-    private MenuItem onlineMenuItem, offlineMenuItem, matchMenu;
     private SettingsManager settingsManager;
     public static final int PICK_MATCH_TO_LOAD = 1;
 
@@ -65,31 +67,8 @@ public class MatchMenuActivity extends AppCompatActivity implements Briscola2PMa
         setSupportActionBar(toolbar);
 
 
-        // toolbar = (Toolbar) findViewById(R.id.toolbar);
-       // setSupportActionBar(toolbar);
-       // getSupportActionBar().setHomeButtonEnabled(true); // for burger icon
-       // getSupportActionBar().setDisplayHomeAsUpEnabled(true); // burger icon related
-       // getSupportActionBar().setDisplayShowCustomEnabled(true); // CRUCIAL - for displaying your custom actionbar
-
-//todo LEGGI SOTTO
-  //DA FARE MOLTO IMPORTANTE, NASCONDI LA ACTION BAR E METTI UN FLOATING BUTTON
-
-        // Find our drawer view
         drawerLayout = (DrawerLayout) findViewById(R.id.id_drawerLayout);
-        //todo se proprio sarai costretto a fare questo drawer con adapter scritto a mano, tieni bene a mente
-        //        che ilt uo vecchio adapter era inutilmente complicato: l'adapter ' deve avere solo una lista di elementi,
-        //        prendi a modello l'implementazione' di adapter e holder che hai fatto per le recyclerView in SavedConfigActivity
-        //        QUINDI, se vuoi dei SEPARATORI, molto semplicemente salvi nell'adapter ' delle costanti (che rappresentano
-        //gli indici di dove si troveranno, nell'UNICA' lista, i nomi dei separatori, e setterai la view in quel modo)
-        // Enabling the Drawer button
-//        getSupportActionBar().setHomeButtonEnabled(true);
-    //    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        //drawerToggle = new ActionBarDrawerToggle( todo <- questo hai rimosso
-        //        this, drawerLayout, 0, 0
-       // );
-
-        //todo, se vuoi puoi anche modificare il titolo sull'action bar (vedi le slides delle lezioni, slide 28 di Fragments and Navigation
         // add listener to drawer
         drawerLayout.addDrawerListener(drawerToggle);
 
@@ -107,6 +86,7 @@ public class MatchMenuActivity extends AppCompatActivity implements Briscola2PMa
                 public void onDrawerClosed(View view)
                 {
                     supportInvalidateOptionsMenu();
+
                     //drawerOpened = false;
                 }
 
@@ -121,33 +101,70 @@ public class MatchMenuActivity extends AppCompatActivity implements Briscola2PMa
         }
         setupDrawerContent(nvDrawer);
 
+        menu = nvDrawer.getMenu();
+
 
         setVolumeControlStream(AudioManager.STREAM_MUSIC); //todo, spostare questo nell'activity! <------------------------
         //todo DAVVERO IMPORTANTE SPOSTARE LA GESTIONE DEL SUONO NELL'ACTIVITY!!! <-------------------------------------------------
         //todo OPPURE in una superActivity da cui erediteranno tutte le activity, o comunque trova un modo di passare il soundManager
         //todo così che tutte le activity gestiscano l'audio in modo continuo (cioè se vado in performance, l'audio non si ferma)
-        soundManager = SoundManager.getInstance(getApplicationContext());
+
+        //soundManager.resumeBgMusic(); todo <----- questo è il vecchio musica
+        startService(new Intent(MatchMenuActivity.this, SoundManager.class));
+        soundManager = SoundManager.getInstance(getApplicationContext()); //todo <----- questo è il vecchio musica
         soundManager.resumeBgMusic();
+      //  Intent serviceIntent = new Intent(MatchMenuActivity.this, SoundService.class);
+       // Bundle bundle = new Bundle();
+       // bundle.putSerializable(SoundManager.EXTRA_SOUND_MANAGER, soundManager);
+       // serviceIntent.putExtras(bundle);
+        //serviceIntent.putExtra("UserID", "123456");
+     //   startService(serviceIntent);
+
+        Log.d("TAG","Grabbed the sound manager "+soundManager);
+        // find the retained fragment on activity restarts
+        FragmentManager fm = getSupportFragmentManager();
+        Briscola2PMatchFragment wasPlayingOfflineMatchFragment = (Briscola2PMatchFragment) fm.findFragmentByTag(offlineMatchTag);
+        Briscola2PMatchFragment wasPlayingOnlineMatchFragment = (Briscola2PMatchFragment) fm.findFragmentByTag(onlineMatchTag);
+
+        if(wasPlayingOfflineMatchFragment != null){
+            //do nothing, fragment is already available
+        }else if(wasPlayingOnlineMatchFragment != null){
+            //do nothing, fragment is already available
+
+        }else if (wasPlayingOfflineMatchFragment == null) {
+        // create the fragment and data the first time
+            startMenu(false);
+            // add the fragment
+           // mRetainedFragment = new RetainedFragment();
+            //fm.beginTransaction().add(mRetainedFragment, TAG_RETAINED_FRAGMENT).commit();
+            // load data from a data source or perform any calculation
+           // mRetainedFragment.setData(loadMyData());
+        }else if(wasPlayingOnlineMatchFragment==null){
+            startMenu(false);
+        }
+        //if there was a match running, restart the match
 
 
-
-       // offlineMenuItem = nvDrawer.findViewById(R.id.id_play_offline);
-       // onlineMenuItem = nvDrawer.findViewById(R.id.id_play_online);
-        matchMenu = nvDrawer.getMenu().findItem(R.id.id_game_menu);
+    }
 
 
-        //startFragment(OfflineMenuFragment.class, offlineMenuItem);
+    private void unCheckAllMenuItems( Menu menu) {
+        int size = menu.size();
+        for (int i = 0; i < size; i++) {
+            final MenuItem item = menu.getItem(i);
+            if(item.hasSubMenu()) {
+                // Un check sub menu items
+                unCheckAllMenuItems(item.getSubMenu());
+            } else {
+                item.setChecked(false);
+            }
+        }
+    }
 
-        startMenu(false);
-       // startFragment(MenuFragment.class, matchMenu,menuFragmentTag);
-
-       /* Fragment fragment = (Fragment) OfflineMenuFragment.newInstance();
-        // Insert the fragment by replacing any existing fragment
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .add(R.id.fragment_container, fragment) //todo, oppure replace?
-                .commit();*/
-
+    @Override
+    protected void onDestroy() {
+        stopService(new Intent(MatchMenuActivity.this, SoundManager.class));
+        super.onDestroy();
     }
 
     @Override
@@ -178,31 +195,7 @@ public class MatchMenuActivity extends AppCompatActivity implements Briscola2PMa
         Intent intent;
         Class fragmentClass;
         switch(menuItem.getItemId()) {
-            case R.id.id_game_menu:
-                Fragment oldMatches = getOldMatches();
-                if(oldMatches != null)
-                    startMenu(true);
-                else
-                    startMenu(false);
-                break;
-           /* case R.id.id_play_offline:
-                fragmentClass = OfflineMenuFragment.class;
-                startFragment(fragmentClass,menuItem);
-                break;
-            case R.id.id_play_online:
-                fragmentClass = OnlineMenuFragment.class;
-                startFragment(fragmentClass,menuItem);
-                break;*/
-          //  case R.id.id_saved_config:
-            //    showSavedMatches();
-                // fragmentClass = SavedConfigActivity.class;
-                //startFragment(fragmentClass,menuItem,"saved_config");
-                /*
-                fragmentClass = TestDatabaseClass.class;
-                startFragment(fragmentClass,menuItem, "ranking");*/
-                //intent = new Intent(MatchMenuActivity.this, SavedConfigActivity.class);
-                //startActivity(intent);
-                //break;
+
             case R.id.id_performance:
                 intent = new Intent(MatchMenuActivity.this, PreviousMatchRecordsActivity.class);
                 startActivity(intent);
@@ -211,58 +204,13 @@ public class MatchMenuActivity extends AppCompatActivity implements Briscola2PMa
                 intent = new Intent(MatchMenuActivity.this, SettingsActivity.class);
                 startActivity(intent);
                 break;
-           /* case R.id.id_game_rules: //questo un dialog tooltip
-                onBuildDialog(
-                        "questa deve diventare un tooltip/tutorial/qualcosa, ma fallo solo dopo che hai finito",//getString(R.string.exit_message),
-                        "temporaneo si",//getString(R.string.yes),
-                        "temporaneo no",//getString(R.string.no),
-                        true,
-                        false
-                ).show();
-                break;*/
-            default:return;
+            default:
+                return;
         }
 
-
-        // Set action bar title
-        setTitle(menuItem.getTitle());
-        // Close the navigation drawer
+        //since they are handled through activities and drawer is not necessary in those activities
+        //when the activity are closed the menuItem should not be checked
         drawerLayout.closeDrawers();
-    }
-    private void startFragment(Class fragmentClass, MenuItem menuItem, String tag){
-        Fragment fragment = null;
-        try {
-            if(fragmentClass != null) {
-                fragment = (Fragment) fragmentClass.newInstance();
-                // Insert the fragment by replacing any existing fragment
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                if(fragmentManager.findFragmentByTag(menuFragmentTag) != null && tag.equals(menuFragmentTag)){
-                    return;
-                }
-                fragmentManager.beginTransaction()
-                        .add(R.id.fragment_container, fragment, tag) //todo, oppure replace?
-                        .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
-                        .commit();
-                // Highlight the selected item has been done by NavigationView
-                menuItem.setChecked(true);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void replaceWithMatchMenu(){
-
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        Fragment oldMatch = fragmentManager.findFragmentByTag("offline_match");
-        if(oldMatch != null)
-            fragmentManager.beginTransaction().remove(oldMatch).commit();
-
-        oldMatch = fragmentManager.findFragmentByTag("online_match");
-        if(oldMatch != null)
-            fragmentManager.beginTransaction().remove(oldMatch).commit();
-
-        startFragment(MenuFragment.class, matchMenu, menuFragmentTag);
     }
 
 
@@ -308,6 +256,22 @@ public class MatchMenuActivity extends AppCompatActivity implements Briscola2PMa
     @Override
     public void onBackPressed() {
 
+
+        MenuFragment menu = (MenuFragment) getSupportFragmentManager().findFragmentByTag(menuFragmentTag);
+        if(menu != null && menu.getIsOverlay()){
+            hideOverlayMenu();
+            menu.setIsOverlay(false);
+        }else { //if there is an overlay, priority to overlay closure rather than closing the match
+            Briscola2PMatchFragment match = getOldMatches();
+            if (match != null) {
+                match.handleMatchInterrupt(EXIT_BUTTON);
+            }
+        }
+
+
+
+        super.onBackPressed(); //todo <- questo lo chiami dopo che l'utente dice' sì voglio uscire nel dialog
+        // matchMenu.getIsOverlay() if yes fai una cosa altrimenti un'altra'
         if(getSupportFragmentManager().getBackStackEntryCount() > 1){
             getSupportFragmentManager().popBackStack();
         }else {
@@ -347,7 +311,7 @@ public class MatchMenuActivity extends AppCompatActivity implements Briscola2PMa
             case START_NEW_OFFLINE:  startOfflineMatch();  break;
             case START_NEW_ONLINE:  startOnlineMatch(); break;
             case LOAD_OLD_MATCH : loadMatch(loadConfig);break;
-            default: return;
+            default: break;
 
         }
 
@@ -385,7 +349,6 @@ public class MatchMenuActivity extends AppCompatActivity implements Briscola2PMa
                     .addToBackStack(menuFragmentTag)
                     .commit();
         }
-        matchMenu.setChecked(true);
     }
     @Override
     public void startOfflineMatch(){
@@ -527,6 +490,7 @@ public class MatchMenuActivity extends AppCompatActivity implements Briscola2PMa
     {
         super.onPostCreate(savedInstanceState);
         drawerToggle.syncState();
+
     }
 
     @Override
@@ -534,6 +498,7 @@ public class MatchMenuActivity extends AppCompatActivity implements Briscola2PMa
     {
         super.onConfigurationChanged(newConfig);
         drawerToggle.onConfigurationChanged(newConfig);
+
     }
 
 

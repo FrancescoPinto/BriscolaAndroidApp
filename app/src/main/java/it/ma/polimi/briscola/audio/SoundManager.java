@@ -1,6 +1,8 @@
 package it.ma.polimi.briscola.audio;
 
+import android.app.Service;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.AssetFileDescriptor;
 import android.media.AudioAttributes;
@@ -8,6 +10,7 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.SoundPool;
 import android.os.Build;
+import android.os.IBinder;
 import android.preference.PreferenceManager;
 
 import java.io.IOException;
@@ -17,7 +20,7 @@ import java.util.HashMap;
  * Created by utente on 07/12/17.
  */
 
-public class SoundManager {
+public class SoundManager extends Service{
     private static final int MAX_STREAMS = 10;
     private static final float DEFAULT_MUSIC_VOLUME = 0.6f;
 
@@ -36,6 +39,13 @@ public class SoundManager {
     private boolean musicEnabled;
 
     private MediaPlayer backgroundPlayer;
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+
 
     private SoundManager(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -100,7 +110,7 @@ public class SoundManager {
         loadEventSound(context, GameEvent.FlipCard, "240776__f4ngy__card-flip.wav");
         loadEventSound(context, GameEvent.WinRound, "341985__unadamlar__goodresult.wav");
         loadEventSound(context, GameEvent.LoseRound, "362204__taranp__horn-fail-wahwah-3.wav");
-        loadEventSound(context, GameEvent.WinMatch, "341985__unadamlar__goodresult.wav"); //todo AGGIUNGI UN VERO VICTORY THEME
+        loadEventSound(context, GameEvent.WinMatch, "353546__maxmakessounds__success.wav"); //todo AGGIUNGI UN VERO VICTORY THEME
         loadEventSound(context, GameEvent.LoseMatch, "371451__cabled-mess__lose-funny-retro-video-game.wav");
 
 
@@ -150,7 +160,7 @@ public class SoundManager {
         }
     }
 
-    private void unloadMusic() {
+    public void unloadMusic() {
         backgroundPlayer.stop();
         backgroundPlayer.release();
     }

@@ -39,6 +39,7 @@ public class Briscola2PMinimalMatchConfig implements Serializable {
     private boolean isLocalPlayerTurn;
     private String matchId;
     private NeapolitanCard localPlayerNextRoundCard;
+    private int currentRound;
 
     public NeapolitanCard getLocalPlayerNextRoundCard() {
         return localPlayerNextRoundCard;
@@ -65,11 +66,13 @@ public class Briscola2PMinimalMatchConfig implements Serializable {
     public Briscola2PMinimalMatchConfig(String matchId, String briscola, String localPlayerHand, boolean localPlayerTurn){
         this.matchId = matchId;
         this.briscolaString = briscola;
+        this.briscola = new NeapolitanCard(briscola.charAt(0), briscola.charAt(1));
         this.hand = new Briscola2PHand(localPlayerHand);
         this.isLocalPlayerTurn = localPlayerTurn;
         this.remotePlayerCardsCounter = 3;
         this.deckIsEmpty = false;
         this.currentPlayer = localPlayerTurn?PLAYER0:PLAYER1;
+        this.currentRound = 1;
 
         this.surface = new Briscola2PSurface("");//initialize surface
         this.piles.add(new Briscola2PPile(""));// pile0
@@ -77,6 +80,31 @@ public class Briscola2PMinimalMatchConfig implements Serializable {
 
     }
 
+    public Briscola2PMinimalMatchConfig(Briscola2PMinimalMatchConfig config){
+        this.matchId = config.matchId;
+        this.briscolaString = config.getBriscolaString();
+        this.briscola = config.getBriscola();
+        this.hand = config.getLocalPlayerHand();
+        this.remotePlayerCardsCounter = config.getRemotePlayerCardsCounter();
+        this.deckIsEmpty = config.isDeckEmpty();
+        this.currentPlayer = config.getCurrentPlayer();
+        this.currentRound = config.getCurrentRound();
+        this.surface = config.getSurface();//initialize surface
+        this.piles.add(config.getPile(PLAYER0));// pile0
+        this.piles.add(config.getPile(PLAYER1)); // pile1
+    }
+
+    public NeapolitanCard getBriscola() {
+        return briscola;
+    }
+
+    public int getCurrentRound() {
+        return currentRound;
+    }
+
+    public void setCurrentRound(int currentRound) {
+        this.currentRound = currentRound;
+    }
 
     /**
      * Gets current player.

@@ -4,13 +4,11 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/briscola_launcher_icon"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".view.activities.MatchMenuActivity"
-            android:screenOrientation="portrait"
             android:theme = "@style/NoActionBarTheme">
 
             <!-- <activity android:name=".MainActivity"> -->
@@ -22,17 +20,15 @@
         </activity>
         <!-- <activity android:name=".Briscola2PMatchActivity" android:theme = "@style/FullscreenActionBarStyle" /> -->
         <activity android:name=".view.activities.PreviousMatchRecordsActivity"
-            android:screenOrientation="portrait"
             android:parentActivityName=".view.activities.MatchMenuActivity"
             android:label="@string/statistics"/>
         <activity android:name=".view.activities.SavedConfigActivity"
-            android:screenOrientation="portrait"
             android:parentActivityName=".view.activities.MatchMenuActivity"
             android:label="@string/resume_from_saved"/>
         <activity android:name=".view.activities.SettingsActivity"
-            android:screenOrientation="portrait"
             android:parentActivityName=".view.activities.MatchMenuActivity"
             android:label="@string/app_settings"/>
+        <service android:name=".audio.SoundService"  android:enabled="true"></service>
     </application>
 
 </manifest>

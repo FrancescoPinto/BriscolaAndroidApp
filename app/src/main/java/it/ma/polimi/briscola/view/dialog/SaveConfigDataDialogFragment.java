@@ -17,7 +17,9 @@ import it.ma.polimi.briscola.view.MatchMenuActivityActions;
 import it.ma.polimi.briscola.view.activities.MatchMenuActivity;
 
 /**
- * Created by utente on 14/12/17.
+ * Fragment representing a Save Configuration Dialog. Asks the user whether he/she wants to save the data.
+ *
+ * @author Francesco Pinto
  */
 public class SaveConfigDataDialogFragment extends DialogFragment{
 
@@ -29,24 +31,46 @@ public class SaveConfigDataDialogFragment extends DialogFragment{
     private static final String ARG_CONFIG = "Config";
     private static final String ARG_MOTIVATION = "Motivation";
 
+    /**
+     * EXTRA_ACTION ID
+     */
     public static final String EXTRA_ACTION = "it.ma.polimi.briscola.saveconfigexit.action",
-                            EXTRA_MOTIVATION ="it.ma.polimi.briscola.saveconfigexit.motivation",
-                             EXTRA_LOAD_CONFIG = "it.ma.polimi.briscola.saveconfigexit.config";
+    /**
+     * EXTRA_MOTIVATION ID.
+     */
+    EXTRA_MOTIVATION ="it.ma.polimi.briscola.saveconfigexit.motivation",
+    /**
+     * EXTRA_LOAD_CONFIG ID
+     */
+    EXTRA_LOAD_CONFIG = "it.ma.polimi.briscola.saveconfigexit.config";
 
 
+    /**
+     * Builds a new instance of SaveConfigDataDialogFragment given the initialization parameters.
+     *
+     * @param config     the configuration to be saved
+     * @param motivation the motivation
+     * @return the save config data dialog fragment
+     */
     public static SaveConfigDataDialogFragment newInstance(Briscola2PMatchConfig config, int motivation){
+        //put parameters in the bundle
         Bundle args = new Bundle();
         args.putSerializable(ARG_CONFIG, config);
         args.putInt(ARG_MOTIVATION, motivation);
         SaveConfigDataDialogFragment fragment = new SaveConfigDataDialogFragment();
+        //set parameters as arguments in the fragment
         fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+
+        //extract parameters from the arguments
         config = (Briscola2PMatchConfig) getArguments().getSerializable(ARG_CONFIG);
         motivation = getArguments().getInt(ARG_MOTIVATION);
+
+        //initialize the Dialog class to be returned, set parameters of the Dialog class
         dialog = new Dialog(getActivity());
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setCancelable(false);
@@ -54,22 +78,21 @@ public class SaveConfigDataDialogFragment extends DialogFragment{
 
         dialog.setContentView(R.layout.dialog_save_config_data);
 
-
+        //retrieve widget references and initialize them (if required)
         Button saveButton = (Button) dialog.findViewById(R.id.save_button);
         configNameEditText = (EditText) dialog.findViewById(R.id.config_name_edit_text);
 
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (configNameEditText.getText().toString().equals("")) {
-                    //userName.setHint(R.string.mandatory_type_your_name);
-                    //userName.setHintTextColor(Color.RED);
-                    configNameEditText.setError(getString(R.string.mandatory_type_config_name));
+                if (configNameEditText.getText().toString().equals("")) { //ensures input is not empty
+                    configNameEditText.setError(getString(R.string.mandatory_type_config_name)); //remind the user to fill the form
                 } else {
+                    //save the match config
                     SQLiteRepositoryImpl repo = new SQLiteRepositoryImpl(getActivity());
                     repo.saveMatchConfig(config, configNameEditText.getText().toString());
+                    //tell the hosting activity that should stop the offline match
                     sendResult(Activity.RESULT_OK, MatchMenuActivityActions.STOP_OFFLINE, motivation);
-                    //activity.exitMatch(false);
                     dialog.dismiss();
                 }
             }
@@ -80,15 +103,8 @@ public class SaveConfigDataDialogFragment extends DialogFragment{
         dontSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //se esci dal match mediante pulsante exit
-                //se avvii un nuovo match (sia online che offline) mentre ce n'è uno in corso
-                //  switch(motivation) {
-                //  case EXIT_BUTTON:
-                // activity.exitMatch(false); <- sostituisci
+                //tell the hosting activity that should stop the offline match
                 sendResult(Activity.RESULT_OK, MatchMenuActivityActions.STOP_OFFLINE, motivation);
-                //   break;
-                //sposta l'exit button nel menù
-                //  }
                 dialog.dismiss();
             }
         });
@@ -96,6 +112,7 @@ public class SaveConfigDataDialogFragment extends DialogFragment{
         return dialog;
     }
 
+        //helper method, sends the result of the user interaction with the dialog in an Intent
         private void sendResult(int resultCode, MatchMenuActivityActions actionCode, int motivation) {
             if(getTargetFragment()==null)
                 return;

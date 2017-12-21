@@ -27,6 +27,7 @@ public class PreviousMatchRecordsActivity extends AppCompatActivity {
     private MatchRecordAdapter adapter;
     private TextView numMatchPlayed, numMatchWon, numMatchLost, numMatchDraw, numMatchOnline;
     SQLiteRepositoryImpl repo;
+    private TextView noAvailable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +55,8 @@ public class PreviousMatchRecordsActivity extends AppCompatActivity {
         numMatchOnline = (TextView) findViewById(R.id.num_match_online);
         numMatchOnline.setText(""+statistics.getNumberOfMatchesOnline());
 
+        noAvailable = (TextView) findViewById(R.id.no_items_match_records);
+
         updateUI();
 
     }
@@ -65,6 +68,12 @@ public class PreviousMatchRecordsActivity extends AppCompatActivity {
          //todo, sposta questo o nel controller o nel model (non dovresti fare operazioni logiche così complicate in una view!)
         List<Briscola2PMatchRecord> records = repo.findAllMatchRecords();
         //List<Briscola2PMatchRecord> records = new ArrayList<>();
+        if(records.isEmpty())
+            noAvailable.setVisibility(View.VISIBLE);
+        else
+            noAvailable.setVisibility(View.GONE);
+
+
 
         adapter = new MatchRecordAdapter(records);
         matchRecordRecyclerView.setAdapter(adapter);
@@ -85,7 +94,7 @@ public class PreviousMatchRecordsActivity extends AppCompatActivity {
         @Override
         public MatchRecord onCreateViewHolder(ViewGroup parent, int viewType){
             LayoutInflater layoutInflater = LayoutInflater.from(PreviousMatchRecordsActivity.this);
-            View view = layoutInflater.inflate(R.layout.match_record_list_item_layout, parent, false);
+            View view = layoutInflater.inflate(R.layout.list_item_match_record, parent, false);
             return new MatchRecord(view);
         }
 

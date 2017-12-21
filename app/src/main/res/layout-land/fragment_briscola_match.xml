@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_shape"
+    android:orientation="horizontal"
+    >
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="12dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/player1PileSlot"
+            android:layout_width="61dp"
+            android:layout_height="90dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="7dp"
+            app:srcCompat="@drawable/card_slot_shape" />
+
+        <ImageView
+            android:id="@+id/player1Card0Slot"
+            android:layout_width="61dp"
+            android:layout_height="90dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginEnd="14dp"
+            app:srcCompat="@drawable/card_slot_shape" />
+
+        <ImageView
+            android:id="@+id/player1Card1Slot"
+            android:layout_width="61dp"
+            android:layout_height="90dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginEnd="11dp"
+            android:layout_toStartOf="@+id/player1Card0Slot"
+            app:srcCompat="@drawable/card_slot_shape" />
+
+        <ImageView
+            android:id="@+id/player1Card2Slot"
+            android:layout_width="61dp"
+            android:layout_height="90dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="11dp"
+            android:layout_toStartOf="@+id/player1Card1Slot"
+            app:srcCompat="@drawable/card_slot_shape" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_centerVertical="true"
+        android:layout_alignParentStart="true">
+
+
+        <ImageView
+            android:id="@+id/briscolaSlot"
+            android:layout_width="61dp"
+            android:layout_height="90dp"
+            android:layout_marginStart="86dp"
+            app:srcCompat="@drawable/card_slot_shape"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true" />
+
+        <ImageView
+            android:id="@+id/deckSlot"
+            android:layout_width="61dp"
+            android:layout_height="90dp"
+            app:srcCompat="@drawable/default_card_background"
+            android:layout_marginStart="11dp"
+            android:layout_alignParentTop="true"
+            android:layout_toEndOf="@+id/briscolaSlot" />
+
+        <ImageView
+            android:id="@+id/surfaceSlot0"
+            android:layout_width="61dp"
+            android:layout_height="90dp"
+            android:layout_marginStart="12dp"
+            android:adjustViewBounds="false"
+            app:srcCompat="@drawable/card_slot_shape"
+            android:layout_alignParentTop="true"
+            android:layout_toEndOf="@+id/deckSlot" />
+
+        <ImageView
+            android:id="@+id/surfaceSlot1"
+            android:layout_width="61dp"
+            android:layout_height="90dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="16dp"
+            android:layout_toEndOf="@+id/surfaceSlot0"
+            app:srcCompat="@drawable/card_slot_shape" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="15dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true">
+
+        <ImageView
+            android:id="@+id/player0PileSlot"
+            android:layout_width="61dp"
+            android:layout_height="90dp"
+            android:layout_marginStart="9dp"
+            app:srcCompat="@drawable/card_slot_shape"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true" />
+
+        <ImageView
+            android:id="@+id/player0Card0Slot"
+            android:layout_width="61dp"
+            android:layout_height="90dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginEnd="14dp"
+            app:srcCompat="@drawable/card_slot_shape" />
+
+        <ImageView
+            android:id="@+id/player0Card1Slot"
+            android:layout_width="61dp"
+            android:layout_height="90dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginEnd="11dp"
+            android:layout_toStartOf="@+id/player0Card0Slot"
+            app:srcCompat="@drawable/card_slot_shape" />
+
+        <ImageView
+            android:id="@+id/player0Card2Slot"
+            android:layout_width="61dp"
+            android:layout_height="90dp"
+            android:layout_marginRight="11dp"
+            app:srcCompat="@drawable/card_slot_shape"
+            android:layout_marginEnd="10dp"
+            android:layout_alignParentTop="true"
+            android:layout_toStartOf="@+id/player0Card1Slot" />
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/player0Turn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:alpha="0"
+        android:background="@drawable/card_slot_shape"
+        android:padding="8dp"
+        android:text="@string/player0_turn"
+        tools:alpha="1"
+        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="15dp" />
+
+    <Button
+        android:id="@+id/exit_button"
+        android:layout_width="46dp"
+        android:layout_height="46dp"
+        android:background="@drawable/round_button"
+        android:text="EXIT"
+        android:layout_alignTop="@+id/menu_button"
+        android:layout_alignStart="@+id/turn_displayer"
+        android:layout_marginStart="47dp" />
+
+    <Button
+        android:id="@+id/menu_button"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="@drawable/round_button"
+        android:text="@string/menu_button"
+        android:layout_marginStart="10dp"
+        android:layout_alignBottom="@+id/relativeLayout1"
+        android:layout_toEndOf="@+id/exit_button" />
+
+    <TextView
+        android:id="@+id/turn_displayer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="119dp"
+        android:background="@drawable/card_slot_shape"
+        android:padding="8dp"
+        android:text="@string/waiting_for_match_to_start"
+        android:layout_marginBottom="21dp"
+        android:layout_above="@+id/relativeLayout3"
+        android:layout_alignParentStart="true" />
+
+
+</RelativeLayout>

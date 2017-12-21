@@ -76,7 +76,7 @@
     <string name="abandon">Abandoned the match</string>
     <string name="terminated">Match terminated successfully</string>
     <string name = "other_player">Other player</string>
-    <string name = "game_menu">Game Menu</string>
+    <string name = "game_menu">Game Screen</string>
     <string name="warning_should_save">Performing this operation will interrupt the current match. Do you want to save?</string>
     <string name="do_not_save">Don\'t Save</string>
     <string name="load">Load</string>
@@ -95,4 +95,8 @@
     <string name = "data_about_previous_matches">Data About Previous Matches</string>
     <string name="velocity">Velocity</string>
     <string name="saved_data_label">Here you are the saved matches</string>
+    <string name="menu_button">Menu</string>
+    <string name ="turns_elapsed">Turns: %1$d</string>
+    <string name="no_items_saved_matches">No saved matches available. </string>
+    <string name="no_items_match_records">No saved match records available. </string>
 </resources>

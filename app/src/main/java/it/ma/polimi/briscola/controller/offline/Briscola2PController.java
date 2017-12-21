@@ -16,4 +16,5 @@ public interface Briscola2PController {
     public int getHandSize(int playerIndex);
     public void forceMatchEnd();
     public void resumeMatch();
+    public int inferTurnsElapsed();
 }

@@ -12,16 +12,38 @@ import it.ma.polimi.briscola.model.deck.NeapolitanCardSuit;
 public class Briscola2PAISmarterGreedyPlayer  extends AbstractBriscola2PAIPlayer {
 
     //todo MIGLIORATO CON L'EURISTICA "SE NON C'E' BISOGNO DI BUTTARE UNA BRISCOLA PER EVITARE DI FAR FAR PUNTI ALL'AVVERSARIO, CONSERVALA PER DOPO"
-    //todo ANCORA NON CI SONO RAGIONAMENTI PROBABILISTICI!
     private static final int smallThreshold = 1; //parametro da calibrare
+    private static final int acceptableMaxLoss = 2;
+    private static final int noThreshold = 11;
+    private static final float riskTrumpThreshold = 0.5f;
+    private static final int trumpThresholdFirstCard = 4;
 
-    public int chooseMove(Briscola2PMatchConfig configuration){
+    public int chooseMove(Briscola2PMatchConfig configuration,int playerIndex){
         config = configuration;
-        myHand = config.getHand(config.PLAYER1);
+        myHand = config.getHand(playerIndex);
 
-
+        NeapolitanCardSuit briscolaSuit = NeapolitanCardSuit.getCardSuit(config.getBriscolaSuit());
         if(config.getSurface().size() == 0){
 
+            computeSuitProbabilities(playerIndex);
+            NeapolitanCardSuit minAdversaryProbabilitySuit = getMinAdversaryProbabilitySuitInMyHand();
+            if(getAdversaryProbabilityTrump(briscolaSuit) > riskTrumpThreshold){
+                NeapolitanCard trumpSuitCard = getBestRankedCardOfSuit(briscolaSuit);
+                if(BriscolaCardPointsAndRankingRules.getPointValue(trumpSuitCard.getCardNumber()) >= trumpThresholdFirstCard){
+                    return findCardPositionInHand(trumpSuitCard);
+                }
+            }
+            if(minAdversaryProbabilitySuit != null) { //se c'è un minimo
+
+                NeapolitanCard probabilisticChoice = getBestRankedCardOfSuit(minAdversaryProbabilitySuit);
+
+                if(BriscolaCardPointsAndRankingRules.getPointValue(probabilisticChoice.getCardNumber()) == 0) //se ne ho presa una con punteggio nullo, invece di buttare questa cerco un'altra carta a punteggio nullo e rango peggiore da buttare (ok, non è proprio greedy scemo scemo, ma è ok)
+                    return findCardPositionInHand(getBestPointValuedCardOfSuit(minAdversaryProbabilitySuit)); //le altre bestpoint saranno tutte a valore nullo, però questo metodo ritorna quello con rank peggiore
+                else
+                    return findCardPositionInHand(probabilisticChoice);
+            }
+
+            //se non c'è un minimo, comportati da greedy
             //greedy STUPIDO: butta a terra la carta di massimo valore
             // todo, il greedy intelligente invece valuta se è meglio buttare una briscola o altro <- (ci vogliono considerazioni probabilistiche su quanto è probabile l'avversario abbia una briscola)
             NeapolitanCard bestRankedInHand = getBestRankedCard(myHand.getCardList()); //cerco quella con miglior rank
@@ -40,52 +62,42 @@ public class Briscola2PAISmarterGreedyPlayer  extends AbstractBriscola2PAIPlayer
 
             int enemyPointValue = BriscolaCardPointsAndRankingRules.getPointValue(cardOnSurface.toString());
 
-            if(enemyPointValue == 0){
+            if(enemyPointValue < smallThreshold){
                 //todo se hai carte di valore 0 che non siano briscole, butta quella con rank più basso (non importa chi vince)
                 //todo se hai carte di valore 0 ma briscole, prova a vincere senza buttare la briscola (cioè butta una non briscola, STESSO seme della prima carta, rank migliore)
                 //todo se non riesci a vincere il match senza buttare briscole, butta la carta non briscola con punteggio e rank più basso che riesci <- in realtà dovresti fare una scelta probabilistica, ma per ora evita
                 //todo se hai solo briscole in mano, butta la briscola con peggior rank e peggior valore
 
+                    //sia nel caso in cui l'avversario ha buttato una briscola o meno
                 NeapolitanCard zeroValuedNotTrump = getZeroValuedWorstRankedCardNotOfSuit(NeapolitanCardSuit.getCardSuit(config.getBriscolaSuit()));
 
-                if(zeroValuedNotTrump != null)
+                if (zeroValuedNotTrump != null) //butta una carta che non vale niente, ma conserva le briscole
                     return findCardPositionInHand(zeroValuedNotTrump);
-                else{
-                    NeapolitanCard minimumRankSameSeedToWinWithThreshold = getMinimumRankSameSeedToWinWithThreshold(cardOnSurface,cardOnSurface.getCardSuitEnum(),smallThreshold);//todo facendo così risparmi carte forti, e in futuro se l'avversario ne ha buttata con punti alti, dopo andrai a buttare una carta buona
-                    if(minimumRankSameSeedToWinWithThreshold != null)
-                        return findCardPositionInHand(minimumRankSameSeedToWinWithThreshold);
-                    else{ //accetto di perdere ma cerco di minimizzare i punti che regalo all'avversario
-                        NeapolitanCard minimumPointValueNotTrumpWithThreshold = getMinimumPointValueNotTrumpWithThreshold(NeapolitanCardSuit.getCardSuit(config.getBriscolaSuit()), smallThreshold);
-        /*                        if(minimumPointValueNotTrumpWithThreshold != null) <- ATTENTO, io su questo metterei una threshold! perché è capace di buttare carte forti se non la limiti!
-                                    return findCardPositionInHand(minimumPointValueNotTrumpWithThreshold);
-                                else { //se proprio
-                                    NeapolitanCard worstTrumpWithThreshold
-                                            if(worstTrumpWithThreshold != null)
-                                                return  findCardPositionInHand(worstTrump);
-                                            else { //se proprio HAI SOLO CARTE FORTI IN MANO (superano le threshold), itera il ragionamento MA SENZA THRESHOLD, cioe
-                                                NeapolitanCard minimumRankSameSeedToWin
-                                                        if(minimumRankSameSeedToWin)
-                                                            return;
-                                                        else{ //todo: MOLTA ATTENZIONE, se ho solo carte forti, NON voglio perdere punti, quindi NON provo a perdere buttando una carta non di seme
-                                                            NeapolitanCard worstTrumpToWin
-                                                                    if(worstTrumpToWin)
-                                                                        return;
-                                                                    else{ //se sono costretto a perdere, minimizza i danni
-                                                                        NeapolitanCard worstRankedAnySeed <- se devo perdere
-                                                                                return;
-                                                                    }
-                                                        }
-                                            }
-                                }
-                        //se hai solo
-                        ATTENTO: io testerei questo prima contro la Dumb, e poi semplicemente aggiungerei un semplice metodo probabilistico per la scelta della FirstCard, e stop, non impazzire
+                else { //vinci usando la carta dello stesso seme con rank minimo che hai (no threshold, tanto vinci)
+                    NeapolitanCard minimumRankSameSeedToWin = getMinimumRankSameSeedToWinWithThreshold(cardOnSurface, cardOnSurface.getCardSuitEnum(), noThreshold);//todo facendo così risparmi carte forti, e in futuro se l'avversario ne ha buttata con punti alti, dopo andrai a buttare una carta buona
+                    if (minimumRankSameSeedToWin != null)
+                        return findCardPositionInHand(minimumRankSameSeedToWin);
+                    else { //accetto di perdere ma cerco di minimizzare i punti che regalo all'avversario <- POICHE' QUI DECIDO DI PERDERE NON DEVO GIOCARE UNA CARTA FORTE, ALTRIMENTI E' MEGLIO BUTTARE UNA BRISCOLA!
+                    //todo -> questo branch abbassava le prestazioni, cancellapure questi commenti
+                        //   NeapolitanCard minimumPointValueNotTrumpWithThreshold = getMinimumPointValueNotTrumpWithThreshold(briscolaSuit, acceptableMaxLoss);
+                      //  if (minimumPointValueNotTrumpWithThreshold != null)
+                      //      return findCardPositionInHand(minimumPointValueNotTrumpWithThreshold);
+                     //   else { //se proprio hai solo briscole E carte che non soddisfano la threshold, prova a vincere usando una briscola (se la carta in superficie è briscola questo metodo non viene chiamato perché minimuRankSameSeed se ne occupa
+                            NeapolitanCard worstTrumpToWin = getMinimumRankSameSeedToWinWithThreshold(cardOnSurface,briscolaSuit,noThreshold);
+                            if (worstTrumpToWin != null)
+                                return findCardPositionInHand(worstTrumpToWin);
+                            else { //se hai solo carte forti, non trump, SEI COSTRETTO A PERDERE ... non puoi fare niente, solo scegliere la carta con meno punti possibile
+                                NeapolitanCard worstPointsInHand = getWorstPointValuedCard(myHand.getCardList());
+                                    return findCardPositionInHand(worstPointsInHand);
+                            }
+                        }
                     }
-             */
-                        return 0; //todo, rimuovi questa riga (è solo per evitare errori
+
+
                   //  }
             //} else if (enemyPointValue <= smallThreshold){ <- REGOLATI IN BASE ALLE PRESTAZIONI (fai dei test), accorpa con il precedente blocco
                 //todo, se il punteggio che avresti vincendo è basso, ma sei costretto a b
-            }}} else if(enemyPointValue >= smallThreshold) {
+            } else if(enemyPointValue >= smallThreshold) {
                 //todo ATTENTO, non è detto che applicare il puro greedy quando ci sono in ballo carte buone sia un bene
 
                 //todo usa il greedy puro perché devi cercare di massimizzare i punti <-
@@ -100,7 +112,7 @@ public class Briscola2PAISmarterGreedyPlayer  extends AbstractBriscola2PAIPlayer
                     //se puoi ribattere con una briscola migliore
                     //gioca la briscola che ti dà massimo punteggio
 
-                    NeapolitanCard card = getBestRankedCardOfSuitInHandBetterRankedThan(cardOnSurface, NeapolitanCardSuit.getCardSuit(config.getBriscolaSuit()));  //lo basi sul rank per decidere se puoi vincere il match, se rank migliore allora vinci il match //todo <- qui prende la best ranked ma dovresti considerare anche i punti???
+                    NeapolitanCard card = getBestRankedCardOfSuitInHandBetterRankedThan(cardOnSurface, briscolaSuit);  //lo basi sul rank per decidere se puoi vincere il match, se rank migliore allora vinci il match //todo <- qui prende la best ranked ma dovresti considerare anche i punti???
                     if (card == null)
                         return findCardPositionInHand(getWorstPointValuedCardInHand()); //se non puoi vincere il match, cerca di far fare all'avversario meno punti, indipendentemente dal fatto che butti una briscola o meno //todo <- cerca di preservare le briscole per dopo
                     else if (BriscolaCardPointsAndRankingRules.getPointValue(card.getCardNumber()) == 0) //se ne ho presa una con punteggio nullo, invece di buttare questa cerco un'altra carta sempre briscola sempre migliore dell'avversario ma a punteggio nullo e rank minimo da buttare (ok, non è proprio greedy scemo scemo, ma è ok)
@@ -136,15 +148,6 @@ public class Briscola2PAISmarterGreedyPlayer  extends AbstractBriscola2PAIPlayer
 
         }else
             throw new IllegalStateException("No choice can be done in the current state");
-
-        return 0; //todo, rimuovila, è solo per evitare gli errori
+        return 0;
     }
-
-
-
-
-
-
-
-
 }

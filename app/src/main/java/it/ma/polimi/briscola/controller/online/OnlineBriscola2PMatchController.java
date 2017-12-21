@@ -12,16 +12,14 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import it.ma.polimi.briscola.R;
-import it.ma.polimi.briscola.ai.Briscola2PAIPlayer;
-import it.ma.polimi.briscola.ai.Briscola2PAIRandomPlayer;
 import it.ma.polimi.briscola.controller.offline.Briscola2PController;
 import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMatchConfig;
 import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMinimalMatchConfig;
 import it.ma.polimi.briscola.model.deck.NeapolitanCard;
-import it.ma.polimi.briscola.rest.client.OpponentPlayedCardCallback;
-import it.ma.polimi.briscola.rest.client.PlayCardCallback;
-import it.ma.polimi.briscola.rest.client.StartMatchCallback;
-import it.ma.polimi.briscola.rest.client.StopMatchCallback;
+import it.ma.polimi.briscola.rest.client.callbacks.OpponentPlayedCardCallback;
+import it.ma.polimi.briscola.rest.client.callbacks.PlayCardCallback;
+import it.ma.polimi.briscola.rest.client.callbacks.StartMatchCallback;
+import it.ma.polimi.briscola.rest.client.callbacks.StopMatchCallback;
 import it.ma.polimi.briscola.rest.client.dto.NextTurnCardDTO;
 import it.ma.polimi.briscola.rest.client.dto.OpponentCardDTO;
 import it.ma.polimi.briscola.rest.client.dto.StartedMatchDTO;
@@ -42,7 +40,6 @@ public class OnlineBriscola2PMatchController implements Briscola2PController {
 
     private Briscola2PMinimalMatchConfig config;
     // private MatchStatus matchStatus; //todo necessario? credo di sì! E' per forzare il seguire le regole <- invece no, perché faccio un controller per la GUI e uno non per la gui
-    private Briscola2PAIPlayer player1 = new Briscola2PAIRandomPlayer();
     private Briscola2PMatchFragment matchFragment;
     public boolean playing = false;
     private boolean done = false;
@@ -65,6 +62,20 @@ public class OnlineBriscola2PMatchController implements Briscola2PController {
         super();
         this.matchFragment = matchFragment;
     }
+
+    public OnlineBriscola2PMatchController(OnlineBriscola2PMatchController controller, Briscola2PMatchFragment matchFragment){
+        super();
+        this.matchFragment = matchFragment;
+        this.config = new Briscola2PMinimalMatchConfig(controller.getConfig());
+        this.opponentPlayedCardCallback = controller.opponentPlayedCardCallback;
+        this.playCardCallback = controller.playCardCallback;
+        this.startMatchCallback = controller.startMatchCallback;
+        this.stopMatchCallback = controller.stopMatchCallback;
+
+    }
+
+
+
 
     @Override
     public void setIsPlaying(boolean isPlaying) {
@@ -147,6 +158,17 @@ public class OnlineBriscola2PMatchController implements Briscola2PController {
     @Override
     public void startNewMatch() {
 
+        initializeClient();
+
+        matchFragment.waitingToFindOnlinePlayer();
+        briscolaAPI.startMatch(authHeader, roomName).enqueue(startMatchCallback);
+        //todo PROBABILMENTE QUI DEVI FARE "nomePathVariable: "+pathVariable <- ma anche no
+        // Call<List<Change>> call = gerritAPI.loadChanges("status:open");
+        // call.enqueue(this);
+    }
+
+    private void initializeClient(){
+
         OkHttpClient okHttpClient = new OkHttpClient().newBuilder()
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .readTimeout(30, TimeUnit.SECONDS)
@@ -165,12 +187,6 @@ public class OnlineBriscola2PMatchController implements Briscola2PController {
                 .build();
 
         briscolaAPI = retrofit.create(BriscolaAPI.class);
-
-        matchFragment.waitingToFindOnlinePlayer();
-        briscolaAPI.startMatch(authHeader, roomName).enqueue(startMatchCallback);
-        //todo PROBABILMENTE QUI DEVI FARE "nomePathVariable: "+pathVariable <- ma anche no
-        // Call<List<Change>> call = gerritAPI.loadChanges("status:open");
-        // call.enqueue(this);
     }
 
     public void postCard(String plainText){
@@ -211,7 +227,7 @@ public class OnlineBriscola2PMatchController implements Briscola2PController {
         AnimatorSet initializationSequence = new AnimatorSet();
         //Todo, modificare il display delle carte, così che se passi un nome invalido lui non se ne frega ...
         AnimatorSet dealFirstHand = matchFragment.getDealFirstHandAnimatorSet(config.getCurrentPlayer(), config.getHands());
-        AnimatorSet initializeBriscola = matchFragment.getInitializeBriscolaAnimatorSet(new NeapolitanCard(config.getBriscolaString().charAt(0), config.getBriscolaString().charAt(1)));
+        AnimatorSet initializeBriscola = matchFragment.getInitializeBriscolaAnimatorSet(config.getBriscola());
        // AnimatorSet displayCurrentPlayer = matchFragment.displayIsPlayer0Turn(config.getCurrentPlayer());
         //animators.add(dealFirstHand);
         //animators.add(initializeBriscola);
@@ -370,6 +386,7 @@ public class OnlineBriscola2PMatchController implements Briscola2PController {
                     }
                 }else if (currentRound == 19 || currentRound == 18){ //if the deck is empty, but players have cards in hand,don't do anything
                     currentRound++;
+                    config.setCurrentRound(currentRound);
                     matchFragment.enablePlayer0CardsTouch(config.getHands(),config.getCurrentPlayer());
                     if(config.getCurrentPlayer() == config.PLAYER1){
                         //animators.add(playFirstCard(player1.chooseMove(config)));
@@ -383,6 +400,7 @@ public class OnlineBriscola2PMatchController implements Briscola2PController {
                     //boolean lastDraw = false;
                     //if(config.getDeck().size() == 2)
                     //   lastDraw = true;
+                    config.setCurrentRound(currentRound);
                     currentRound++; //since the API doesn't give info on the deck, count turns played to know whether lastDraw
                     boolean lastDraw = false;
                     if(currentRound == 18) // 20th turn (1card -> 0 card, no draw at turn start), 19th turn (2cards->1card, no draw), 18 turn (3cards->2cards, last draw)
@@ -440,7 +458,12 @@ public class OnlineBriscola2PMatchController implements Briscola2PController {
 
     @Override
     public void resumeMatch(){
-        throw new IllegalStateException(); //should not call this for Online matches
+        initializeClient();
+        matchFragment.loadPiles(config.getPile(Briscola2PMatchConfig.PLAYER0).isEmpty(),config.getPile(Briscola2PMatchConfig.PLAYER1).isEmpty());
+        matchFragment.loadSurface(config.getSurface().getCardList()); //questi li si può fare subito dato che sono molto semplici
+        matchFragment.loadHands(config.getHands(), config.getCurrentRound());
+        matchFragment.loadBriscolaIfNeeded(config.getBriscola());
+        matchFragment.loadCurrentPlayer(config.getCurrentPlayer());
     }
 
     public void stopCallbacks(){
@@ -448,5 +471,13 @@ public class OnlineBriscola2PMatchController implements Briscola2PController {
         playCardCallback.shouldStopRetrying(true);
         startMatchCallback.shouldStopRetrying(true);
         stopMatchCallback.shouldStopRetrying(true);
+    }
+
+    public int inferTurnsElapsed(){
+        return currentRound;
+    }
+
+    public Briscola2PMatchFragment getMatchFragment() {
+        return matchFragment;
     }
 }

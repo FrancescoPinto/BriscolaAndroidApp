@@ -122,7 +122,7 @@ public class Briscola2PMatchController implements Briscola2PController{
                 @Override
                 public void onAnimationEnd(Animator animator) {
                     if(config.getCurrentPlayer() == config.PLAYER1){
-                        playFirstCard(player1.chooseMove(config));
+                        playFirstCard(player1.chooseMove(config,config.PLAYER1));
 
                     }
                 }
@@ -235,7 +235,7 @@ public class Briscola2PMatchController implements Briscola2PController{
                 @Override
                 public void onAnimationEnd(Animator animator) {
                     if(config.getCurrentPlayer() == config.PLAYER1){
-                        playSecondCard(player1.chooseMove(config));
+                        playSecondCard(player1.chooseMove(config,config.PLAYER1));
                     }
                 }
                 @Override
@@ -291,7 +291,7 @@ public class Briscola2PMatchController implements Briscola2PController{
                         if(config.getCurrentPlayer() == config.PLAYER1){
                             //if next turn is of player 1, hide "is turn of player 0" BEFORE letting player 1 play his card
                           //  animators.add(displayCurrentPlayer); //todo qui
-                            animators.add(generatePlayFirstCardAnimatorSet(player1.chooseMove(config)));
+                            animators.add(generatePlayFirstCardAnimatorSet(player1.chooseMove(config,config.PLAYER1)));
                         }  else{
                             AnimatorSet displayIsPlayer0Turn = matchFragment.displayIsPlayer0Turn(config.getCurrentPlayer());
                             animators.add(displayIsPlayer0Turn);
@@ -313,7 +313,7 @@ public class Briscola2PMatchController implements Briscola2PController{
                         if(config.getCurrentPlayer() == config.PLAYER1){
                            //if next turn is of player 1, hide "is turn of player 0" BEFORE letting player 1 play his card
                          //   animators.add(displayCurrentPlayer); //todo qui
-                            animators.add(generatePlayFirstCardAnimatorSet(player1.chooseMove(config)));
+                            animators.add(generatePlayFirstCardAnimatorSet(player1.chooseMove(config,config.PLAYER1)));
                         }else{
                             AnimatorSet displayIsPlayer0Turn = matchFragment.displayIsPlayer0Turn(config.getCurrentPlayer());
                             animators.add(displayIsPlayer0Turn);
@@ -393,10 +393,12 @@ public class Briscola2PMatchController implements Briscola2PController{
         matchFragment.loadCurrentPlayer(config.getCurrentPlayer());
 
         if(Briscola2PMatchController.this.config.getCurrentPlayer() == Briscola2PMatchConfig.PLAYER1){
-            playFirstCard(player1.chooseMove(Briscola2PMatchController.this.config));
+            playFirstCard(player1.chooseMove(Briscola2PMatchController.this.config,config.PLAYER1));
         }
     }
 
 
-
+    public int inferTurnsElapsed(){
+        return config.getNumberTurnsElapsed();
+    }
 }

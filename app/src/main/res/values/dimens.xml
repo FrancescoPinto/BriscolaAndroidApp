@@ -15,4 +15,6 @@
     <dimen name="card_width">75dp</dimen>
     <dimen name="card_height">110dp</dimen>
     <dimen name ="card_elevation">2dp</dimen>
+    <dimen name="card_width_landscape">61dp</dimen>
+    <dimen name="card_height_landscape">90dp</dimen>
 </resources>

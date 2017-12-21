@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/background_shape"
     android:orientation="horizontal"
-    tools:context="it.ma.polimi.briscola.Briscola2PMatchActivity">
+    >
 
     <RelativeLayout
         android:id="@+id/relativeLayout2"
@@ -69,19 +69,18 @@
             android:id="@+id/briscolaSlot"
             android:layout_width="75dp"
             android:layout_height="110dp"
-            android:layout_alignParentStart="true"
+            app:srcCompat="@drawable/card_slot_shape"
             android:layout_alignParentTop="true"
-            android:layout_marginStart="18dp"
-            app:srcCompat="@drawable/card_slot_shape" />
+            android:layout_toStartOf="@+id/deckSlot" />
 
         <ImageView
             android:id="@+id/deckSlot"
             android:layout_width="75dp"
             android:layout_height="110dp"
+            app:srcCompat="@drawable/default_card_background"
             android:layout_alignParentTop="true"
-            android:layout_alignStart="@+id/briscolaSlot"
-            android:layout_marginStart="42dp"
-            app:srcCompat="@drawable/default_card_background" />
+            android:layout_toStartOf="@+id/surfaceSlot0"
+            android:layout_marginEnd="25dp" />
 
         <ImageView
             android:id="@+id/surfaceSlot0"
@@ -155,12 +154,14 @@
         android:id="@+id/player0Turn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="21dp"
         android:alpha="0"
+        android:background="@drawable/card_slot_shape"
+        android:padding="8dp"
         android:text="@string/player0_turn"
         tools:alpha="1"
-        android:layout_below="@+id/relativeLayout3"
-        android:layout_alignStart="@+id/exit_button" />
+        android:layout_above="@+id/relativeLayout1"
+        android:layout_alignStart="@+id/exit_button"
+        android:layout_marginBottom="9dp" />
 
     <Button
         android:id="@+id/exit_button"
@@ -168,18 +169,31 @@
         android:layout_height="46dp"
         android:background="@drawable/round_button"
         android:text="EXIT"
-        android:layout_marginStart="38dp"
+        android:layout_marginStart="23dp"
+        android:layout_marginTop="15dp"
         android:layout_below="@+id/relativeLayout2"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="15dp" />
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:id="@+id/menu_button"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="@drawable/round_button"
+        android:text="@string/menu_button"
+        android:layout_marginStart="13dp"
+        android:layout_alignTop="@+id/exit_button"
+        android:layout_toEndOf="@+id/exit_button" />
 
     <TextView
         android:id="@+id/turn_displayer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/exit_button"
         android:layout_alignBottom="@+id/exit_button"
-        android:layout_marginStart="28dp"
-        android:layout_toEndOf="@+id/player0Turn"
+        android:layout_marginStart="33dp"
+        android:layout_toEndOf="@+id/menu_button"
+        android:background="@drawable/card_slot_shape"
+        android:padding="8dp"
         android:text="@string/waiting_for_match_to_start" />
 
 
