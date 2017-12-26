@@ -18,6 +18,7 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import it.ma.polimi.briscola.BriscolaApplication;
 import it.ma.polimi.briscola.R;
@@ -40,6 +41,7 @@ public class MatchActivity extends AppCompatActivity implements Briscola2PMatchA
     private Menu menu;
     private Toolbar toolbar;
     private SettingsManager settingsManager;
+    private boolean backButtonPressedOnce = false;
     /**
      * The request code used to pick a match config to load when the SavedConfigActivity returns it, PICK_MATCH_TO_LOAD.
      */
@@ -101,15 +103,7 @@ public class MatchActivity extends AppCompatActivity implements Briscola2PMatchA
         setVolumeControlStream(AudioManager.STREAM_MUSIC); //set that music is controlled via the +/- physical buttons
 
 
-
-      //  Intent serviceIntent = new Intent(MatchActivity.this, SoundService.class);
-       // Bundle bundle = new Bundle();
-       // bundle.putSerializable(SoundManager.EXTRA_SOUND_MANAGER, soundManager);
-       // serviceIntent.putExtras(bundle);
-        //serviceIntent.putExtra("UserID", "123456");
-     //   startService(serviceIntent);
-
-        // find the retained fragment on activity restarts
+        // find the retained fragment on activity restarts (e.g. retained because of screen rotation!)
         FragmentManager fm = getSupportFragmentManager();
         Briscola2PMatchFragment wasPlayingOfflineMatchFragment = (Briscola2PMatchFragment) fm.findFragmentByTag(offlineMatchTag);
         Briscola2PMatchFragment wasPlayingOnlineMatchFragment = (Briscola2PMatchFragment) fm.findFragmentByTag(onlineMatchTag);
@@ -118,23 +112,25 @@ public class MatchActivity extends AppCompatActivity implements Briscola2PMatchA
             //do nothing, fragment is already available
         }else if(wasPlayingOnlineMatchFragment != null){
             //do nothing, fragment is already available
-
-        }else if (wasPlayingOfflineMatchFragment == null) {
-        // create the fragment and data the first time
+        }else if (wasPlayingOfflineMatchFragment == null && wasPlayingOnlineMatchFragment == null) {
+            // create the fragment and data the first time
             startMenu(false);
-            // add the fragment
-           // mRetainedFragment = new RetainedFragment();
-            //fm.beginTransaction().add(mRetainedFragment, TAG_RETAINED_FRAGMENT).commit();
-            // load data from a data source or perform any calculation
-           // mRetainedFragment.setData(loadMyData());
-        }else if(wasPlayingOnlineMatchFragment==null){
-            startMenu(false);
-        }
+        } //todo, qui ci potrebbe essere un bug legato ai menu ...
+        //}else if(wasPlayingOnlineMatchFragment==null){
+            // create the fragment and data the first time
+        //    startMenu(false);
+        //}
         //if there was a match running, restart the match
 
 
     }
 
+    @Override
+    protected void onResume(){
+        super.onResume();
+        unCheckAllMenuItems(menu);
+
+    }
 
     private void unCheckAllMenuItems( Menu menu) {
         int size = menu.size();
@@ -151,8 +147,7 @@ public class MatchActivity extends AppCompatActivity implements Briscola2PMatchA
 
     @Override
     protected void onDestroy() {
-        ((BriscolaApplication) getApplication()).cleanAudio();
-
+        ((BriscolaApplication) getApplication()).cleanAudio(); //perform cleaning for audio resources
         super.onDestroy();
     }
 
@@ -192,10 +187,12 @@ public class MatchActivity extends AppCompatActivity implements Briscola2PMatchA
         switch(menuItem.getItemId()) {
 
             case R.id.id_performance:
+                //show performance screen
                 intent = new Intent(MatchActivity.this, PreviousMatchRecordsActivity.class);
                 startActivity(intent);
                 break;
-            case R.id.id_settings: //questa deve diventare un'activity, ma fallo solo dopo che hai finito
+            case R.id.id_settings:
+                //show settings screen
                 intent = new Intent(MatchActivity.this, SettingsActivity.class);
                 startActivity(intent);
                 break;
@@ -209,65 +206,25 @@ public class MatchActivity extends AppCompatActivity implements Briscola2PMatchA
     }
 
 
-    /**
-     * Build and AlertDialog instance
-     *
-     * @param _message  :     get the message text
-     * @param _positive :    get the positive button text
-     * @param _negative :    get the negative button text
-     * @param exit      :         get the exit text
-     * @param restart   the restart
-     * @return AlertDialog instance
-     */
-    public AlertDialog onBuildDialog(String _message, String _positive, String _negative,
-                                     final boolean exit, final boolean restart) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(_message);
-        builder.setPositiveButton(_positive, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                if (exit) {
-                    /*if (restart)
-                        startActivity(new Intent(MainCalculatorActivity.this, MainCalculatorActivity.class));
-                    else
-                        new UpdateAppSettings(MainCalculatorActivity.this).onResetSavedText();
-                    finish();*/
-                }
-                // dismiss dialog
-                dialogInterface.dismiss();
-            }
-        });
-        if (_negative != null)
-            builder.setNegativeButton(_negative, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    // dismiss dialog
-                    dialogInterface.dismiss();
-                }
-            });
-        builder.setCancelable(false);
-        return builder.create();
-    }
-
     @Override
     public void onBackPressed() {
 
-
         MenuFragment menu = (MenuFragment) getSupportFragmentManager().findFragmentByTag(menuFragmentTag);
         Briscola2PMatchFragment match = getMatchesFragments();
-        if(menu != null && menu.getIsOverlay()){
+        if(menu != null && menu.getIsOverlay()){ //if there is a menu overlay, hide it
             hideOverlayMenu();
-            menu.setIsOverlay(false);
-        }else if(match!=null) { //if there is an overlay, priority to overlay closure rather than closing the match
-                match.handleMatchInterrupt(BACK_PRESSED);
+            menu.setIsOverlay(false);//if there is an overlay, priority to overlay closure rather than closing the match
+        }else if(match!=null) { //if there is a match
+                match.handleMatchInterrupt(BACK_PRESSED); //handle the interrupt (i.e. tell user "hey, you're going to stop the match!"
 
         }else{
-            super.onBackPressed();
+            if(!backButtonPressedOnce) { //warn the user if it is the first time he presses the back button
+                Toast.makeText(this,R.string.warn_back_button,Toast.LENGTH_SHORT).show();
+                backButtonPressedOnce = !backButtonPressedOnce;
+            }
+            else //if i already warned the user he would have closed
+                super.onBackPressed(); //close
         }
-
-
-        //super.onBackPressed(); //todo <- questo lo chiami dopo che l'utente dice' sì voglio uscire nel dialog
-        // matchMenu.getIsOverlay() if yes fai una cosa altrimenti un'altra'
 
     }
 
@@ -277,30 +234,34 @@ public class MatchActivity extends AppCompatActivity implements Briscola2PMatchA
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         if(!isOverlay){ //delete everything below, and put menu
+            //create fragment instance
             MenuFragment fragment = MenuFragment.newInstance(false); //false = not overlay
             fragmentManager.beginTransaction()
-                    .replace(R.id.fragment_container, fragment, menuFragmentTag)
+                    .replace(R.id.fragment_container, fragment, menuFragmentTag) //replace, no overlay
                     .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
                     .commit();
         }else { //put the menu in overlay over the current fragment
-            Fragment fragment;
+
+            //remove menus, if any
             Fragment oldFragment = fragmentManager.findFragmentByTag(menuFragmentTag);
-
             if (oldFragment != null) {
-                fragmentManager.beginTransaction().remove(oldFragment).commit();
+                fragmentManager.beginTransaction().remove(oldFragment).commit(); //clean
             }
-            fragment = MenuFragment.newInstance(true); //true = overlay
 
+            Fragment newFragment;
+            //create fragment instance
+            newFragment = MenuFragment.newInstance(true); //true = overlay
 
             fragmentManager.beginTransaction()
-                    .add(R.id.fragment_container, fragment, menuFragmentTag)
+                    .add(R.id.fragment_container, newFragment, menuFragmentTag) //add it, overlay
                     .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
-                    .addToBackStack(menuFragmentTag)
                     .commit();
         }
     }
+
     @Override
     public void startOfflineMatch(){
+        //prepare fragment
         Briscola2PMatchFragment fragment = Briscola2PMatchFragment.newInstance(false,settingsManager.getDifficultyPreference());
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
@@ -309,6 +270,7 @@ public class MatchActivity extends AppCompatActivity implements Briscola2PMatchA
     }
     @Override
     public void startOnlineMatch(){
+        //prepare fragment
         Briscola2PMatchFragment fragment = Briscola2PMatchFragment.newInstance(true,0);
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
@@ -317,7 +279,8 @@ public class MatchActivity extends AppCompatActivity implements Briscola2PMatchA
     }
     @Override
     public void loadOfflineMatch(Briscola2PMatchConfig config){
-        if(config == null) throw new IllegalArgumentException();
+        if(config == null) throw new IllegalArgumentException(); //shouldn't be called with no config to be loaded!
+        //prepare fragment
         Briscola2PMatchFragment fragment = Briscola2PMatchFragment.newInstance(config, settingsManager.getDifficultyPreference());
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
@@ -325,26 +288,22 @@ public class MatchActivity extends AppCompatActivity implements Briscola2PMatchA
                 .commitAllowingStateLoss(); //because this is invoked when the matchMenuActivity is in background ... avoids IllegalStateException
     }
 
-  //  @Override
-    //protected void onSaveInstanceState(Bundle outState) {
-        //No call for super(). To solve a bug on API Level > 11 that prevents correct execution of fragment transaction after onResult
-   // }
-
     @Override
     public void showSavedMatches(){
         startActivityForResult(new Intent(MatchActivity.this,SavedConfigActivity.class),PICK_MATCH_TO_LOAD);
     }
 
     @Override
-    public Briscola2PMatchFragment getMatchesFragments(){ //todo, credo sia inutile ... causa replace
+    public Briscola2PMatchFragment getMatchesFragments(){
         FragmentManager fragmentManager = getSupportFragmentManager();
+        //check for offline matches
         Briscola2PMatchFragment oldFragment = (Briscola2PMatchFragment) fragmentManager.findFragmentByTag(offlineMatchTag);
-        if(oldFragment != null)
+        if(oldFragment != null) //if found return it
             return oldFragment;
-            //fragmentManager.beginTransaction().remove(oldFragment).commit();
 
+        //check for online matches
         oldFragment = (Briscola2PMatchFragment) fragmentManager.findFragmentByTag(onlineMatchTag);
-        if(oldFragment != null)
+        if(oldFragment != null)//if found, return it
             return oldFragment;
 
         return null;
@@ -355,7 +314,7 @@ public class MatchActivity extends AppCompatActivity implements Briscola2PMatchA
     public void hideOverlayMenu(){
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment oldFragment = fragmentManager.findFragmentByTag(menuFragmentTag);
-        fragmentManager.beginTransaction().remove(oldFragment).commit();
+        fragmentManager.beginTransaction().remove(oldFragment).commit(); //removes the overlay menu
 
     }
 
@@ -370,38 +329,20 @@ public class MatchActivity extends AppCompatActivity implements Briscola2PMatchA
                 Briscola2PMatchConfig config = (Briscola2PMatchConfig) bundle.getSerializable(SavedConfigActivity.EXTRA_LOAD_CONFIG);
 
                 Briscola2PMatchFragment match = getMatchesFragments();
-                if(match != null){ //poiché load è chiamato solo dal menù principale, ci deve essere un MenuFragment
+                if(match != null){ //questa diramazione è diventata ridondante dopo il refactor del codice, la mantengo nel caso in cui cambiassi idea dopo
                     loadOfflineMatch(config);
-                    //FragmentManager manager = getFragmentManager();
-                   // WarningExitDialogFragment dialog = WarningExitDialogFragment.newInstance(isOnline, Briscola2PMatchActivity.LOAD_OLD_MATCH, loadConfig);
-                   // dialog.setTargetFragment(Briscola2PMatchFragment.this, REQUEST_EXIT);
-                   // manager.beginTransaction().add(R.id.fragment_container,dialog).commitAllowingStateLoss();
-                    //dialog.show(manager, DIALOG_EXIT);
-                   // match.handleLoadConfig(config);
-                    //FragmentManager manager = getSupportFragmentManager();
-                    //MenuFragment menu = (MenuFragment) manager.findFragmentByTag(menuFragmentTag);
-                    //menu.handleLoadConfig(config);
                 }else{ //altrimenti non c'è nulla da salvare, quindi fai direttamente il load
                     loadOfflineMatch(config);
                 }
-
             }
-
-
-
-            //todo, considera se è necessario per settings <- ma io vorrei salvare il tutto già dentro SettingsActivity
-            //poi se uno vuole i dati salvati si prende il settingsmanager e amen
-            //invece il previous match records non ritorna un bel niente, quindi inutile fare
         }
-
-
     }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState)
     {
         super.onPostCreate(savedInstanceState);
-        drawerToggle.syncState();
+        drawerToggle.syncState(); //correctly handle drawer
 
     }
 
@@ -409,7 +350,7 @@ public class MatchActivity extends AppCompatActivity implements Briscola2PMatchA
     public void onConfigurationChanged(Configuration newConfig)
     {
         super.onConfigurationChanged(newConfig);
-        drawerToggle.onConfigurationChanged(newConfig);
+        drawerToggle.onConfigurationChanged(newConfig);  //correctly handle drawer
 
     }
 

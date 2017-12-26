@@ -22,7 +22,7 @@ public class CardAnimationListener implements View.OnClickListener {
 
     private Briscola2PMatchFragment fragment;
     private Briscola2PController controller;
-
+    private boolean alreadyPressed = false;
     /**
      * Instantiates a new Card animation listener.
      *
@@ -47,7 +47,11 @@ public class CardAnimationListener implements View.OnClickListener {
             controller.playSecondCard(getPlayerCardIndex(view));//.start();
             view.setOnClickListener(null); //disable the listener on this card
         }else if(!controller.isPlaying()){ //if the user can't play, tell him via a toast
-            fragment.showToast(fragment.getString(R.string.warn_cant_play));
+            if(alreadyPressed == false) {
+                fragment.showToast(fragment.getString(R.string.warn_cant_play));
+                alreadyPressed = true; //avoid to clutter the GUI with many toasts in case user presses the button many times
+                //the user has a "Is your turn box", can clearly understand when it is his/her turn, once it has been warned, stop warning him every time he touches the same card
+            }
         }
 
     }

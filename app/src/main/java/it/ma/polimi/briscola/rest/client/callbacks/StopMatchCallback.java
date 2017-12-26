@@ -26,36 +26,45 @@ public class StopMatchCallback extends CallbackWithRetry{
             this.controller = controller;
         }
 
-
+    public StopMatchCallback() {
+        super();
+    }
         @Override
         public void onResponse(Call call, Response response) {
-            if(controller.getMatchFragment().isVisible() && !call.isCanceled()) {
+            if(response.isSuccessful()){
+                Log.d("TAG", "Match Cancelled correctly");
+            }else {
+                try {
+                    JSONObject error = new JSONObject(response.errorBody().string());
+                    controller.manageError(error.getString("error"), error.getString("message"));
+                    Log.d("TAG", "STOPMATCHCALLBACK: Opponent played " +error.getString("error") + " , you received " + error.getString("message"));
+                } catch (IOException | JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            /*if(controller.getMatchFragment().isVisible() && !call.isCanceled() && !shouldStop) {
+                success = true;
 
-           /* while (!controller.getMatchFragment().isVisible()) {
-                if (!controller.getMatchFragment().isVisible()) {
-                    try {
-                        sleep(200);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }else {*/
                 if (response.isSuccessful()) {
                     Log.d("TAG", "Match Cancelled");
-                    //todo
-                    //  controller.endMatch();
                 } else {
                     try {
                         JSONObject error = new JSONObject(response.errorBody().string());
                         Log.d("TAG", "Error on Match Cancelled");
-                        controller.manageError(error.getString("error"), error.getString("message"));
+                        Log.d("TAG", "STOPMATCHCALLBACK: Opponent played " +error.getString("error") + " , you received " + error.getString("message"));
                     } catch (IOException | JSONException e) {
                         e.printStackTrace();
                     }
                 }
-                // }
-                //}
+
+            }else if(shouldStop) {
+                call.cancel();
+                Log.d("TAG", "STOPMATCALLBACK: shoudlStop");
+
             }else{
                 retry(call);
-            }
+                Log.d("TAG", "STOPMATCALLBACK: retrying");
+
+            }*/
         }
 }

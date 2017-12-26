@@ -1,5 +1,7 @@
 package it.ma.polimi.briscola.rest.client.callbacks;
 
+import android.util.Log;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -24,6 +26,9 @@ public class StartMatchCallback extends CallbackWithRetry<StartedMatchDTO>{
         this.controller = controller;
     }
 
+    public StartMatchCallback() {
+        super();
+    }
     @Override
     public void onFailure(Call<StartedMatchDTO> call, Throwable t) {
         super.onFailure(call, t);
@@ -32,7 +37,18 @@ public class StartMatchCallback extends CallbackWithRetry<StartedMatchDTO>{
 
     @Override
     public void onResponse(Call<StartedMatchDTO> call, Response<StartedMatchDTO> response) {
-        if(controller.getMatchFragment().isVisible() && !call.isCanceled()) {
+        if(response.isSuccessful()){
+            Log.d("TAG", "STARTMATCH: Success");
+        }else {
+            try {
+                JSONObject error = new JSONObject(response.errorBody().string());
+                controller.manageError(error.getString("error"), error.getString("message"));
+                Log.d("TAG", "STARTMATCHCALLBACK: Opponent played " +error.getString("error") + " , you received " + error.getString("message"));
+            } catch (IOException | JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        /* if(controller.getMatchFragment().isVisible() && !call.isCanceled()&& !shouldStop) {
 
             success = true;
             if (response.isSuccessful()) {
@@ -42,13 +58,20 @@ public class StartMatchCallback extends CallbackWithRetry<StartedMatchDTO>{
                 try {
                     JSONObject error = new JSONObject(response.errorBody().string());
                     controller.manageError(error.getString("error"), error.getString("message"));
+                    Log.d("TAG", "STARTMATCHCALLBACK: Opponent played " +error.getString("error") + " , you received " + error.getString("message"));
+
                 } catch (IOException | JSONException e) {
                     e.printStackTrace();
                 }
             }
+        }else if(shouldStop) {
+            call.cancel();
+            Log.d("TAG", "STARTMATCHCALLBACK: shoudlStop");
+
         }else{
             retry(call);
+            Log.d("TAG", "STARTMATCHCALLBACK: retrying");
 
-        }
+        }*/
     }
 }

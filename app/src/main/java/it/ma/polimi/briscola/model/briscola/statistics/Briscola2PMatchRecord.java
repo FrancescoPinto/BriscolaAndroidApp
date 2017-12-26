@@ -13,7 +13,7 @@ public class Briscola2PMatchRecord implements Comparable<Briscola2PMatchRecord> 
      * The constant computerPlayerName.
      */
     public static final String computerPlayerName = "CPU";
-    public static final String remotePlayerDefault = "Remote";
+    public static final String remotePlayerDefault = "Online";
 
     public static final int totPoints = 120;
 

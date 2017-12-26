@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -19,9 +20,10 @@ import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMatchConfig;
 import it.ma.polimi.briscola.persistency.SQLiteRepositoryImpl;
 
 /**
- * Created by utente on 28/11/17.
+ * Activity used to show saved matches to the user.
+ *
+ * @author Francesco Pinto
  */
-
 public class SavedConfigActivity extends AppCompatActivity {
 
     private RecyclerView savedConfigRecyclerView;
@@ -29,6 +31,9 @@ public class SavedConfigActivity extends AppCompatActivity {
 
     private TextView noAvailable;
 
+    /**
+     * The constant id representing the extra EXTRA_LOAD_CONFIG.
+     */
     public static final String EXTRA_LOAD_CONFIG = "it.ma.polimi.briscola.savedConfig.config";
 
 
@@ -38,20 +43,13 @@ public class SavedConfigActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_saved_config);
 
-        //@Override
-        // public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-        // init the view
-        //    View mainView = inflater.inflate(R.layout.fragment_saved_config, container, false);
-
         noAvailable = (TextView) findViewById(R.id.no_items_saved_matches);
+
+        //initialize the recyclerView
         savedConfigRecyclerView = (RecyclerView) findViewById(R.id.saved_config_recyclerview);
         savedConfigRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
         updateUI();
-        //    return mainView;
 
-        //}
 
     }
 
@@ -60,7 +58,7 @@ public class SavedConfigActivity extends AppCompatActivity {
         SQLiteRepositoryImpl repo = new SQLiteRepositoryImpl(this);
         List<Briscola2PMatchConfig> savedConfig = repo.findAllMatchConfig();
 
-        if(savedConfig.isEmpty())
+        if(savedConfig.isEmpty()) //if no items available in the list, tell the user
             noAvailable.setVisibility(View.VISIBLE);
         else
             noAvailable.setVisibility(View.GONE);
@@ -68,22 +66,29 @@ public class SavedConfigActivity extends AppCompatActivity {
         adapter = new SavedConfigAdapter(savedConfig);
         savedConfigRecyclerView.setAdapter(adapter);
 
-        //todo, vedi quella cosa che DOVRESTI fare con il notify suli libro
     }
 
+    //REMARK: since Adapter and ViewHolder should be used ONLY by this activity, they are embedded here for
+    //simplicity. They can allways be put in separate classes for reuse. Since it is not the case of this project
+    //I preferred to keep them here and don't make the package structure more messy
 
+    //from now on, no extremely detailed documentation is provided (this is VERY STANDARD ANDROID CODE ... there is no need to explain it step by step)
     private class SavedConfigAdapter extends RecyclerView.Adapter<SavedConfig>{
         private List<Briscola2PMatchConfig> savedConfigRows;
 
+        /**
+         * Instantiates a new Saved Config adapter.
+         *
+         * @param savedConfigRows the saved config rows
+         */
         public SavedConfigAdapter(List<Briscola2PMatchConfig> savedConfigRows){
-            //Collections.sort(rankingRows);
-            //Collections.reverse(rankingRows);
             this.savedConfigRows = savedConfigRows;
         }
 
         @Override
         public SavedConfig onCreateViewHolder(ViewGroup parent, int viewType){
             LayoutInflater layoutInflater = LayoutInflater.from(SavedConfigActivity.this);
+            //inflate the layout for the list item
             View view = layoutInflater.inflate(R.layout.list_item_saved_config, parent, false);
             return new SavedConfig(view);
         }
@@ -102,13 +107,22 @@ public class SavedConfigActivity extends AppCompatActivity {
     }
 
     private class SavedConfig extends RecyclerView.ViewHolder /*implements View.OnClickListener*/{
-        Briscola2PMatchConfig data;
-        public TextView name, position;
-        public Button load, cancel;
 
+        //the config data
+        Briscola2PMatchConfig data;
+
+        //widget references
+        public TextView name, position;
+
+        public Button load,cancel;
+
+        /**
+         * Instantiates a new Saved config viewHolder.
+         *
+         * @param view the view
+         */
         public SavedConfig(View view){
             super(view);
-            //view.setOnClickListener(this); <- not needed
 
             name = (TextView) view.findViewById(R.id.name_saved_config);
             position = (TextView) view.findViewById(R.id.identifier_saved_config);
@@ -116,14 +130,12 @@ public class SavedConfigActivity extends AppCompatActivity {
             load.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = new Intent();//getIntent();//new Intent(SavedConfigActivity.this,MatchActivity.class);
+                    Intent intent = new Intent(); //send the calling activity the config data to be loaded in a bundle
                     Bundle bundle = new Bundle();
                     bundle.putSerializable(EXTRA_LOAD_CONFIG,data);
                     intent.putExtras(bundle);
-                    setResult(RESULT_OK, intent);
-                    finish();
-                   // QUI C'è ' un errore per cui non ritorna e fa load ...
-                    //matchMenuActivity.loadMatch(data); //todo ritornare il result dell'activity con il comando "avvia match loadato"
+                    setResult(RESULT_OK, intent); //return data to the calling activity
+                    finish(); //close
                 }
             });
 
@@ -132,14 +144,20 @@ public class SavedConfigActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view){
                     SQLiteRepositoryImpl repo = new SQLiteRepositoryImpl(SavedConfigActivity.this);
-                    repo.deleteMatchConfig(data.getId());
-                    adapter.savedConfigRows.remove(getAdapterPosition());
-                    adapter.notifyDataSetChanged();
+                    repo.deleteMatchConfig(data.getId()); //delete the row from database
+                    adapter.savedConfigRows.remove(getAdapterPosition()); //remove it from the recyclerView
+                    adapter.notifyDataSetChanged(); //notify changes
                 }
             });
 
         }
 
+        /**
+         * Bind saved config row.
+         *
+         * @param data     the data
+         * @param position the position
+         */
         public void bindSavedConfigRow(Briscola2PMatchConfig data, int position){
             this.data = data;
             name.setText(data.getName());
@@ -148,7 +166,16 @@ public class SavedConfigActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home){
+            onBackPressed();
+            return true; //todo, è qui che si scatena il problema del chekced ... ma se metti false la musica non parte
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
 
-    //todo, gestire i ritorni indietro non ben fatti
+
 }

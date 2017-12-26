@@ -74,8 +74,6 @@ public class OnlineBriscola2PMatchController implements Briscola2PController {
     }
 
 
-
-
     @Override
     public void setIsPlaying(boolean isPlaying) {
         playing = isPlaying;
@@ -95,65 +93,7 @@ public class OnlineBriscola2PMatchController implements Briscola2PController {
     public int getCurrentPlayer() {
         return config.getCurrentPlayer();
     }
-//todo: questo link ha un esempio di uso android dell'api
-    //todo: http://www.vogella.com/tutorials/Retrofit/article.html
-    /*todo: segui questo pattern
-    in sintesi consiste in: metti una private BriscolaAPI nell'activity,
-    nei listener delle interazioni metti le chiamate all'api e accodale direttamente
-    (ESEMPIO: BriscolaAPI.faiUnaCosa(parametri).enqueue(nomeCallbackCheDeveGestireRitornoDllaChiamata)
-    cioè lui ISTANZA DELLE CLASSI ANONIME CHE IMPLEMENTANO Callback<> in variabili dell'activity, queste classi fano
-    ovverride di onResponse e onFailure ... ce n'è una per ogni tipo di query fattibile
-    POI Nell'onCreate metti praticamente il contenuto di start()
-     per inizializzare Gson e Retrofit e BriscolaAPI
-     */
-    //TODO IMPORTANTE: capire come fare a rifare la richiesta se c'è timeout
 
-    /*public void start() {
-
-        OkHttpClient okHttpClient = new OkHttpClient().newBuilder()
-                .connectTimeout(30, TimeUnit.SECONDS)
-                .readTimeout(30, TimeUnit.SECONDS)
-                .writeTimeout(30, TimeUnit.SECONDS)
-                .build();
-
-        Gson gson = new GsonBuilder()
-                .setLenient()
-                .create();
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .addConverterFactory(ScalarsConverterFactory.create())
-                .client(okHttpClient)
-                .build();
-
-        BriscolaAPI briscolaAPI = retrofit.create(BriscolaAPI.class);
-
-       // Call<List<Change>> call = gerritAPI.loadChanges("status:open");
-       // call.enqueue(this);
-
-    }
-
-    public void startNewMatch(){
-        // Call<List<Change>> call = gerritAPI.loadChanges("status:open");
-        // call.enqueue(this);
-    }
-
-    @Override //todo <- nell'implementazione finale creerai classi separate di Callback, ciascuna implementando questi due metodi, una per ciascun metodo
-    public void onResponse(Call<List<Change>> call, Response<List<Change>> response) {
-        if(response.isSuccessful()) {
-            List<Change> changesList = response.body();
-            changesList.forEach(change -> System.out.println(change.subject));
-        } else {
-            System.out.println(response.errorBody());
-        }
-    }
-
-    @Override
-    public void onFailure(Call<List<Change>> call, Throwable t) {
-        t.printStackTrace();
-    }
-*/
     @Override
     public void startNewMatch() {
 
@@ -230,7 +170,6 @@ public class OnlineBriscola2PMatchController implements Briscola2PController {
        // AnimatorSet displayCurrentPlayer = matchFragment.displayIsPlayer0Turn(config.getCurrentPlayer());
         //animators.add(dealFirstHand);
         //animators.add(initializeBriscola);
-        matchFragment.showToast("Current player is " + config.getCurrentPlayer());
 
         initializeBriscola.addListener(new Animator.AnimatorListener() {
             @Override
@@ -294,7 +233,7 @@ public class OnlineBriscola2PMatchController implements Briscola2PController {
             AnimatorSet displayIsPlayer0Turn = matchFragment.displayIsPlayer0Turn(config.getCurrentPlayer());
             playFirstCard.playSequentially(playCard, displayIsPlayer0Turn);
         }else{
-            AnimatorSet hideIsPlayer0Turn = matchFragment.hidIsPlayer0Turn(/*config.getCurrentPlayer()*/);
+            AnimatorSet hideIsPlayer0Turn = matchFragment.hideIsPlayer0Turn(/*config.getCurrentPlayer()*/);
             playFirstCard.playSequentially(hideIsPlayer0Turn, playCard);
         }
        // playFirstCard.playSequentially(playCard, displayCurrentPlayer);
@@ -359,10 +298,8 @@ public class OnlineBriscola2PMatchController implements Briscola2PController {
         int roundWinner = config.chooseRoundWinner(); //choose round winner
         config.clearSurface(roundWinner);
         AnimatorSet cleanSurface = matchFragment.cleanSurface(roundWinner);
-        Log.d("TAG", "prepeared beautiful clean surfacea animation, lasts: " + cleanSurface.getDuration());
         config.setCurrentPlayer(roundWinner);
-        matchFragment.showToast("Current player = " + config.getCurrentPlayer() + ", roundWInner = "+roundWinner);
-        AnimatorSet hideIsPlayer0Turn = matchFragment.hidIsPlayer0Turn();
+        AnimatorSet hideIsPlayer0Turn = matchFragment.hideIsPlayer0Turn();
 
         //   final AnimatorSet displayCurrentPlayer = matchFragment.displayIsPlayer0Turn(config.getCurrentPlayer());
         cleanSurface.addListener(new Animator.AnimatorListener() {
@@ -407,7 +344,6 @@ public class OnlineBriscola2PMatchController implements Briscola2PController {
 
                     //config.drawCardsNewRound();
                     //cards have been collected from surface, new cards have been drawn
-                    matchFragment.showToast("Current round (after draw):  "+ currentRound);
                     config.drawLocalPlayerCard();
                     config.increaseRemotePlayerCardCounter();
                     AnimatorSet drawCards = matchFragment.drawCardsNewRound(config.getHands(), config.getCurrentPlayer(),lastDraw); //TODO, sistemare come calcolare il lastdraw in base al comportamento dell'api del prof
@@ -460,7 +396,7 @@ public class OnlineBriscola2PMatchController implements Briscola2PController {
         initializeClient();
         matchFragment.loadPiles(config.getPile(Briscola2PMatchConfig.PLAYER0).isEmpty(),config.getPile(Briscola2PMatchConfig.PLAYER1).isEmpty());
         matchFragment.loadSurface(config.getSurface().getCardList()); //questi li si può fare subito dato che sono molto semplici
-        matchFragment.loadHands(config.getHands(), config.getCurrentRound());
+        matchFragment.loadHands(config.getHands());
         matchFragment.loadBriscolaIfNeeded(config.getBriscola());
         matchFragment.loadCurrentPlayer(config.getCurrentPlayer());
     }

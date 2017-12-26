@@ -1,13 +1,7 @@
 package it.ma.polimi.briscola.view.activities;
 
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
@@ -24,110 +18,103 @@ import it.ma.polimi.briscola.controller.listeners.VelocityRadioGroupListener;
 import it.ma.polimi.briscola.persistency.SettingsManager;
 
 /**
- * Created by utente on 28/11/17.
+ * Activity used to show settings to the user .
+ *
+ * @author Francesco Pinto
  */
-
 public class SettingsActivity extends AppCompatActivity{
 
 
     private Switch audio, sfx;
     private RadioGroup difficultyRadioGroup;
     private RadioButton easy, medium, hard, veryHard;
-
     private RadioGroup velocityRadioGroup;
     private RadioButton normal, fast, veryFast;
-    private boolean musicIsBound;
-
     private SoundService soundManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //VERY IMPORTANT REMARK: SETTINGS ARE IMMEDIATELY SAVED AS THE USER INTERACTS WITH THEM
         super.onCreate(savedInstanceState);
 
         // set the content view
         setContentView(R.layout.activity_main_settings);
 
         // init the elements
-        /* layout elements */
 
         difficultyRadioGroup = (RadioGroup) findViewById(R.id.difficulty_radio_group);
         easy = (RadioButton) findViewById(R.id.difficulty_easy);
         medium = (RadioButton) findViewById(R.id.difficutly_intermediate);
         hard = (RadioButton) findViewById(R.id.difficulty_hard);
-        //veryHard = (RadioButton) findViewById(R.id.difficulty_very_hard);
-
+        //veryHard = (RadioButton) findViewById(R.id.difficulty_very_hard); //todo, se ho tempo per fare un altro livello di difficoltà
         audio = (Switch) findViewById(R.id.toggle_audio_switch);
         sfx = (Switch) findViewById(R.id.toggle_sfx_switch);
-
-
-       // Button saveButton = (Button) findViewById(R.id.id_save_button);
-       // saveButton.setOnClickListener(new UpdateColorListener(this, this));
-
-       // resultPreview = (TextView) findViewById(R.id.id_result_preview);
-
-        // get the intent from the caller activity
-        Intent intent = getIntent();
-       // result = intent.getStringExtra("result");
-
-        SettingsManager settingsManager = new SettingsManager(getApplicationContext());
-
-        switch(settingsManager.getDifficultyPreference()){
-            case SettingsManager.EASY:easy.setChecked(true);break;
-            case SettingsManager.MEDIUM:medium.setChecked(true);break;
-            case SettingsManager.HARD:hard.setChecked(true);break;
-           // case SettingsManager.VERY_HARD:veryHard.setChecked(true);break;
-            default: easy.setChecked(true);
-
-        }
-        // set the listeners for each checkboxes
-        for (int i = 0; i < difficultyRadioGroup.getChildCount(); i++) {
-            View view = difficultyRadioGroup.getChildAt(i);
-            RadioButton radioButton = (RadioButton) view;
-            switch(i){
-                case SettingsManager.EASY: radioButton.setTag(0); break;
-                case SettingsManager.MEDIUM: radioButton.setTag(1);break;
-                case SettingsManager.HARD: radioButton.setTag(2);break;
-              //  case SettingsManager.VERY_HARD: radioButton.setTag(3);break;
-                default:
-            }
-        }
-
-        difficultyRadioGroup.setOnCheckedChangeListener(new DifficultyRadioGroupListener(this));
-
         velocityRadioGroup = (RadioGroup) findViewById(R.id.velocity_radio_group);
         normal = (RadioButton) findViewById(R.id.velocity_normal);
         fast = (RadioButton) findViewById(R.id.velocity_fast);
         veryFast = (RadioButton) findViewById(R.id.velocity_very_fast);
 
+        //initialize the toggles/radiogroups interface based on the saved settings
+        SettingsManager settingsManager = new SettingsManager(getApplicationContext());
 
+        switch(settingsManager.getDifficultyPreference()){
+            case SettingsManager.DIFFICULTY_EASY:easy.setChecked(true);break;
+            case SettingsManager.DIFFICULTY_MEDIUM:medium.setChecked(true);break;
+            case SettingsManager.DIFFICULTY_HARD:hard.setChecked(true);break;
+           // case SettingsManager.DIFFICULTY_VERY_HARD:veryHard.setChecked(true);break;
+            default: easy.setChecked(true);
+
+        }
+
+        //set tags containing the difficulty id in the radiobuttons
+        for (int i = 0; i < difficultyRadioGroup.getChildCount(); i++) {
+            View view = difficultyRadioGroup.getChildAt(i);
+            RadioButton radioButton = (RadioButton) view;
+            switch(i){
+                case SettingsManager.DIFFICULTY_EASY: radioButton.setTag(SettingsManager.DIFFICULTY_EASY); break;
+                case SettingsManager.DIFFICULTY_MEDIUM: radioButton.setTag(SettingsManager.DIFFICULTY_MEDIUM);break;
+                case SettingsManager.DIFFICULTY_HARD: radioButton.setTag(SettingsManager.DIFFICULTY_HARD);break;
+              //  case SettingsManager.DIFFICULTY_VERY_HARD: radioButton.setTag(3);break;
+                default:
+            }
+        }
+
+        //set listener
+        difficultyRadioGroup.setOnCheckedChangeListener(new DifficultyRadioGroupListener(this));
+
+        //initialize the toggles/radiogroups interface based on the saved settings
         switch(settingsManager.getVelocityPreference()){
-            case SettingsManager.NORMAL:normal.setChecked(true);break;
-            case SettingsManager.FAST:fast.setChecked(true);break;
-            case SettingsManager.VERYFAST:veryFast.setChecked(true);break;
+            case SettingsManager.VELOCITY_NORMAL:normal.setChecked(true);break;
+            case SettingsManager.VELOCITY_FAST:fast.setChecked(true);break;
+            case SettingsManager.VELOCITY_VERY_FAST:veryFast.setChecked(true);break;
             default: normal.setChecked(true);
 
         }
-        // set the listeners for each checkboxes
+        //set tags containing the velocity id in the radiobuttons
         for (int i = 0; i < velocityRadioGroup.getChildCount(); i++) {
             View view = velocityRadioGroup.getChildAt(i);
             RadioButton radioButton = (RadioButton) view;
             switch(i){
-                case SettingsManager.NORMAL: radioButton.setTag(0); break;
-                case SettingsManager.FAST: radioButton.setTag(1);break;
-                case SettingsManager.VERYFAST:radioButton.setTag(2);break;
-                default: radioButton.setTag(0);
+                case SettingsManager.VELOCITY_NORMAL: radioButton.setTag(SettingsManager.VELOCITY_NORMAL); break;
+                case SettingsManager.VELOCITY_FAST: radioButton.setTag(SettingsManager.VELOCITY_FAST);break;
+                case SettingsManager.VELOCITY_VERY_FAST:radioButton.setTag(SettingsManager.VELOCITY_VERY_FAST);break;
+                default: radioButton.setTag(SettingsManager.VELOCITY_NORMAL);
             }
         }
-
-        Toast.makeText(this,R.string.change_settings_warning,Toast.LENGTH_LONG).show();
-
+        //set listener
         velocityRadioGroup.setOnCheckedChangeListener(new VelocityRadioGroupListener(this));
 
+        //warn the user that changing the difficulty will only affect next match
+        Toast.makeText(this,R.string.change_settings_warning,Toast.LENGTH_LONG).show();
+
+        //get soundManager
         soundManager = ((BriscolaApplication) getApplication()).getSoundManager();
 
+        //initialize switches based on music/sound status
         audio.setChecked(soundManager.getMusicStatus());
         sfx.setChecked(soundManager.getSoundStatus());
 
+        //set listeners
         audio.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -147,8 +134,7 @@ public class SettingsActivity extends AppCompatActivity{
     @Override
     protected void onResume() {
         super.onResume();
-        // update result
-       // resultPreview.setText(result);
+
     }
 
     @Override
@@ -156,39 +142,11 @@ public class SettingsActivity extends AppCompatActivity{
         int id = item.getItemId();
         if (id == android.R.id.home){
             onBackPressed();
-            return true;
+            return true; //todo, è qui che si scatena il problema del chekced ... ma se metti false la musica non parte
         }
         return super.onOptionsItemSelected(item);
     }
-    /*@Override
-    public void onBackPressed() {
-        AlertDialog dialog = new AlertDialog.Builder(this)
-                .setMessage(getString(R.string.back_button_settings))
-                .setCancelable(false)
-                .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        finish();
-                    }
-                })
-                .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                })
-                .create();
-        dialog.show();
-    }*/
 
-   /* public void onCallIntent(String color) {
-        // call an intent to pass the result to the activity caller
-        Intent intent = new Intent(MainSettingsActivity.this, MainCalculatorActivity.class);
-        intent.putExtra("theme_color", color);
-        setResult(RESULT_OK, intent);
-        // saveMatchRecord the current
-        finish();
-    }*/
 
 
 

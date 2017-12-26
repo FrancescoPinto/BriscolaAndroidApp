@@ -1,4 +1,13 @@
 DOCUMENTAZIONE FATTA COMPLETA: DIALOG, LISTENERS, in controllers mi manca l'online da documentare
+                                ho fatto tutte LE ACTIVITIES, PERO' c'è la cosa dell onItemSelected da sistemare
+                                ho fatto tutti i PERSISTENCE ----------
+                                FATTO TUTTO AUDIO ---------------------
+                                CONSIDERA UN MERGE TRA OFFLINE E ONLINE CONTROLLERS
+                                SEMPLICEMENTE SOSTITUENDO ALLE CHIAMATE SPECIFICHE PER ONLINE/OFFLINE
+                                DELLE CLASSI CHE IMPLEMENTANO UN'INTERFACCIA, a seconda di se sono online o meno
+                                TUTTI I FRAGMENT, solo che ho inserito degli errori per le cose che devi cambiare
+                                ricordati che nel model devi documentar ele cose che hai cambiato (e.g. minimal match config etc.)
+
 
 DA FARE IN SETTIMANA:
 --- ONLINE
@@ -17,10 +26,11 @@ ATTENZIONE: ho già messo la lingua italiana!
 perché appena pescata ma non giunta in tempo ... usa la soluzione che hai fatto in Offlinecontroller ... (puoi interagire solo
 dopo displayCurrentPlayer ... e presumo anche dopo fine dell'animazione della pesca??? non ricord, controlla
 per rapidità, cerca tutte le manipolazioni di isPlaying o gli usi di GameInteractionEnabler
+- i match online non chiudono bene (se avii un'app, e avvi un match, e poi dici di non voler aspettare, e poi avvi un altro match
+questo PARTE anche se non ci sono altri giocatori, perché il server non ha chiuso il match
 ... C' E' DAVVERO QUALCOSA CHE NON VA
    //todo IMPORTANTISSIMO: togliere il retained
    - togli il background scuro al menu?? o almeno fallo più chiaro ...
-   -- SISTEMARE LA QUESTIONE DEL DRAWER (ovvero che resta checked)
     -       fare l'IA' avanzata
     - controllare l'online e debuggarlo
    // anima le cards delle schermate statiche e il menu di inizio match
@@ -46,7 +56,8 @@ per rapidità, cerca tutte le manipolazioni di isPlaying o gli usi di GameIntera
     l'audio smette <- ho provato a risolvere togliendo il pauseBackgroundMusic dall'onPause ... QUINDI
     la soluzione è O trasformare SettingsActivity in un fragment ... oppure usare implementazione avanzata di un Service (cerca
     su internet Background Music in all activities)
-
+- testa che un possibile (ma mai rilevato bug) introdotto nel refactoring di matchActivity riga 116 (accorpando in OR le due condizioni che prima erano in else)
+    non esista davvero
 
 
 ROBA CHE SEMBRA A POSTO MA POTREBBE NON ESSERLO:
@@ -65,6 +76,8 @@ isDeckEmpty() ... però dentro ci gestisci anche ciò che succede quando non è 
 - sistemare il drawer
 - randomizzare (come in SoundInfo) il seme (ovvero creare un unico random da usare sempre) (lo lascio per ultimo, così mi è più facile testare)
    //  QUESTO DOVREI AVERLO FATTO IMPLICITAMENTE FACENDO IL REPLACE CON IL FRAGMENT MANAGER A FINE PARTITA (automaticamente fa replace con menu)->: togliere retained fragment quando la partita termina o viene abbandonata (chiusa quando si gestisce un exit dalla partita)
+   -- SISTEMARE LA QUESTIONE DEL DRAWER (ovvero che resta checked) <- scoperto che è a riga 151 (onOptionsItemSelected) di SettingsActivity (e dell'altra) il problema ...
+   ATTENTO, è anche in SavedConfig e PreviousMatch (devi permere il back in alto a sinistra, non il pulsante back sotto)
 
 NELLA SPECIFICA, PER LA UI LUI RICHIEDE ALMENO:
 - UI should contain navigation that allows to

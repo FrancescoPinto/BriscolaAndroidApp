@@ -83,4 +83,8 @@
     <string name="no_items_saved_matches">No saved matches available. </string>
     <string name="no_items_match_records">No saved match records available. </string>
     <string name="warn_cant_play">"In this moment you can't choose a card, please, wait!"</string>
+    <string name="warn_back_button">Pressing the back button again will exit the app. Press again if you want to exit.</string>
+    <string name="record_score">Score: %1$d </string>
+    <string name="record_player_name">Player: %1$s </string>
+
 </resources>

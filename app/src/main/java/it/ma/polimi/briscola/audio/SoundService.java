@@ -18,31 +18,32 @@ import android.preference.PreferenceManager;
 import java.io.IOException;
 import java.util.HashMap;
 
-/**
- * Created by utente on 17/12/17.
- */
+import it.ma.polimi.briscola.persistency.SettingsManager;
 
+/**
+ * Service that handles the audio/sound aspects
+ *
+ * @author Francesco Pinto
+ */
 public class SoundService extends Service{
 
-    public final IBinder binder = new ServiceBinder();
 
-    private static final int MAX_STREAMS = 10;
+     // The Binder, used to bind the Service (used by ServiceConnection objects)
+    private final IBinder binder = new ServiceBinder();
+
+    private static final int MAX_STREAMS = 10; //max number of streams
     private static final float DEFAULT_MUSIC_VOLUME = 0.6f;
 
-    private static final String SOUNDS_PREF_KEY = "it.ma.polimi.briscola.sounds.boolean";
-    private static final String MUSIC_PREF_KEY = "it.ma.polimi.briscola.music.boolean";
-
-    //	private HashMap<GameEvent, SoundInfo> mSoundsMap;
-    private HashMap<GameEvent, Integer> soundsMap;
+    private HashMap<GameEvent, Integer> soundsMap; //hashmap mapping game events on resources id
 
     private Context context;
     private SoundPool soundPool;
 
-    private boolean soundEnabled;
+    private boolean soundEnabled; //whether sound/music are enabled
     private boolean musicEnabled;
 
     private MediaPlayer backgroundPlayer;
-
+    private SettingsManager settings;
 
     @Override
     public IBinder onBind(Intent arg0){return binder;}
@@ -55,14 +56,14 @@ public class SoundService extends Service{
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        // soundManager = (SoundManager) bundle.getSerializable(SoundManager.EXTRA_SOUND_MANAGER);
-        //soundManager = SoundManager.getInstance(this);
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        soundEnabled = prefs.getBoolean(SOUNDS_PREF_KEY, true);
-        musicEnabled = prefs.getBoolean(MUSIC_PREF_KEY, true);
+        //generate settings manager and extract preferences
+        settings = new SettingsManager(this);
+        soundEnabled = settings.getSoundPreference();
+        musicEnabled =settings.getMusicPreference();
+
+    ;
         this.context = this;
 
-        //return START_STICKY;
         loadIfNeeded();
         //resumeBgMusic();
         return Service.START_STICKY;
@@ -75,7 +76,15 @@ public class SoundService extends Service{
         super.onDestroy();
     }
 
+    /**
+     * The Service binder class, used by ServiceConnection to to return a reference to the service.
+     */
     public class ServiceBinder extends Binder {
+        /**
+         * Gets service.
+         *
+         * @return the service
+         */
         public SoundService getService()
         {
             return SoundService.this;
@@ -83,29 +92,36 @@ public class SoundService extends Service{
     }
 
     private void loadEventSound(Context context, GameEvent event, String... filename) {
-//		mSoundsMap.put(event,new SoundInfo(context, soundPool, filename));
         try {
+            //retrieve sound descriptor
             AssetFileDescriptor descriptor = context.getAssets().openFd("sfx/" + filename[0]);
+            //load it
             int soundId = soundPool.load(descriptor, 1);
+            //save the mapping between event and soundId
             soundsMap.put(event, soundId);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * Play sound for game event.
+     *
+     * @param event the event
+     */
     public void playSoundForGameEvent(GameEvent event) {
-        if (!soundEnabled) {
+        if (!soundEnabled) { //check if should play sound
             return;
         }
 
-        Integer soundId = soundsMap.get(event);
+        Integer soundId = soundsMap.get(event); //get soundId corresponding to event
         if (soundId != null) {
             // Left Volume, Right Volume, priority (0 == lowest), loop (0 == no) and rate (1.0 normal playback rate)
             soundPool.play(soundId, 1.0f, 1.0f, 0, 0, 1.0f);
         }
     }
 
-    private void loadIfNeeded () {
+    private void loadIfNeeded () { //load sounds/music only if they are enabled
         if (soundEnabled) {
             loadSounds();
         }
@@ -115,13 +131,15 @@ public class SoundService extends Service{
     }
 
     private void loadSounds() {
+        //initialize pool object
         createSoundPool();
         soundsMap = new HashMap<GameEvent, Integer>();
+        //initialize soundsMap
         loadEventSound(context, GameEvent.MoveCard, "240777__f4ngy__dealing-card.wav");
         loadEventSound(context, GameEvent.FlipCard, "240776__f4ngy__card-flip.wav");
         loadEventSound(context, GameEvent.WinRound, "341985__unadamlar__goodresult.wav");
         loadEventSound(context, GameEvent.LoseRound, "362204__taranp__horn-fail-wahwah-3.wav");
-        loadEventSound(context, GameEvent.WinMatch, "353546__maxmakessounds__success.wav"); //todo AGGIUNGI UN VERO VICTORY THEME
+        loadEventSound(context, GameEvent.WinMatch, "353546__maxmakessounds__success.wav");
         loadEventSound(context, GameEvent.LoseMatch, "371451__cabled-mess__lose-funny-retro-video-game.wav");
 
 
@@ -143,11 +161,17 @@ public class SoundService extends Service{
         }
     }
 
+    /**
+     * Load music.
+     */
     public void loadMusic() {
         try {
-            // Important to not reuse it. It can be on a strange state
+            //since the state machine of MediaPlayer is quite complex, I'll create a new one every time it is needed to reload the music
+            //to simplify the management of MediaPlayer state ... for the purposes of this app it doesn't produce low performance
             backgroundPlayer = new MediaPlayer();
-            AssetFileDescriptor afd = context.getAssets().openFd("sfx/UnexpectedBackgroundMusic.mp3"); //todo, cambia musichetta
+            //find data about asset
+            AssetFileDescriptor afd = context.getAssets().openFd("sfx/UnexpectedBackgroundMusic.mp3");
+            //initialize backgroundPlayer
             backgroundPlayer.setDataSource(afd.getFileDescriptor(),
                     afd.getStartOffset(), afd.getLength());
             backgroundPlayer.setLooping(true);
@@ -159,18 +183,27 @@ public class SoundService extends Service{
         }
     }
 
+    /**
+     * Pause background music.
+     */
     public void pauseBgMusic() {
         if (musicEnabled) {
             backgroundPlayer.pause();
         }
     }
 
+    /**
+     * Resume background music.
+     */
     public void resumeBgMusic() {
         if (musicEnabled) {
             backgroundPlayer.start();
         }
     }
 
+    /**
+     * Unload music.
+     */
     public void unloadMusic() {
         backgroundPlayer.stop();
         backgroundPlayer.release();
@@ -182,6 +215,9 @@ public class SoundService extends Service{
         soundsMap.clear();
     }
 
+    /**
+     * Toggle sound status.
+     */
     public void toggleSoundStatus() {
         soundEnabled = !soundEnabled;
         if (soundEnabled) {
@@ -191,11 +227,13 @@ public class SoundService extends Service{
             unloadSounds();
         }
         // Save it to preferences
-        PreferenceManager.getDefaultSharedPreferences(context).edit()
-                .putBoolean(SOUNDS_PREF_KEY, soundEnabled)
-                .commit();
+        settings.setSoundPreference(soundEnabled);
+
     }
 
+    /**
+     * Toggle music status.
+     */
     public void toggleMusicStatus() {
         musicEnabled = !musicEnabled;
         if (musicEnabled) {
@@ -206,16 +244,25 @@ public class SoundService extends Service{
             unloadMusic();
         }
         // Save it to preferences
-        PreferenceManager.getDefaultSharedPreferences(context).edit()
-                .putBoolean(MUSIC_PREF_KEY, musicEnabled)
-                .commit();
+        settings.setMusicPreference(musicEnabled);
+
     }
 
+    /**
+     * Gets music status.
+     *
+     * @return the music status
+     */
     public boolean getMusicStatus() {
         return musicEnabled;
     }
 
 
+    /**
+     * Gets sound status.
+     *
+     * @return the sound status
+     */
     public boolean getSoundStatus() {
         return soundEnabled;
     }

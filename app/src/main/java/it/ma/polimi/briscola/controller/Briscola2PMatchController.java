@@ -2,7 +2,6 @@ package it.ma.polimi.briscola.controller;
 
 import android.animation.Animator;
 import android.animation.AnimatorSet;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,16 +42,16 @@ public class Briscola2PMatchController implements Briscola2PController {
         super();
         this.matchFragment = matchFragment;
         switch(difficulty) {
-            case SettingsManager.EASY:
+            case SettingsManager.DIFFICULTY_EASY:
                 player1 = new Briscola2PAIRandomPlayer();
                 break;
-            case SettingsManager.MEDIUM:
+            case SettingsManager.DIFFICULTY_MEDIUM:
                 player1 = new Briscola2PAIDumbGreedyPlayer();
                 break;
-            case SettingsManager.HARD:
+            case SettingsManager.DIFFICULTY_HARD:
                 player1 = new Briscola2PAISmarterGreedyPlayer(); //todo, se PROPRIO non riesci a fare un'IA più intelligente del greedy, fai una SuperDumbGreedy
                 break;
-            case SettingsManager.VERY_HARD:
+            case SettingsManager.DIFFICULTY_VERY_HARD:
                 player1 = new Briscola2PAISmarterGreedyPlayer(); //todo, metti IA ancora più intelligente (se hai tempo)
                 break;
         }
@@ -144,7 +143,7 @@ public class Briscola2PMatchController implements Briscola2PController {
             //schedule animations
             playFirstCard.playSequentially(playCard, displayIsPlayer0Turn);
         }else{ //if PLAYER1 is the next one
-            AnimatorSet hideIsPlayer0Turn = matchFragment.hidIsPlayer0Turn(/*config.getCurrentPlayer()*/); //hide the signal that user can play
+            AnimatorSet hideIsPlayer0Turn = matchFragment.hideIsPlayer0Turn(/*config.getCurrentPlayer()*/); //hide the signal that user can play
             //schedule animations
             playFirstCard.playSequentially(hideIsPlayer0Turn, playCard);
         }
@@ -179,7 +178,7 @@ public class Briscola2PMatchController implements Briscola2PController {
         config.clearSurface(roundWinner); //clear surface at configuration level
         AnimatorSet cleanSurface = matchFragment.cleanSurface(roundWinner); //clean surface at GUI level
         config.setCurrentPlayer(roundWinner); //choose next round first player at configuration level
-        AnimatorSet hideIsPlayer0Turn = matchFragment.hidIsPlayer0Turn(); //in any case, hide player0Turn (while playing cleaning animations interaction should not be enabled)
+        AnimatorSet hideIsPlayer0Turn = matchFragment.hideIsPlayer0Turn(); //in any case, hide player0Turn (while playing cleaning animations interaction should not be enabled)
 
         //a listener that handles the end of the surface cleaning operations
         cleanSurface.addListener(new Animator.AnimatorListener() {
@@ -274,7 +273,7 @@ public class Briscola2PMatchController implements Briscola2PController {
     public void resumeMatch(){
         matchFragment.loadPiles(config.getPile(Briscola2PMatchConfig.PLAYER0).isEmpty(),config.getPile(Briscola2PMatchConfig.PLAYER1).isEmpty());
         matchFragment.loadSurface(config.getSurface().getCardList()); //questi li si può fare subito dato che sono molto semplici
-        matchFragment.loadHands(config.getHands(), config.getNumberTurnsElapsed());
+        matchFragment.loadHands(config.getHands());
         matchFragment.loadBriscolaIfNeeded(config.inferBriscolaIfInDeck());
         matchFragment.loadCurrentPlayer(config.getCurrentPlayer());
 

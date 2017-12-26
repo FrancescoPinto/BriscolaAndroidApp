@@ -11,22 +11,36 @@ import it.ma.polimi.briscola.view.activities.Briscola2PMatchActivity;
 import it.ma.polimi.briscola.R;
 
 /**
- * Created by utente on 13/12/17.
+ * Class that handles the menu of the game
+ *
+ * @author Francesco Pinto
  */
-
 public class MenuFragment extends Fragment {
 
+    //image buttons of the view
     private ImageButton startOfflineMatch, loadOfflineMatch, startOnlineMatch, closeMenuOverlay;
     private Briscola2PMatchActivity activity;
+
+    /**
+     * ID used to pass the isOverlay value to the fragment
+     */
     public static final String IS_OVERLAY = "it.ma.polimi.briscola.matchmenu.isoverlay";
 
-
+    //whether the menu is Overlay or not
     private boolean isOverlay = false;
+
+    /**
+     * Generates a new instance of MenuFragment given the parameters.
+     *
+     * @param isOverlay the is overlay
+     * @return the menu fragment
+     */
     public static MenuFragment newInstance(boolean isOverlay){
+        //put data in bundle
         Bundle args = new Bundle();
         args.putBoolean(IS_OVERLAY, isOverlay);
-
         MenuFragment fragment =  new MenuFragment();
+        //provide data to fragment
         fragment.setArguments(args);
 
         return fragment;
@@ -35,46 +49,23 @@ public class MenuFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-
+        //extract data from arguments
         isOverlay = getArguments().getBoolean(IS_OVERLAY);
+
         // init the view
         View mainView = inflater.inflate(R.layout.fragment_main_menu, container, false);
         activity = (Briscola2PMatchActivity) getActivity();
+
         startOfflineMatch = (ImageButton) mainView.findViewById(R.id.start_offline_match);
         startOfflineMatch.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) { //todo, anziché settare la difficulty qui, fallo nel newInstance, assegnandolo all'oggeto fragment che istanzi!
+            public void onClick(View view) {
                 Briscola2PMatchFragment match = activity.getMatchesFragments();
-                if(match == null) {
+                if(match == null) { //if there is no previously running match, then start new
                     activity.startOfflineMatch();
-                }else{
+                }else{ //else handle interrupt current match
                     match.handleMatchInterrupt(Briscola2PMatchActivity.START_NEW_OFFLINE);
                 }
-            /*    // Pop off everything up to and including the current tab
-               FragmentManager fragmentManager = getSupportFragmentManager();
-                fragmentManager.popBackStack(BACK_STACK_ROOT_TAG, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-
-                // Add the new tab fragment
-                fragmentManager.beginTransaction()
-                        .replace(R.id.container, TabFragment.newInstance())
-                        .addToBackStack(BACK_STACK_ROOT_TAG)
-                        .commit();
-
-                DECIDERE QUALE DEI DUE
-
-            Fragment fragment = Briscola2PMatchFragment.newInstance(false, new SettingsManager(getActivity().getApplicationContext()).getDifficultyPreference()); //false = not online
-                fragment.setEnterTransition(new Slide(Gravity.RIGHT));
-                fragment.setExitTransition(new Slide(Gravity.LEFT));
-
-                // Insert the fragment by replacing any existing fragment
-                FragmentManager fragmentManager = MenuFragment.this.getActivity().getSupportFragmentManager();
-                Fragment oldMatch = fragmentManager.findFragmentByTag("offline_match");
-                if(oldMatch != null)
-                    fragmentManager.beginTransaction().remove(oldMatch).commit();
-
-                fragmentManager.beginTransaction()
-                        .replace(R.id.fragment_container, fragment,"offline_match") //todo, oppure replace?
-                        .commit();*/
             }
         });
 
@@ -84,18 +75,11 @@ public class MenuFragment extends Fragment {
             public void onClick(View view) {
 
                 Briscola2PMatchFragment match = activity.getMatchesFragments();
-                if(match == null) {
+                if(match == null) { //if there is no previously running match, then show saved matches
                     activity.showSavedMatches();
-                }else{
+                }else{ //else handle interrupt current match
                     match.handleMatchInterrupt(Briscola2PMatchActivity.LOAD_OLD_MATCH);
                 }
-                /*((MatchActivity) getActivity()).onBuildDialog(
-                        "Sorry, no time to implement this",//getString(R.string.exit_message),
-                        "Ok",//getString(R.string.yes),
-                        null,//getString(R.string.no),
-                        true,
-                        false
-                ).show();*/
             }
 
         });
@@ -106,49 +90,45 @@ public class MenuFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Briscola2PMatchFragment match = activity.getMatchesFragments();
-                if(match == null) {
+                if(match == null) { //if there is no previously running match, then start new
                     activity.startOnlineMatch();
-                }else{
+                }else{//else handle interrupt current match
                     match.handleMatchInterrupt(Briscola2PMatchActivity.START_NEW_ONLINE);
                 }
-               /* Fragment fragment = Briscola2PMatchFragment.newInstance(true, null); //true = online match
-                fragment.setEnterTransition(new Slide(Gravity.RIGHT));
-                fragment.setExitTransition(new Slide(Gravity.LEFT));
 
-                // Insert the fragment by replacing any existing fragment
-                FragmentManager fragmentManager = MenuFragment.this.getActivity().getSupportFragmentManager();
-                Fragment oldMatch = fragmentManager.findFragmentByTag("online_match");
-                if(oldMatch != null)
-                    fragmentManager.beginTransaction().remove(oldMatch).commit();
-
-                fragmentManager.beginTransaction()
-                        .replace(R.id.fragment_container, fragment,"online_match") //todo, oppure replace?
-                        .commit();*/
             }
         });
 
         closeMenuOverlay = (ImageButton) mainView.findViewById(R.id.close_menu_button);
-        if(!isOverlay)
-            closeMenuOverlay.setVisibility(View.GONE);
+        if(!isOverlay) //if menu is not an overlay you shouldn't close it with the close button
+            closeMenuOverlay.setVisibility(View.GONE); //hide the button
         else{
             closeMenuOverlay.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    activity.hideOverlayMenu();
+                    activity.hideOverlayMenu(); //hide on click
                 }
             });
         }
-
-
 
         return mainView;
 
     }
 
+    /**
+     * Whether the menu is an overlay.
+     *
+     * @return True if the menu is an overlay, false otherwise
+     */
     public boolean getIsOverlay(){
         return isOverlay;
     }
 
+    /**
+     * Set is overlay.
+     *
+     * @param isOverlay True if the menu is an overlay, false otherwise
+     */
     public void setIsOverlay(boolean isOverlay){
         this.isOverlay = isOverlay;
     }

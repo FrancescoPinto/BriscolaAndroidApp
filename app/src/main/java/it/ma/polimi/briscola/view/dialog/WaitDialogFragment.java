@@ -46,7 +46,7 @@ public class WaitDialogFragment extends DialogFragment
         //initialize the Dialog class to be returned, set parameters of the Dialog class
         dialog = new Dialog(getActivity());
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setCancelable(false);
+        setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);
         dialog.setContentView(R.layout.dialog_wait);
 

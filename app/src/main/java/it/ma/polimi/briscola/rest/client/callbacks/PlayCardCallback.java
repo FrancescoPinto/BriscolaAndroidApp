@@ -26,6 +26,11 @@ public class PlayCardCallback extends CallbackWithRetry<NextTurnCardDTO>{
         this.controller = controller;
     }
 
+
+    public PlayCardCallback() {
+        super();
+    }
+
     @Override
     public void onFailure(Call<NextTurnCardDTO> call, Throwable t) {
         super.onFailure(call, t);
@@ -35,22 +40,41 @@ public class PlayCardCallback extends CallbackWithRetry<NextTurnCardDTO>{
 
     @Override
     public void onResponse(Call<NextTurnCardDTO> call, Response<NextTurnCardDTO> response) {
-        if(controller.getMatchFragment().isVisible() && !call.isCanceled()) {
+        if(response.isSuccessful()){
+            Log.d("TAG", "PLAYCARDCALLBACK: Success playCardRequest, next turn card is" + response.body().getCard());
+        }else {
+            try {
+                JSONObject error = new JSONObject(response.errorBody().string());
+                controller.manageError(error.getString("error"), error.getString("message"));
+                Log.d("TAG", "PLAYCARDCALLBACK: Opponent played " + error.getString("error") + " , you received " + error.getString("message"));
+            } catch (IOException | JSONException e) {
+                e.printStackTrace();
+            }
+        }
+      /*  if(controller.getMatchFragment().isVisible() && !call.isCanceled() && !shouldStop) {
             success = true;
             if (response.isSuccessful()) {
-                Log.d("TAG", "Success playCardRequest, next turn card is" + response.body().getCard());
+                Log.d("TAG", "PLAYCARDCALLBACK: Success playCardRequest, next turn card is" + response.body().getCard());
                 NextTurnCardDTO nextTurn = response.body();
                 controller.manageNextTurnCard(nextTurn);
             } else {
                 try {
                     JSONObject error = new JSONObject(response.errorBody().string());
                     controller.manageError(error.getString("error"), error.getString("message"));
+                    Log.d("TAG", "PLAYCARDCALLBACK: Opponent played " +error.getString("error") + " , you received " + error.getString("message"));
+
                 } catch (IOException | JSONException e) {
                     e.printStackTrace();
                 }
             }
+        }else if(shouldStop) {
+            call.cancel();
+            Log.d("TAG", "PLAYCARDCALLBACK: shoudlStop");
+
         }else{
             retry(call);
-        }
+            Log.d("TAG", "PLAYCARDCALLBACK: retrying");
+
+        }*/
     }
 }
