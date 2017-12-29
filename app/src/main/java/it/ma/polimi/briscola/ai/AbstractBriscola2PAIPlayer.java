@@ -36,9 +36,9 @@ public abstract class AbstractBriscola2PAIPlayer implements Briscola2PAIPlayer {
     }
 
     public void computeSuitProbabilities(int playerIndex){
-        List<NeapolitanCard> cardsInPiles = config.getPile(Briscola2PMatchConfig.PLAYER0).getCardList();
-        cardsInPiles.addAll(config.getPile(Briscola2PMatchConfig.PLAYER1).getCardList());
-        cardsInPiles.addAll(config.getHand(playerIndex).getCardList());
+        List<NeapolitanCard> cardsInPiles = new ArrayList(config.getPile(Briscola2PMatchConfig.PLAYER0).getCardList());
+        cardsInPiles.addAll(new ArrayList<NeapolitanCard>(config.getPile(Briscola2PMatchConfig.PLAYER1).getCardList()));
+        cardsInPiles.addAll(new ArrayList<NeapolitanCard>(config.getHand(playerIndex).getCardList()));
 
         int batons = 0;
         int cups = 0;

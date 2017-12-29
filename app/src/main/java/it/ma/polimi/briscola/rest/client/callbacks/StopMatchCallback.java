@@ -8,6 +8,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 import it.ma.polimi.briscola.controller.OnlineBriscola2PMatchController;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -18,53 +19,39 @@ import static java.lang.Thread.sleep;
  */
 
 //todo, eliminarlo? tanto non te ne frega se finisce bene o male lo stop?
-public class StopMatchCallback extends CallbackWithRetry{
-    private OnlineBriscola2PMatchController controller;
+public class StopMatchCallback extends CallbackWithRetry<ResponseBody> {
 
-        public StopMatchCallback(OnlineBriscola2PMatchController controller) {
+        public StopMatchCallback() {
             super();
-            this.controller = controller;
         }
 
-    public StopMatchCallback() {
-        super();
-    }
+
         @Override
-        public void onResponse(Call call, Response response) {
-            if(response.isSuccessful()){
-                Log.d("TAG", "Match Cancelled correctly");
-            }else {
-                try {
-                    JSONObject error = new JSONObject(response.errorBody().string());
-                    controller.manageError(error.getString("error"), error.getString("message"));
-                    Log.d("TAG", "STOPMATCHCALLBACK: Opponent played " +error.getString("error") + " , you received " + error.getString("message"));
-                } catch (IOException | JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-            /*if(controller.getMatchFragment().isVisible() && !call.isCanceled() && !shouldStop) {
-                success = true;
+        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            Log.d("TAG","STO CHIUDENDO");
+            try {
 
-                if (response.isSuccessful()) {
-                    Log.d("TAG", "Match Cancelled");
-                } else {
-                    try {
-                        JSONObject error = new JSONObject(response.errorBody().string());
-                        Log.d("TAG", "Error on Match Cancelled");
-                        Log.d("TAG", "STOPMATCHCALLBACK: Opponent played " +error.getString("error") + " , you received " + error.getString("message"));
-                    } catch (IOException | JSONException e) {
-                        e.printStackTrace();
+                    if(/*(controller.getMatchFragment().isVisible() &&*/ !call.isCanceled() && !shouldStop) {
+                    success = true;
+                    shouldStop = true;
+
+                    if (response.code() == 200) {
+                        Log.d("TAG", "Match Cancelled");
+                        //todo
+                        //  controller.endMatch();
+                    } else {
+                            JSONObject error = new JSONObject(response.errorBody().string());
+                            Log.d("TAG", "Error on Match Cancelled");
+                            Log.d("TAG", "STOPMATCHCALLBACK: " +error.getString("error") + " , you received " + error.getString("message"));
+
                     }
-                }
-
-            }else if(shouldStop) {
-                call.cancel();
-                Log.d("TAG", "STOPMATCALLBACK: shoudlStop");
-
-            }else{
-                retry(call);
-                Log.d("TAG", "STOPMATCALLBACK: retrying");
-
-            }*/
+                    // }
+                    //}
+                    }
+            } catch (IOException | JSONException e) {
+                e.printStackTrace();
+            }
         }
+
+
 }

@@ -86,5 +86,9 @@
     <string name="warn_back_button">Pressing the back button again will exit the app. Press again if you want to exit.</string>
     <string name="record_score">Score: %1$d </string>
     <string name="record_player_name">Player: %1$s </string>
-
+    <string name="error_match_close_warn">The match will close</string>
+    <string name="exit">Exit</string>
+    <string name="game_terminated_timeout">Game Terminated due to Timeout</string>
+    <string name="game_terminated_generic">Game Terminated due to %1$s</string>
+    <string name="you">You</string>
 </resources>

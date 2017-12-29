@@ -9,8 +9,7 @@ import java.util.List;
 import it.ma.polimi.briscola.model.briscola.BriscolaCardPointsAndRankingRules;
 import it.ma.polimi.briscola.model.deck.NeapolitanCard;
 import it.ma.polimi.briscola.model.deck.NeapolitanCardSuit;
-import it.ma.polimi.briscola.model.deck.NeapolitanDeck;
-import it.ma.polimi.briscola.rest.client.dto.StartedMatchDTO;
+
 
 /**
  * Created by utente on 10/12/17.
@@ -37,7 +36,7 @@ public class Briscola2PMinimalMatchConfig implements Serializable {
     private List<Briscola2PPile> piles = new ArrayList<>();
     private int remotePlayerCardsCounter;
     private boolean isLocalPlayerTurn;
-    private String matchId;
+    private String matchURL;
     private NeapolitanCard localPlayerNextRoundCard;
     private int currentRound;
 
@@ -50,6 +49,10 @@ public class Briscola2PMinimalMatchConfig implements Serializable {
     }
 
     public void drawLocalPlayerCard(){
+        if(this.localPlayerNextRoundCard == null)
+            return; //due to asynchronism, the match could be closed by the server without initializing the localPlayerNextRoundCard, however the controller will continue (at least for a while) its execution and end up here
+        //if the two rows above weren't written, the app would have crashed, because a null card would have been appended to the hand.
+
         hand.appendCard(localPlayerNextRoundCard);
         this.localPlayerNextRoundCard = null;
     }
@@ -63,8 +66,8 @@ public class Briscola2PMinimalMatchConfig implements Serializable {
             inconsistentSurfaceForRound = "The surface is in an inconsistent state, could not evaluate the round winner";
 
 
-    public Briscola2PMinimalMatchConfig(String matchId, String briscola, String localPlayerHand, boolean localPlayerTurn){
-        this.matchId = matchId;
+    public Briscola2PMinimalMatchConfig(String matchURL, String briscola, String localPlayerHand, boolean localPlayerTurn){
+        this.matchURL = matchURL;
         this.briscolaString = briscola;
         this.briscola = new NeapolitanCard(briscola.charAt(0), briscola.charAt(1));
         this.hand = new Briscola2PHand(localPlayerHand);
@@ -81,7 +84,7 @@ public class Briscola2PMinimalMatchConfig implements Serializable {
     }
 
     public Briscola2PMinimalMatchConfig(Briscola2PMinimalMatchConfig config){
-        this.matchId = config.matchId;
+        this.matchURL = config.matchURL;
         this.briscolaString = config.getBriscolaString();
         this.briscola = config.getBriscola();
         this.hand = config.getLocalPlayerHand();
@@ -92,6 +95,14 @@ public class Briscola2PMinimalMatchConfig implements Serializable {
         this.surface = config.getSurface();//initialize surface
         this.piles.add(config.getPile(PLAYER0));// pile0
         this.piles.add(config.getPile(PLAYER1)); // pile1
+    }
+
+    public String getMatchURL() {
+        return matchURL;
+    }
+
+    public void setMatchURL(String matchURL) {
+        this.matchURL = matchURL;
     }
 
     public NeapolitanCard getBriscola() {
@@ -210,7 +221,7 @@ public class Briscola2PMinimalMatchConfig implements Serializable {
 
     public void playCard(String card){
         if(currentPlayer == PLAYER1){
-            remotePlayerCardsCounter--;
+            this.remotePlayerCardsCounter--;
             surface.appendCard(new NeapolitanCard(card.charAt(0),card.charAt(1))); //la carta del primo giocatore è sempre in 0
         }
     }
@@ -250,7 +261,7 @@ public class Briscola2PMinimalMatchConfig implements Serializable {
     }
 
     public int getRemotePlayerCardsCounter() {
-        return remotePlayerCardsCounter;
+        return this.remotePlayerCardsCounter;
     }
 
     public int chooseRoundWinner(){

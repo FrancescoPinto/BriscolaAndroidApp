@@ -17,15 +17,6 @@ ATTENZIONE: ho già messo la lingua italiana!
     che non c'è modo di sapere se l'altro ha abbandonato lato client ...) il problema è che l'app crasha perché
     giustamente sei uscito e hai fatto il detach.
 - CONTROLLARE TUTTI I POSSIBILI CRASH DEL GIOCO ONLINE
-- rimuovi il dialog nell'online quando giochi la prima carta (è il dialog che riprova la request)
-    INDAGA SULLE COMPARSE "STRANE" DEI DIALOG, magari loggando tutta la partita alla ricerca di roba folle
-       infatti si potrebbe creare un disallineamento tra interfaccia e stato sul server che produce
-       errori e manco te ne accorgi
-- GESTIRE GLI ERRORI DI PARTITE ONLINE <- attento alle cadute di connessione, fanno sembrare ci siano bug
-- nell'online c'è qualcosa che non va nell'adjust, controlla bene (ho visto buco in mezzo, terza carta non possa (probabilmente
-perché appena pescata ma non giunta in tempo ... usa la soluzione che hai fatto in Offlinecontroller ... (puoi interagire solo
-dopo displayCurrentPlayer ... e presumo anche dopo fine dell'animazione della pesca??? non ricord, controlla
-per rapidità, cerca tutte le manipolazioni di isPlaying o gli usi di GameInteractionEnabler
 - i match online non chiudono bene (se avii un'app, e avvi un match, e poi dici di non voler aspettare, e poi avvi un altro match
 questo PARTE anche se non ci sono altri giocatori, perché il server non ha chiuso il match
 ... C' E' DAVVERO QUALCOSA CHE NON VA
@@ -35,12 +26,14 @@ questo PARTE anche se non ci sono altri giocatori, perché il server non ha chiu
     - controllare l'online e debuggarlo
    // anima le cards delle schermate statiche e il menu di inizio match
    - refactor del codice e documentazione
+   - Sistemare la briscola che non va a suo posto se installi da APK e non se vai di android studio
+   - nell'online se ruoti durante l'attesa ti viene un bel crash!
   l'activity coi fragment non dovrebbe essere una FragmentActivity?
 - controllare che i match online chiudano bene e salvino correttamente i dati
 - cambiare i bottoni circolari nel menu e nel caricamento con delle icone a sfondo bianco o comunque qualcosa più carino (va bene nel match che restino così)
 - anima tutte le cardview così che sembri tutto più "giocoso"
 - testare il Drawer in varie API
-- testare i passaggi in landscape nel caso di online
+- testare i passaggi in landscape nel caso di online <- importante da fare
 - mettere tutte le cose (dimensioni) in @dimen ecc., così i colori, ecc. ecc. ecc.
 - metti anche l'opzione per mostrare  il punteggio corrente di ciascuno
 - anima meglio Your Turn e il contatore di turni, sistema la textView

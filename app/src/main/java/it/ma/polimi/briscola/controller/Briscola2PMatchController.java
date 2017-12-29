@@ -2,6 +2,7 @@ package it.ma.polimi.briscola.controller;
 
 import android.animation.Animator;
 import android.animation.AnimatorSet;
+import android.content.Context;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,7 +67,7 @@ public class Briscola2PMatchController implements Briscola2PController {
      */
     public Briscola2PMatchController(Briscola2PMatchConfig config, Briscola2PMatchFragment matchFragment,int difficulty){
         this(matchFragment,difficulty);
-        this.config = new Briscola2PMatchConfig(config.toString());
+        this.config = config;
 
     }
 
@@ -247,7 +248,7 @@ public class Briscola2PMatchController implements Briscola2PController {
         });
 
         //schedule animations
-        playSecondCard.playSequentially(playCard, cleanSurface,hideIsPlayer0Turn);
+        playSecondCard.playSequentially(playCard, hideIsPlayer0Turn,cleanSurface);
         return playSecondCard;
 
     }
@@ -264,7 +265,7 @@ public class Briscola2PMatchController implements Briscola2PController {
     }
 
     @Override
-    public void forceMatchEnd() {
+    public void forceMatchEnd(Context context) {
         //don't do anything ... the objects will be destroyed authomatically
     }
 

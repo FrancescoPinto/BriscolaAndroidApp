@@ -25,7 +25,11 @@ public interface Briscola2PMatchActivity {
     LOAD_OLD_MATCH = 3, /**
      * BACK_PRESSED.
      */
-    BACK_PRESSED = 4;
+    BACK_PRESSED = 4,
+    /**
+     * ONLINE_ERROR
+     */
+    ONLINE_ERROR = 5;
     /**
      * NO_MOTIVATION.
      */

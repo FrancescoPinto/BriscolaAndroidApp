@@ -130,7 +130,9 @@ public class MatchActivity extends AppCompatActivity implements Briscola2PMatchA
         super.onResume();
         unCheckAllMenuItems(menu);
 
+
     }
+
 
     private void unCheckAllMenuItems( Menu menu) {
         int size = menu.size();
@@ -351,6 +353,16 @@ public class MatchActivity extends AppCompatActivity implements Briscola2PMatchA
     {
         super.onConfigurationChanged(newConfig);
         drawerToggle.onConfigurationChanged(newConfig);  //correctly handle drawer
+        // Checks the orientation of the screen
+      //  if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+        //   SoundService soundManager = ((BriscolaApplication) getApplicationContext()).getSoundManager();
+        //    if(soundManager != null && soundManager.getMusicStatus())
+       //        soundManager.resumeBgMusic();
+       // } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
+       //     SoundService soundManager = ((BriscolaApplication) getApplicationContext()).getSoundManager();
+       //     if(soundManager != null && soundManager.getMusicStatus())
+       //         soundManager.resumeBgMusic();
+       // }
 
     }
 

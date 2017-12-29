@@ -1,5 +1,6 @@
 package it.ma.polimi.briscola.rest.client.callbacks;
 
+import android.app.Activity;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -8,7 +9,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 import it.ma.polimi.briscola.controller.OnlineBriscola2PMatchController;
-import it.ma.polimi.briscola.rest.client.dto.StartedMatchDTO;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -18,60 +19,60 @@ import static java.lang.Thread.sleep;
  * Created by utente on 10/12/17.
  */
 
-public class StartMatchCallback extends CallbackWithRetry<StartedMatchDTO>{
+public class StartMatchCallback extends CallbackWithRetry<ResponseBody>{
     private OnlineBriscola2PMatchController controller;
+    private boolean stopWaitingOccurred;
+    private Activity activity;
 
-    public StartMatchCallback(OnlineBriscola2PMatchController controller) {
+    public StartMatchCallback(OnlineBriscola2PMatchController controller, Activity activity) {
         super();
         this.controller = controller;
+        this.activity = activity;
+
     }
 
-    public StartMatchCallback() {
-        super();
-    }
-    @Override
-    public void onFailure(Call<StartedMatchDTO> call, Throwable t) {
-        super.onFailure(call, t);
-    }
 
 
     @Override
-    public void onResponse(Call<StartedMatchDTO> call, Response<StartedMatchDTO> response) {
-        if(response.isSuccessful()){
-            Log.d("TAG", "STARTMATCH: Success");
-        }else {
-            try {
-                JSONObject error = new JSONObject(response.errorBody().string());
-                controller.manageError(error.getString("error"), error.getString("message"));
-                Log.d("TAG", "STARTMATCHCALLBACK: Opponent played " +error.getString("error") + " , you received " + error.getString("message"));
-            } catch (IOException | JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        /* if(controller.getMatchFragment().isVisible() && !call.isCanceled()&& !shouldStop) {
+    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+        try {
+            if(controller.getMatchFragment().isVisible() && !call.isCanceled()&& !shouldStop) {
+                success = true;
+                shouldStop = true;
+                if (response.isSuccessful()) {
+                    JSONObject body = new JSONObject(response.body().string());
+                    String game = body.getString("game");
+                    String lastCard = body.getString("last_card");
+                    String cards = body.getString("cards");
+                    String yourTurn = body.getString("your_turn");
+                    String url = body.getString("url");
 
-            success = true;
-            if (response.isSuccessful()) {
-                StartedMatchDTO started = response.body();
-                controller.manageStartedMatch(started);
-            } else {
-                try {
+                    Log.d("TAG", "STARTED: Success, " + game + "|" + lastCard + "|" + cards + "|" + yourTurn + "|" + url);
+                    if (!stopWaitingOccurred)
+                        controller.manageStartedMatch(game, lastCard, cards, yourTurn, url);
+                    else
+                        controller.forceMatchEnd(activity, url); //todo, capisci se questo else lo raggiungi
+
+                } else {
+
                     JSONObject error = new JSONObject(response.errorBody().string());
                     controller.manageError(error.getString("error"), error.getString("message"));
-                    Log.d("TAG", "STARTMATCHCALLBACK: Opponent played " +error.getString("error") + " , you received " + error.getString("message"));
+                    Log.d("TAG", "STARTMATCHCALLBACK: Opponent played " + error.getString("error") + " , you received " + error.getString("message"));
 
-                } catch (IOException | JSONException e) {
-                    e.printStackTrace();
+
                 }
+            }else if(stopWaitingOccurred){
+                JSONObject body = new JSONObject(response.body().string());
+                String url = body.getString("url");
+                controller.forceMatchEnd(activity,url);
             }
-        }else if(shouldStop) {
-            call.cancel();
-            Log.d("TAG", "STARTMATCHCALLBACK: shoudlStop");
 
-        }else{
-            retry(call);
-            Log.d("TAG", "STARTMATCHCALLBACK: retrying");
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
-        }*/
+    public void stopWaiting(boolean stop){
+        stopWaitingOccurred = stop;
     }
 }

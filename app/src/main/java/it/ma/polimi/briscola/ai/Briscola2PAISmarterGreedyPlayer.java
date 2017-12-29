@@ -29,7 +29,7 @@ public class Briscola2PAISmarterGreedyPlayer  extends AbstractBriscola2PAIPlayer
             NeapolitanCardSuit minAdversaryProbabilitySuit = getMinAdversaryProbabilitySuitInMyHand();
             if(getAdversaryProbabilityTrump(briscolaSuit) > riskTrumpThreshold){
                 NeapolitanCard trumpSuitCard = getBestRankedCardOfSuit(briscolaSuit);
-                if(BriscolaCardPointsAndRankingRules.getPointValue(trumpSuitCard.getCardNumber()) >= trumpThresholdFirstCard){
+                if(trumpSuitCard != null && BriscolaCardPointsAndRankingRules.getPointValue(trumpSuitCard.getCardNumber()) >= trumpThresholdFirstCard){
                     return findCardPositionInHand(trumpSuitCard);
                 }
             }
@@ -60,7 +60,7 @@ public class Briscola2PAISmarterGreedyPlayer  extends AbstractBriscola2PAIPlayer
             //todo if(BriscolaCardPointsAndRankingRules.getRank(cardOnSurface.getCardNumber())) ... ma sei proprio sicuro che sia meglio come approccio?
 
 
-            int enemyPointValue = BriscolaCardPointsAndRankingRules.getPointValue(cardOnSurface.toString());
+            int enemyPointValue = BriscolaCardPointsAndRankingRules.getPointValue(cardOnSurface.getCardNumber());
 
             if(enemyPointValue < smallThreshold){
                 //todo se hai carte di valore 0 che non siano briscole, butta quella con rank più basso (non importa chi vince)

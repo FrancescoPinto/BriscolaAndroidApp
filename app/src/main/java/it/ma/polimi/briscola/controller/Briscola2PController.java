@@ -1,5 +1,7 @@
 package it.ma.polimi.briscola.controller;
 
+import android.content.Context;
+
 /**
  *Interface providing the basic functionalities required by a GUI controller in any case (used to improve reusability of the View part of the applicaion, e.g. in online/offline cases)
  *
@@ -64,8 +66,10 @@ public interface Briscola2PController {
 
     /**
      * Performs operations to close the match
+     *
+     * @param context the context, used to get the string to show to the user (if any)
      */
-    public void forceMatchEnd();
+    public void forceMatchEnd(Context context);
 
     /**
      * Performs operations to resume the match.

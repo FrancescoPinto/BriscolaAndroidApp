@@ -8,73 +8,54 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 import it.ma.polimi.briscola.controller.OnlineBriscola2PMatchController;
-import it.ma.polimi.briscola.rest.client.dto.OpponentCardDTO;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
 
 import static java.lang.Thread.sleep;
 
 /**
- * Created by utente on 10/12/17.
+ * Class implementing the callback to be called after a request has been sent to the server to ask for the card played by the opponent.
  */
+public class OpponentPlayedCardCallback extends CallbackWithRetry<ResponseBody>{
 
-public class OpponentPlayedCardCallback extends CallbackWithRetry<OpponentCardDTO>{
-
+    /**
+     * Instantiates a new Opponent played card callback.
+     *
+     * @param controller the controller
+     */
     public OpponentPlayedCardCallback(OnlineBriscola2PMatchController controller) {
         super();
         this.controller = controller;
     }
 
-    public OpponentPlayedCardCallback() {
-        super();
-    }
-
     @Override
-    public void onFailure(Call<OpponentCardDTO> call, Throwable t) {
-        super.onFailure(call, t);
-    }
+    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+        try {
+                //important: the fragment
+                if(controller.getMatchFragment().isVisible() && !call.isCanceled() && !shouldStop) {
+                    success = true;
+                    shouldStop = true;
 
+                    if (response.isSuccessful()) {
+                        JSONObject body = new JSONObject(response.body().string());
+                        String opponent = body.getString("opponent");
+                        String card = (body.has("card")) ? body.getString("card") : null;
 
+                        Log.d("TAG", "OPPONENTPLAYEDCARDCALLBACK: Opponent played " + opponent + " , you received " + card);
+                        controller.manageOpponentPlayedCard(opponent, card);
+                    } else {
 
-    @Override
-    public void onResponse(Call<OpponentCardDTO> call, Response<OpponentCardDTO> response) {
-        if(response.isSuccessful()){
-            OpponentCardDTO opponent = response.body();
-            Log.d("TAG", "OPPONENTPLAYEDCARDCALLBACK: Opponent played " + opponent.getOpponent() + " , you received " + opponent.getCard());
-        }else {
-            try {
-                JSONObject error = new JSONObject(response.errorBody().string());
-                controller.manageError(error.getString("error"), error.getString("message"));
-                Log.d("TAG", "OPPONENTPLAYEDCARDCALLBACK: Opponent played " +error.getString("error") + " , you received " + error.getString("message"));
-            } catch (IOException | JSONException e) {
-                e.printStackTrace();
-            }
-        }
-       /* if(controller.getMatchFragment().isVisible() && !call.isCanceled() && !shouldStop) {
-            success = true;
-            if (response.isSuccessful()) {
-                OpponentCardDTO opponent = response.body();
-                Log.d("TAG", "OPPONENTPLAYEDCARDCALLBACK: Opponent played " + opponent.getOpponent() + " , you received " + opponent.getCard());
-                controller.manageOpponentPlayedCard(opponent);
-            } else {
-                try {
-                    JSONObject error = new JSONObject(response.errorBody().string());
-                    controller.manageError(error.getString("error"), error.getString("message"));
-                    Log.d("TAG", "OPPONENTPLAYEDCARDCALLBACK: Opponent played " +error.getString("error") + " , you received " + error.getString("message"));
-                } catch (IOException | JSONException e) {
-                    e.printStackTrace();
+                        JSONObject error = new JSONObject(response.errorBody().string());
+                        controller.manageError(error.getString("error"), error.getString("message"));
+                        Log.d("TAG", "OPPONENTPLAYEDCARDCALLBACK: Opponent played " + error.getString("error") + " , you received " + error.getString("message"));
+
+                    }
                 }
-            }
-        }else if(shouldStop) {
-            call.cancel();
-            Log.d("TAG", "OPPONENTPLAYEDCARDCALLBACK: shoudlStop");
 
-        }else{
-            retry(call);
-            Log.d("TAG", "OPPONENTPLAYEDCARDCALLBACK: retrying");
-
-        }*/
-
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
     }
 
 

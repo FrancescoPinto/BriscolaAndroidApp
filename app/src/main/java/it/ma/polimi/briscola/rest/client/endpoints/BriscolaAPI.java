@@ -1,9 +1,7 @@
 package it.ma.polimi.briscola.rest.client.endpoints;
 
-import it.ma.polimi.briscola.rest.client.dto.NextTurnCardDTO;
-import it.ma.polimi.briscola.rest.client.dto.OpponentCardDTO;
-import it.ma.polimi.briscola.rest.client.dto.StartedMatchDTO;
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -21,17 +19,17 @@ import retrofit2.http.Url;
 
 public interface BriscolaAPI {
         @GET("room/{room}")
-        Call<StartedMatchDTO> startMatch(@Header("Authorization") String credentials,
+        Call<ResponseBody> startMatch(@Header("Authorization") String credentials,
                                                @Path("room") String room);
         @GET
-        Call<OpponentCardDTO> getOpponentPlayedCard(@Url String url, @Header("Authorization") String credentials);
+        Call<ResponseBody> getOpponentPlayedCard(@Url String url, @Header("Authorization") String credentials);
 
     //TODO: attento, è proprio url a distinguere tra i due giocatori chi sia quello giusto! quindi due giocatori avranno due Url di gioco diversi
 
     //todo, attento, devi mandare text/plain e dentro i due caratteri della carta, segui questa guida https://futurestud.io/tutorials/retrofit-2-how-to-send-plain-text-request-body
 
         @POST
-        Call<NextTurnCardDTO> playCard(@Url String url, @Header("Authorization") String credentials, @Header("Content-Type") String type, @Body RequestBody playedCard);
+        Call<ResponseBody> playCard(@Url String url, @Header("Authorization") String credentials, @Header("Content-Type") String type, @Body RequestBody playedCard);
 
     /*
     esempio di come dovrai usare playCard (attento, puoi fare anche l'enqueue con callback, che è DECISAMENTE MEGLIO
@@ -42,7 +40,7 @@ Response<String> response = call.execute();
 String value = response.body();
      */
         @HTTP(method = "DELETE", hasBody = true)
-        Call<StartedMatchDTO> stopMatch(@Url String url, @Header("Authorization") String credentials,@Header("Content-Type") String type,
-                                        @Body RequestBody motivation);
+        Call<ResponseBody> stopMatch(@Url String url, @Header("Authorization") String credentials, @Header("Content-Type") String type,
+                                 @Body RequestBody motivation);
 
 }

@@ -85,7 +85,7 @@ public class WinnerMatchDialogFragment extends DialogFragment {
         //based on the winner index, show different messages and play different end-match sounds
         if(winnerPlayer == Briscola2PMatchConfig.PLAYER0) {
             congrats_or_ops.setText(R.string.congrats_you_won);
-            messageTV.setText(getString(R.string.who_won_with,"You",score));
+            messageTV.setText(getString(R.string.who_won_with,getString(R.string.you),score));
             congrats_or_ops.setBackgroundColor(Color.GREEN);
             congrats_or_ops.setTextColor(Color.WHITE);
             soundManager.playSoundForGameEvent(GameEvent.WinMatch);

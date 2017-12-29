@@ -6,6 +6,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.IBinder;
 
@@ -28,27 +29,9 @@ public class BriscolaApplication extends Application {
         AppLifecycleTracker tracker = new AppLifecycleTracker();
         registerActivityLifecycleCallbacks(tracker);
         numStarted = tracker.getNumStartedActivities();
-        Intent serviceIntent = new Intent(this, SoundService.class);
-        serviceConnection = new ServiceConnection(){
+        playAudio();
 
-            @Override
-            public void onServiceConnected(ComponentName name, IBinder
-                    binder) {
-                soundManager = ((SoundService.ServiceBinder) binder).getService();
-                soundManager.resumeBgMusic();
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName name) {
-                soundManager = null;
-            }
-        };
-
-        startService(serviceIntent);
-        doBindService(serviceIntent);
     }
-
-
 
     class AppLifecycleTracker implements Application.ActivityLifecycleCallbacks {
         private Integer numStarted = 0;
@@ -57,8 +40,9 @@ public class BriscolaApplication extends Application {
         @Override
         public void onActivityStarted(Activity activity) {
             if (numStarted == 0 && soundManager != null) {
-                soundManager.loadMusic();
-                soundManager.resumeBgMusic(); // app went to foreground
+                //soundManager.loadMusic();
+               // soundManager.resumeBgMusic(); // app went to foreground
+                playAudio();
             }
             numStarted++;
         }
@@ -67,9 +51,11 @@ public class BriscolaApplication extends Application {
         public void onActivityStopped(Activity activity) {
             numStarted--;
             if (numStarted == 0 && soundManager != null) {
-                soundManager.pauseBgMusic();// app went to background
+              //  soundManager.pauseBgMusic();// app went to background
+                cleanAudio();
             }
         }
+
 
         @Override
         public void onActivityDestroyed(Activity activity) {
@@ -123,6 +109,27 @@ public class BriscolaApplication extends Application {
     public void cleanAudio(){
         doUnbindService();
         stopService(new Intent(this, SoundService.class));
+    }
+
+    public void playAudio(){
+        Intent serviceIntent = new Intent(this, SoundService.class);
+        serviceConnection = new ServiceConnection(){
+
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder
+                    binder) {
+                soundManager = ((SoundService.ServiceBinder) binder).getService();
+                soundManager.resumeBgMusic();
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                soundManager = null;
+            }
+        };
+
+        startService(serviceIntent);
+        doBindService(serviceIntent);
     }
 
     public SoundService getSoundManager(){

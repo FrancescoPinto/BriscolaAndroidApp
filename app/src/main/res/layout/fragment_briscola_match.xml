@@ -168,7 +168,7 @@
         android:layout_width="46dp"
         android:layout_height="46dp"
         android:background="@drawable/round_button"
-        android:text="EXIT"
+        android:text="@string/exit"
         android:layout_marginStart="23dp"
         android:layout_marginTop="15dp"
         android:layout_below="@+id/relativeLayout2"

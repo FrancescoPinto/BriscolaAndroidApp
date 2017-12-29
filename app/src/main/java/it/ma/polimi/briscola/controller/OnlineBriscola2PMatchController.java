@@ -2,6 +2,8 @@ package it.ma.polimi.briscola.controller;
 
 import android.animation.Animator;
 import android.animation.AnimatorSet;
+import android.app.Activity;
+import android.content.Context;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -15,13 +17,11 @@ import it.ma.polimi.briscola.R;
 import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMatchConfig;
 import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMinimalMatchConfig;
 import it.ma.polimi.briscola.model.deck.NeapolitanCard;
+import it.ma.polimi.briscola.rest.client.callbacks.CallbackWithRetry;
 import it.ma.polimi.briscola.rest.client.callbacks.OpponentPlayedCardCallback;
 import it.ma.polimi.briscola.rest.client.callbacks.PlayCardCallback;
 import it.ma.polimi.briscola.rest.client.callbacks.StartMatchCallback;
 import it.ma.polimi.briscola.rest.client.callbacks.StopMatchCallback;
-import it.ma.polimi.briscola.rest.client.dto.NextTurnCardDTO;
-import it.ma.polimi.briscola.rest.client.dto.OpponentCardDTO;
-import it.ma.polimi.briscola.rest.client.dto.StartedMatchDTO;
 import it.ma.polimi.briscola.rest.client.endpoints.BriscolaAPI;
 import it.ma.polimi.briscola.view.fragments.Briscola2PMatchFragment;
 import okhttp3.MediaType;
@@ -40,8 +40,9 @@ public class OnlineBriscola2PMatchController implements Briscola2PController {
     private Briscola2PMinimalMatchConfig config;
     // private MatchStatus matchStatus; //todo necessario? credo di sì! E' per forzare il seguire le regole <- invece no, perché faccio un controller per la GUI e uno non per la gui
     private Briscola2PMatchFragment matchFragment;
+    private Activity activity;
     public boolean playing = false;
-    private boolean done = false;
+    private boolean allreadyOneFatalError = false;
 
     private String url;
     private static final String BASE_URL = "http://mobile17.ifmledit.org/api/";
@@ -51,25 +52,24 @@ public class OnlineBriscola2PMatchController implements Briscola2PController {
     private final String authHeader = "APIKey 0c3828b9-b0d6-45c3-aa3b-a6d324561569",
             roomName = "Group01",
             contentTypePlainText = "text/plain";
-    private OpponentPlayedCardCallback opponentPlayedCardCallback = new OpponentPlayedCardCallback(this);
-    private PlayCardCallback playCardCallback = new PlayCardCallback(this);
-    private StartMatchCallback startMatchCallback = new StartMatchCallback(this);
-    private StopMatchCallback stopMatchCallback = new StopMatchCallback(this);
+    private OpponentPlayedCardCallback opponentPlayedCardCallback;
+    private StartMatchCallback startMatchCallback;
+    private PlayCardCallback playCardCallback;
+    private StopMatchCallback stopMatchCallback;
 
 
     public OnlineBriscola2PMatchController(Briscola2PMatchFragment matchFragment) {
         super();
         this.matchFragment = matchFragment;
+        this.activity = matchFragment.getActivity();
     }
 
     public OnlineBriscola2PMatchController(OnlineBriscola2PMatchController controller, Briscola2PMatchFragment matchFragment){
         super();
         this.matchFragment = matchFragment;
-        this.config = new Briscola2PMinimalMatchConfig(controller.getConfig());
-        this.opponentPlayedCardCallback = controller.opponentPlayedCardCallback;
-        this.playCardCallback = controller.playCardCallback;
-        this.startMatchCallback = controller.startMatchCallback;
-        this.stopMatchCallback = controller.stopMatchCallback;
+        //this.config = new Briscola2PMinimalMatchConfig(controller.getConfig());
+        this.config = controller.getConfig();
+        this.activity = matchFragment.getActivity();
 
     }
 
@@ -100,12 +100,20 @@ public class OnlineBriscola2PMatchController implements Briscola2PController {
         initializeClient();
 
         matchFragment.waitingToFindOnlinePlayer();
-        briscolaAPI.startMatch(authHeader, roomName).enqueue(startMatchCallback);
+        startMatchCall();
         //todo PROBABILMENTE QUI DEVI FARE "nomePathVariable: "+pathVariable <- ma anche no
         // Call<List<Change>> call = gerritAPI.loadChanges("status:open");
         // call.enqueue(this);
     }
 
+    private void startMatchCall(){
+        startMatchCallback = new StartMatchCallback(this, activity);
+        briscolaAPI.startMatch(authHeader, roomName).enqueue(startMatchCallback);
+    }
+
+    public void stopWaiting(boolean stop){
+        startMatchCallback.stopWaiting(stop);
+    }
     private void initializeClient(){
 
         OkHttpClient okHttpClient = new OkHttpClient().newBuilder()
@@ -120,8 +128,8 @@ public class OnlineBriscola2PMatchController implements Briscola2PController {
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .addConverterFactory(ScalarsConverterFactory.create())
+               // .addConverterFactory(GsonConverterFactory.create(gson))
+               // .addConverterFactory(ScalarsConverterFactory.create())
                 .client(okHttpClient)
                 .build();
 
@@ -131,27 +139,28 @@ public class OnlineBriscola2PMatchController implements Briscola2PController {
     public void postCard(String plainText){
         RequestBody body =
                 RequestBody.create(MediaType.parse("text/plain"), plainText);
+        playCardCallback = new PlayCardCallback(this);
         briscolaAPI.playCard(url, authHeader,contentTypePlainText, body).enqueue(playCardCallback);
 
     }
     public void manageError(String error, String message) {
         //todo, gestire meglio le cose da qui per gli errori, in particolare mostrare solo messagi d'errore utili (timeout altro giocatore, abbandono ecc.)
-       //il message: timeout è uno di quelli
-        //presumo Game Terminated nell'error sia
-        matchFragment.onBuildDialog("Error: " + error + ". Message: " + message,
-                "Ok",
-                null,
-                false,
-                false
-        ).show();
+      if(!allreadyOneFatalError) { //since the controller doesn't immediately stop, other callbacks might cause other manageError calls
+          matchFragment.manageError(error, message);
+          allreadyOneFatalError = true;
+      }else{
+          //do nothing
+      }
+
+
     }
 
-    public void manageStartedMatch(StartedMatchDTO started) {
-        url = started.getUrl();
-        config = new Briscola2PMinimalMatchConfig(started.getGame(), started.getLastCard(), started.getCards(), started.isYourTurn()); //todo, TI CONVIENE CREARE UNA NUOVA CLASSE CHE GESTISCA CONFIGURAZIONI INCOMPLETE
+    public void manageStartedMatch(String game, String lastCard,String cards,String yourTurn, String url) {
+        this.url = url;
 
+
+        config = new Briscola2PMinimalMatchConfig(url, lastCard, cards, Boolean.valueOf(yourTurn)); //todo, TI CONVIENE CREARE UNA NUOVA CLASSE CHE GESTISCA CONFIGURAZIONI INCOMPLETE
         matchFragment.foundOnlinePlayer();
-        Log.d("TAG", started.getGame() + "|"+started.getLastCard() + "|" +  started.getCards() + "|"+ started.isYourTurn());
         //config.initializeNewDeck(); non più possibile
         //  config.initializeFirstPlayer(); todo questo fallo nel costruttore (ricorda: se sei tu il firstPlayer allora inizializza con i valori che ti ha ritornato,
         //todo altrimenti inizializzalo con una carta vuota (aggiungi una carta CoveredCard, che non vada a rompere le scatole con il resto che hai fatto finora)
@@ -180,7 +189,7 @@ public class OnlineBriscola2PMatchController implements Briscola2PController {
             public void onAnimationEnd(Animator animator) {
                 if (config.getCurrentPlayer() == config.PLAYER1) {
                     //playFirstCard(player1.chooseMove(config)).start(); //todo, questo è un metodo annidato in un metodo chiamato dal callback di OpponentCallback
-                    briscolaAPI.getOpponentPlayedCard(url, authHeader).enqueue(opponentPlayedCardCallback);
+                  opponentPlayedCardCall();
 
                 }
             }
@@ -244,7 +253,7 @@ public class OnlineBriscola2PMatchController implements Briscola2PController {
             public void onAnimationEnd(Animator animator) {
                 if(config.getCurrentPlayer() == config.PLAYER1){
                     //playSecondCard(player1.chooseMove(config)).start(); //todo, sarà nel callback che decidi se giocare first o second card!
-                    briscolaAPI.getOpponentPlayedCard(url, authHeader).enqueue(opponentPlayedCardCallback);
+                    opponentPlayedCardCall();
                 }
             }
             @Override
@@ -256,22 +265,22 @@ public class OnlineBriscola2PMatchController implements Briscola2PController {
     }
 
 
-    public void manageNextTurnCard(NextTurnCardDTO next){
-        if(next.getCard() != null){
-            config.setLocalPlayerNextRoundCard(new NeapolitanCard(next.getCard().charAt(0), next.getCard().charAt(1)));
+    public void manageNextTurnCard(String card){
+        if(card != null){
+            config.setLocalPlayerNextRoundCard(new NeapolitanCard(card.charAt(0),card.charAt(1)));
         }
     }
 
-    public void manageOpponentPlayedCard(OpponentCardDTO opponent){
-        if(opponent.getOpponent() != null){
+    public void manageOpponentPlayedCard(String opponent, String card){
+        if(opponent != null){
             if(config.countCardsOnSurface() == 0)
-                playFirstCard(opponent.getOpponent());
+                playFirstCard(opponent);
             else
-                playSecondCard(opponent.getOpponent());
+                playSecondCard(opponent);
         }
 
-        if(opponent.getCard() != null){
-            config.setLocalPlayerNextRoundCard(new NeapolitanCard(opponent.getCard().charAt(0), opponent.getCard().charAt(1)));
+        if(card != null){
+            config.setLocalPlayerNextRoundCard(new NeapolitanCard(card.charAt(0), card.charAt(1)));
         }
     }
 
@@ -311,9 +320,7 @@ public class OnlineBriscola2PMatchController implements Briscola2PController {
                 List<Animator> animators = new ArrayList<Animator>();
 
                 if(currentRound == 20){ //if the match is finished, choose winner
-                    RequestBody body =
-                            RequestBody.create(MediaType.parse("text/plain"), matchFragment.getString(R.string.terminated));
-                    briscolaAPI.stopMatch(url,authHeader,contentTypePlainText,body);
+                    stopMatchCall();
                     switch(config.chooseMatchWinner()){
                         case Briscola2PMatchConfig.PLAYER0: matchFragment.displayMatchWinner(Briscola2PMatchConfig.PLAYER0, config.computeScore(Briscola2PMatchConfig.PLAYER0)); break;
                         case Briscola2PMatchConfig.PLAYER1: matchFragment.displayMatchWinner(Briscola2PMatchConfig.PLAYER1, config.computeScore(Briscola2PMatchConfig.PLAYER1)); break;
@@ -326,7 +333,7 @@ public class OnlineBriscola2PMatchController implements Briscola2PController {
                     matchFragment.putPlayer0CardsTouchListeners(config.getHands(),config.getCurrentPlayer());
                     if(config.getCurrentPlayer() == config.PLAYER1){
                         //animators.add(playFirstCard(player1.chooseMove(config)));
-                        briscolaAPI.getOpponentPlayedCard(url, authHeader).enqueue(opponentPlayedCardCallback);
+                        opponentPlayedCardCall();
                     }  else{
                         AnimatorSet displayIsPlayer0Turn = matchFragment.displayIsPlayer0Turn(config.getCurrentPlayer());
                         animators.add(displayIsPlayer0Turn);
@@ -350,7 +357,7 @@ public class OnlineBriscola2PMatchController implements Briscola2PController {
                     animators.add(drawCards);
                     if(config.getCurrentPlayer() == config.PLAYER1){
                         //animators.add(playFirstCard(player1.chooseMove(config)));
-                        briscolaAPI.getOpponentPlayedCard(url, authHeader).enqueue(opponentPlayedCardCallback);
+                        opponentPlayedCardCall();
                     }else{
                         AnimatorSet displayIsPlayer0Turn = matchFragment.displayIsPlayer0Turn(config.getCurrentPlayer());
                         animators.add(displayIsPlayer0Turn);
@@ -369,7 +376,7 @@ public class OnlineBriscola2PMatchController implements Briscola2PController {
             public void onAnimationRepeat(Animator animator) {}
         });
 
-        playSecondCard.playSequentially(playCard, cleanSurface,hideIsPlayer0Turn);
+        playSecondCard.playSequentially(playCard,hideIsPlayer0Turn, cleanSurface);
         playSecondCard.start();
     }
 
@@ -385,10 +392,27 @@ public class OnlineBriscola2PMatchController implements Briscola2PController {
             return config.getRemotePlayerCardsCounter();
     }
 
-    public void forceMatchEnd(){
+    private void stopMatchCall() {
+        stopMatchCallback = new StopMatchCallback();
         RequestBody body =
-                RequestBody.create(MediaType.parse("text/plain"), matchFragment.getString(R.string.abandon));
-        briscolaAPI.stopMatch(url,authHeader,contentTypePlainText,body);
+                RequestBody.create(MediaType.parse("text/plain"), matchFragment.getString(R.string.terminated));
+        briscolaAPI.stopMatch(url, authHeader, contentTypePlainText, body).enqueue(stopMatchCallback);
+    }
+    public void forceMatchEnd(Context context){
+        stopMatchCallback = new StopMatchCallback();
+        RequestBody body =
+        RequestBody.create(MediaType.parse("text/plain"), context.getString(R.string.abandon));
+        briscolaAPI.stopMatch(url,authHeader,contentTypePlainText,body).enqueue(stopMatchCallback);
+        if(opponentPlayedCardCallback != null) opponentPlayedCardCallback.shouldStopRetrying(true);
+        if(playCardCallback != null) playCardCallback.shouldStopRetrying(true);
+        if(startMatchCallback != null) startMatchCallback.shouldStopRetrying(true);
+        //stopMatchCallback.shouldStopRetrying(true);
+
+    }
+
+    public void forceMatchEnd(Context context, String url){
+        this.url = url;
+        forceMatchEnd(context);
     }
 
     @Override
@@ -399,14 +423,9 @@ public class OnlineBriscola2PMatchController implements Briscola2PController {
         matchFragment.loadHands(config.getHands());
         matchFragment.loadBriscolaIfNeeded(config.getBriscola());
         matchFragment.loadCurrentPlayer(config.getCurrentPlayer());
+        this.url = config.getMatchURL();
     }
 
-    public void stopCallbacks(){
-        opponentPlayedCardCallback.shouldStopRetrying(true);
-        playCardCallback.shouldStopRetrying(true);
-        startMatchCallback.shouldStopRetrying(true);
-        stopMatchCallback.shouldStopRetrying(true);
-    }
 
     public int getTurnsElapsed(){
         return currentRound;
@@ -415,4 +434,29 @@ public class OnlineBriscola2PMatchController implements Briscola2PController {
     public Briscola2PMatchFragment getMatchFragment() {
         return matchFragment;
     }
+
+    private void opponentPlayedCardCall(){
+        opponentPlayedCardCallback = new OpponentPlayedCardCallback(OnlineBriscola2PMatchController.this);
+        briscolaAPI.getOpponentPlayedCard(url, authHeader).enqueue(opponentPlayedCardCallback);
+    }
+
+    public String getUrl(){
+        return url;
+    }
+
+
+
+   /* public void performCallWithUrl(int typeOfCall, String url, String plainTextParmeter){ //in case of rotations, url becomes null, but the callbacks save their urls, and call this method to reperform the call with a correct url
+        if(briscolaAPI == null)
+            initializeClient();
+        if(url == null)
+            this.url = url;
+
+        switch(typeOfCall){
+            case CallbackWithRetry.OPPONENT_PLAYED:opponentPlayedCardCall();break;
+            case CallbackWithRetry.PLAY_CARD:postCard(plainTextParmeter);break;
+            case CallbackWithRetry.START_MATCH:;break;
+            case CallbackWithRetry.STOP_MATCH:stopMatchCall();break;
+        }
+    }*/
 }

@@ -47,6 +47,7 @@ import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PHand;
 import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMatchConfig;
 import it.ma.polimi.briscola.model.deck.NeapolitanCard;
 import it.ma.polimi.briscola.persistency.SettingsManager;
+import it.ma.polimi.briscola.view.dialog.FatalOnlineErrorDialogFragment;
 import it.ma.polimi.briscola.view.dialog.SaveConfigDataDialogFragment;
 import it.ma.polimi.briscola.view.dialog.SaveFinishedMatchRecordDialogFragment;
 import it.ma.polimi.briscola.view.dialog.WaitDialogFragment;
@@ -99,7 +100,7 @@ public class Briscola2PMatchFragment extends Fragment {
     //request codes, to intercept request return values to the activity
     private static final int REQUEST_EXIT = 100, REQUEST_SAVE = 101, REQUEST_STOP_WAITING = 102, REQUEST_SHOW_WINNER = 103, REQUEST_SAVE_RECORD = 104;
     //dynamically generated fragment tags
-    private static final String DIALOG_EXIT = "DialogExit", DIALOG_SAVE = "DialogSave", DIALOG_WAIT = "DialogWait", DIALOG_WINNER = "DialogWinner", DIALOG_SAVE_RECORD = "DialogSaveRecord";
+    private static final String DIALOG_EXIT = "DialogExit", DIALOG_SAVE = "DialogSave", DIALOG_WAIT = "DialogWait", DIALOG_WINNER = "DialogWinner", DIALOG_SAVE_RECORD = "DialogSaveRecord", DIALOG_ONLINE_ERROR = "DialogOnlineError";
 
 
     /**
@@ -273,13 +274,13 @@ public class Briscola2PMatchFragment extends Fragment {
                 }else{ //if it is retained
                     if(!isOnline) { //if is offline
                         //initialize the controller reloading the config
-                        controller = new Briscola2PMatchController(
-                                ((Briscola2PMatchController) controller).getConfig(),
-                                Briscola2PMatchFragment.this, difficulty);
+                        //controller = new Briscola2PMatchController(
+                          //      ((Briscola2PMatchController) controller).getConfig(),
+                          //      Briscola2PMatchFragment.this, difficulty);
                         controller.resumeMatch(); //resume
                     }else{ //is online
                         //initialize the controller
-                        controller = new OnlineBriscola2PMatchController((OnlineBriscola2PMatchController) controller, Briscola2PMatchFragment.this);
+                        //controller = new OnlineBriscola2PMatchController((OnlineBriscola2PMatchController) controller, Briscola2PMatchFragment.this);
                         controller.resumeMatch(); //resume
                     }
                 }
@@ -642,8 +643,11 @@ public class Briscola2PMatchFragment extends Fragment {
             cards.put(second,cardSecond);
             //properly translate the two cards so that they move to the correct player hand position
             AnimatorSet playFirst = getTranslationAnimationSet(cards.get(slotIndices[firstHandSize+firstPlayerOffset-1]),slotCoordinates.get(SlotIndices.DeckSlot),slotCoordinates.get(slotIndices[firstHandSize+firstPlayerOffset-1]));
-            AnimatorSet playSecond = getTranslationAnimationSet(cards.get(slotIndices[secondHandSize+secondPlayerOffset-1]),slotCoordinates.get(SlotIndices.DeckSlot),slotCoordinates.get(slotIndices[secondHandSize+secondPlayerOffset-1]));
-
+            AnimatorSet playSecond;
+            if(!lastDraw) //if it is not the last draw, the translation starts from deck
+                playSecond = getTranslationAnimationSet(cards.get(slotIndices[secondHandSize+secondPlayerOffset-1]),slotCoordinates.get(SlotIndices.DeckSlot),slotCoordinates.get(slotIndices[secondHandSize+secondPlayerOffset-1]));
+            else //else it starts from the briscola slot!
+                playSecond = getTranslationAnimationSet(cards.get(slotIndices[secondHandSize+secondPlayerOffset-1]),slotCoordinates.get(SlotIndices.BriscolaSlot),slotCoordinates.get(slotIndices[secondHandSize+secondPlayerOffset-1]));
             //player0 cards should have touch listeners, to let him play
             putPlayer0CardsTouchListeners(playersHands,firstPlayerIndex);
             if(firstPlayerIndex == Briscola2PMatchConfig.PLAYER0) { //if first player == PLAYER0
@@ -794,44 +798,32 @@ public class Briscola2PMatchFragment extends Fragment {
     /**
      * Method that shows the user a dialog with the occured error
      *
-     * @param errorCode the error code
+     * @param error the error of the javascript message
+     * @param message the message of the javascript message
      */
-    public void manageError(int errorCode){
+    public void manageError(String error, String message){
+
+            FragmentManager manager = getFragmentManager();
+            FatalOnlineErrorDialogFragment dialog = FatalOnlineErrorDialogFragment.newInstance(error,message, Briscola2PMatchActivity.ONLINE_ERROR);
+            dialog.setTargetFragment(Briscola2PMatchFragment.this, REQUEST_EXIT); //the error is fatal, should exit after
+            dialog.show(manager,DIALOG_ONLINE_ERROR);
         //todo, usare l'errorCode per diversificare la gestione
        //todo DEVI FARE QUESTO AL POSTO DEL DIALOG CHE HAI CANCELLATO
-        showToast("errorCOde:" + errorCode);
+
+        //ci sono due tipi di errori:
+        // timeout,
+        // il giocatore abbandona PRIMA della fine del match,
+        // il giocatore abbandona ALLA fine del match
+
+        //i primi due casi vanno gestiti CHIUDENDO IL MATCH dopo il dialog, l'altro invece va gestito con una exit normale
+
+
+
+       // PER QUANTO RIGUARDA LE PARTITE INCOMINCIATE E LASCIATE IN ATTESA: nel callback di startMatch
+         //       PASSA la BriscolaAPI e una variabile "StoppedWaiting" che se è true implica
+        //        che fa una call invisibile a BriscolaAPI.closeMatch()
     }
 
-    //todo, elimina il seguente metodo:
-    public AlertDialog onBuildDialog(String _message, String _positive, String _negative,
-                                     final boolean exit, final boolean restart) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this.getActivity());
-        builder.setMessage(_message);
-        builder.setPositiveButton(_positive, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-               /* if (exit) {
-                    if (restart)
-                        startActivity(new Intent(MainCalculatorActivity.this, MainCalculatorActivity.class));
-                    else
-                        new UpdateAppSettings(MainCalculatorActivity.this).onResetSavedText();
-                    finish();
-                }*/
-                // dismiss dialog
-                dialogInterface.dismiss();
-            }
-        });
-        if (_negative != null)
-            builder.setNegativeButton(_negative, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    // dismiss dialog
-                    dialogInterface.dismiss();
-                }
-            });
-        builder.setCancelable(false);
-        return builder.create();
-    }
 
         /**
          * Method that shows the user a dialog to save data about the match
@@ -972,11 +964,10 @@ public class Briscola2PMatchFragment extends Fragment {
             //retrieve data from the Intent returned
             MatchMenuActivityActions action = (MatchMenuActivityActions) data.getSerializableExtra(WarningExitDialogFragment.EXTRA_ACTION);
             int motivation = data.getIntExtra(WarningExitDialogFragment.EXTRA_MOTIVATION, Briscola2PMatchActivity.EXIT_BUTTON);
-            Briscola2PMatchConfig loadConfig = (Briscola2PMatchConfig) data.getSerializableExtra(WarningExitDialogFragment.EXTRA_LOAD_CONFIG);
 
             //based on the suggested action, make a choice
             if(action == MatchMenuActivityActions.STOP_ONLINE){
-                controller.forceMatchEnd(); //invoca rest api, terminate match
+                controller.forceMatchEnd(getActivity()); //invoca rest api, terminate match
                 handleExit(motivation);
 
             }else if(action == MatchMenuActivityActions.WARN_STOP_OFFLINE){
@@ -1001,7 +992,7 @@ public class Briscola2PMatchFragment extends Fragment {
             boolean stopWaiting = data.getBooleanExtra(WaitDialogFragment.EXTRA_STOP_WAITING,false);
 
             if(stopWaiting){//if the online wants to stop waiting, stop the callbacks and return to menu
-                ((OnlineBriscola2PMatchController) controller).stopCallbacks();
+                ((OnlineBriscola2PMatchController) controller).stopWaiting(true);
                 ((MatchActivity)getActivity()).startMenu(false);
             }
 
@@ -1034,6 +1025,7 @@ public class Briscola2PMatchFragment extends Fragment {
                 ((Briscola2PMatchActivity) getActivity()).showSavedMatches();break;
             //return to menu
             case Briscola2PMatchActivity.BACK_PRESSED: ((Briscola2PMatchActivity) getActivity()).startMenu(false); break;
+            case Briscola2PMatchActivity.ONLINE_ERROR: ((Briscola2PMatchActivity) getActivity()).startMenu(false); break;
             default: return;
         }
     }
