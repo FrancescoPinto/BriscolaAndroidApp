@@ -10,6 +10,9 @@ DOCUMENTAZIONE FATTA COMPLETA: DIALOG, LISTENERS, in controllers mi manca l'onli
 
 
 DA FARE IN SETTIMANA:
+--todo report sul bug della briscola: IN VERTICALE ORA FUNZIONA (CON QUEL TRUCCHETTO) è in orizzontale
+--todo che finisce SEMPRE sotto la seconda carta, invece che alla terza
+-- todo credo che il problema sia causato da ROTAZIONI durante il match, infatti se inzii il match già nell'orientamento giusto, tutto fila correttamente
 --- ONLINE
 ATTENZIONE: ho già messo la lingua italiana!
 - fai il test Menu->Match->Menu->Load CON INIZIO di partita online)
@@ -18,7 +21,7 @@ ATTENZIONE: ho già messo la lingua italiana!
     giustamente sei uscito e hai fatto il detach.
 - CONTROLLARE TUTTI I POSSIBILI CRASH DEL GIOCO ONLINE
 - i match online non chiudono bene (se avii un'app, e avvi un match, e poi dici di non voler aspettare, e poi avvi un altro match
-questo PARTE anche se non ci sono altri giocatori, perché il server non ha chiuso il match
+questo PARTE anche se non ci sono altri giocatori, perché il server non ha c hiuso il match
 ... C' E' DAVVERO QUALCOSA CHE NON VA
     --todo IMPORTANTISSIMO: la briscola ha ripreso ad andare nel posto sbagliato
    - togli il background scuro al menu?? o almeno fallo più chiaro ...

@@ -8,11 +8,9 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Point;
 import android.os.Bundle;
-import android.support.constraint.ConstraintLayout;
-import android.support.constraint.ConstraintSet;
-import android.support.transition.TransitionManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +29,7 @@ import java.util.Map;
 
 import it.ma.polimi.briscola.audio.SoundService;
 import it.ma.polimi.briscola.controller.OfflineBriscola2PMatchController;
+import it.ma.polimi.briscola.controller.listeners.FixBriscolaLayoutParams;
 import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PFullMatchConfig;
 import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMatchConfig;
 import it.ma.polimi.briscola.view.MatchMenuActivityActions;
@@ -64,7 +63,7 @@ public class Briscola2PMatchFragment extends Fragment {
 
     private MatchActivity activity;
     //layout containing all widgets
-    private ConstraintLayout layout;
+    private RelativeLayout layout;
     //The interface of the controller
     private Briscola2PController controller;
     //variables to store convenience data about the view (mainly widgets and additional info)
@@ -94,8 +93,8 @@ public class Briscola2PMatchFragment extends Fragment {
 
     //ids of data passed to the fragment via Bundle
     public static final String MATCH_CONFIG = "it.ma.polimi.briscola.resume.config",
-    IS_ONLINE = "it.ma.polimi.briscola.resume.is_online",
-    IS_RESUME = "it.ma.polimi.briscola.resume.resume";
+            IS_ONLINE = "it.ma.polimi.briscola.resume.is_online",
+            IS_RESUME = "it.ma.polimi.briscola.resume.resume";
     public static final String DIFFICULTY = "it.ma.polimi.briscola.offline.difficulty";
 
     //request codes, to intercept request return values to the activity
@@ -160,12 +159,12 @@ public class Briscola2PMatchFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         //initialize view
-        View mainView = inflater.inflate(R.layout.fragment_briscola_match_constraint, container, false); //todo, refactor del nome
+        View mainView = inflater.inflate(R.layout.fragment_briscola_match, container, false); //todo, refactor del nome
 
         //get data
         activity = (MatchActivity) this.getActivity();
         soundManager = activity.getSoundManager();
-        layout = (ConstraintLayout) mainView.findViewById(R.id.layout);
+        layout = (RelativeLayout) mainView.findViewById(R.id.layout);
         isOnline = getArguments().getBoolean(IS_ONLINE);
         isResume = getArguments().getBoolean(IS_RESUME);
         difficulty = getArguments().getInt(DIFFICULTY);
@@ -194,6 +193,10 @@ public class Briscola2PMatchFragment extends Fragment {
         slots.put(SlotIndices.BriscolaSlot, mainView.findViewById(R.id.briscolaSlot));
         slots.put(SlotIndices.SurfaceSlot0, mainView.findViewById(R.id.surfaceSlot0));
         slots.put(SlotIndices.SurfaceSlot1, mainView.findViewById(R.id.surfaceSlot1));
+
+        slots.put(SlotIndices.OffsetLayoutPlayer0, mainView.findViewById(R.id.relativeLayout1));
+        slots.put(SlotIndices.OffsetLayoutPlayer1, mainView.findViewById(R.id.relativeLayout2));
+        slots.put(SlotIndices.OffsetLayoutSurface, mainView.findViewById(R.id.relativeLayout3));
 
         //initialize exit button
         exit = mainView.findViewById(R.id.exit_button);
@@ -234,35 +237,43 @@ public class Briscola2PMatchFragment extends Fragment {
                 //one should add the relativeLayout coordinates to them.
                 for(int i = 0; i <indices.length; i++ ) {
                     //get relative layouts
-                   // if (i < SlotIndices.Player0Card0.getIndex()) //slot indices ENSURES other classes that relative layouts will always have indices lower than the Player0Card0 index
-                     //   slotCoordinates.put(indices[i], new Point(slots.get(indices[i]).getLeft(), slots.get(indices[i]).getTop()));
-                   // else //extract Player0Info (again slot indices ensures Player0Info is between Player0Card0 and Player1Card0
+                    if (i < SlotIndices.Player0Card0.getIndex()) //slot indices ENSURES other classes that relative layouts will always have indices lower than the Player0Card0 index
+                        slotCoordinates.put(indices[i], new Point(slots.get(indices[i]).getLeft(), slots.get(indices[i]).getTop()));
+                    else //extract Player0Info (again slot indices ensures Player0Info is between Player0Card0 and Player1Card0
                         if (i >= SlotIndices.Player0Card0.getIndex() && i < SlotIndices.Player1Card0.getIndex()) {
-                        tempCoordinates =new Point(slots.get(indices[i]).getLeft(), slots.get(indices[i]).getTop());
-                        //tempCoordinates.x += slotCoordinates.get(SlotIndices.OffsetLayoutPlayer0).x;
-                       // tempCoordinates.y += slotCoordinates.get(SlotIndices.OffsetLayoutPlayer0).y;
-                        slotCoordinates.put(indices[i],tempCoordinates);
-                    } else //extract Player1Info (again slot indices ensures Player1Info is between Player1Card0 and Deckslot
-                        if (i >= SlotIndices.Player1Card0.getIndex() && i < SlotIndices.DeckSlot.getIndex()) {
-                        tempCoordinates =new Point(slots.get(indices[i]).getLeft(), slots.get(indices[i]).getTop());
-                       // tempCoordinates.x += slotCoordinates.get(SlotIndices.OffsetLayoutPlayer1).x;
-                       // tempCoordinates.y += slotCoordinates.get(SlotIndices.OffsetLayoutPlayer1).y;
-                        slotCoordinates.put(indices[i],tempCoordinates);
+                            tempCoordinates =new Point(slots.get(indices[i]).getLeft(), slots.get(indices[i]).getTop());
+                            tempCoordinates.x += slotCoordinates.get(SlotIndices.OffsetLayoutPlayer0).x;
+                            tempCoordinates.y += slotCoordinates.get(SlotIndices.OffsetLayoutPlayer0).y;
+                            slotCoordinates.put(indices[i],tempCoordinates);
+                        } else //extract Player1Info (again slot indices ensures Player1Info is between Player1Card0 and Deckslot
+                            if (i >= SlotIndices.Player1Card0.getIndex() && i < SlotIndices.DeckSlot.getIndex()) {
+                                tempCoordinates =new Point(slots.get(indices[i]).getLeft(), slots.get(indices[i]).getTop());
+                                tempCoordinates.x += slotCoordinates.get(SlotIndices.OffsetLayoutPlayer1).x;
+                                tempCoordinates.y += slotCoordinates.get(SlotIndices.OffsetLayoutPlayer1).y;
+                                slotCoordinates.put(indices[i],tempCoordinates);
 
-                    } else //extract surface (and deck and briscola) info (slot indices ensures they are between DeckSlot and SurfaceSlot1)
-                        if (i >= SlotIndices.DeckSlot.getIndex() && i <= SlotIndices.SurfaceSlot1.getIndex()) {
-                        tempCoordinates =new Point(slots.get(indices[i]).getLeft(), slots.get(indices[i]).getTop());
-                       // tempCoordinates.x += slotCoordinates.get(SlotIndices.OffsetLayoutSurface).x;
-                       // tempCoordinates.y += slotCoordinates.get(SlotIndices.OffsetLayoutSurface).y;
-                        slotCoordinates.put(indices[i],tempCoordinates);
-                    }
+                            } else //extract surface (and deck and briscola) info (slot indices ensures they are between DeckSlot and SurfaceSlot1)
+                                if (i >= SlotIndices.DeckSlot.getIndex() && i <= SlotIndices.SurfaceSlot1.getIndex()) {
+                                    tempCoordinates =new Point(slots.get(indices[i]).getLeft(), slots.get(indices[i]).getTop());
+                                    tempCoordinates.x += slotCoordinates.get(SlotIndices.OffsetLayoutSurface).x;
+                                    tempCoordinates.y += slotCoordinates.get(SlotIndices.OffsetLayoutSurface).y;
+                                    slotCoordinates.put(indices[i],tempCoordinates);
+                                    if(i == 12) {
+                                        String isHorizo = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE ? "horizontal" : "vertical";
+                                        Log.d("TAG", "Briscola coordinates " + isHorizo + " : (" + slotCoordinates.get(indices[i]).x + "," +  slotCoordinates.get(indices[i]).y);
+                                    }
+                                    if(i == SlotIndices.DeckSlot.getIndex()){
+                                        String isHorizo = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE ? "horizontal" : "vertical";
+                                        Log.d("TAG", "Deck coordinates " + isHorizo + " : (" + slotCoordinates.get(indices[i]).x + "," +  slotCoordinates.get(indices[i]).y);
+                                    }
+                                }
                 }
 
                 if(!isRetained) { //if is not a retained fragment
                     if (!isResume)  //and a new match (not loaded from saved)
                         controller.startNewMatch(); //todo QUESTA RIGA MI LASCIA PERPLESSO ... (controller = null????)//start new match from
                     else {
-                            //initialize the controller to resume the match from saved config
+                        //initialize the controller to resume the match from saved config
                         controller = new OfflineBriscola2PMatchController(
                                 (Briscola2PFullMatchConfig) getArguments().getSerializable(MATCH_CONFIG),
                                 Briscola2PMatchFragment.this, difficulty);
@@ -272,8 +283,8 @@ public class Briscola2PMatchFragment extends Fragment {
                     if(!isOnline) { //if is offline
                         //initialize the controller reloading the config
                         //controller = new OfflineBriscola2PMatchController(
-                          //      ((OfflineBriscola2PMatchController) controller).getConfig(),
-                          //      Briscola2PMatchFragment.this, difficulty);
+                        //      ((OfflineBriscola2PMatchController) controller).getConfig(),
+                        //      Briscola2PMatchFragment.this, difficulty);
                         controller.resumeMatch(); //resume
                     }else{ //is online
                         //initialize the controller
@@ -319,9 +330,9 @@ public class Briscola2PMatchFragment extends Fragment {
 
             if(firstPlayerIndex == Briscola2PFullMatchConfig.PLAYER0){ //if first player is player0
                 //put the at the proper card in hand0 slot the card positioned by positionCardOnScreen initially positioned on the deck slot at highest elevation
-                cards.put(slotIndices[i+SlotIndices.player0Offset],positionCardOnScreen(firstPlayer.getCard(i), (ImageView) slots.get(SlotIndices.DeckSlot), elevationLevels[j],true));
+                cards.put(slotIndices[i+SlotIndices.player0Offset],positionCardOnScreen(firstPlayer.getCard(i), slotCoordinates.get(SlotIndices.DeckSlot), elevationLevels[j],true));
                 //put the at the proper card in hand1 slot the card positioned by positionCardOnScreen initially positioned on the deck slot at highest-1 elevation (while drawing two cards, second card to be drawn should be positioned below)
-                cards.put(slotIndices[i+SlotIndices.player1Offset],positionCardOnScreen(secondPlayer.getCard(i), (ImageView) slots.get(SlotIndices.DeckSlot), elevationLevels[j-1],true));
+                cards.put(slotIndices[i+SlotIndices.player1Offset],positionCardOnScreen(secondPlayer.getCard(i), slotCoordinates.get(SlotIndices.DeckSlot), elevationLevels[j-1],true));
 
                 //build the animation                                      get the card, and translate the card from deck to the proper card in hand position
                 AnimatorSet player0Animation = getTranslationAnimationSet(cards.get(slotIndices[i+SlotIndices.player0Offset]),slotCoordinates.get(SlotIndices.DeckSlot),slotCoordinates.get(slotIndices[i+SlotIndices.player0Offset]));
@@ -334,9 +345,9 @@ public class Briscola2PMatchFragment extends Fragment {
             }else if(firstPlayerIndex == Briscola2PFullMatchConfig.PLAYER1) { //if first player is player1
 
                 //put the proper card in hand1 etc. etc. as before
-                cards.put(slotIndices[i+SlotIndices.player1Offset],positionCardOnScreen(firstPlayer.getCard(i), (ImageView) slots.get(SlotIndices.DeckSlot), elevationLevels[j],true));
+                cards.put(slotIndices[i+SlotIndices.player1Offset],positionCardOnScreen(firstPlayer.getCard(i), slotCoordinates.get(SlotIndices.DeckSlot), elevationLevels[j],true));
                 //put the proper card in hand0 etc. etc. as before
-                cards.put(slotIndices[i+SlotIndices.player0Offset],positionCardOnScreen(secondPlayer.getCard(i), (ImageView) slots.get(SlotIndices.DeckSlot), elevationLevels[j-1],true));
+                cards.put(slotIndices[i+SlotIndices.player0Offset],positionCardOnScreen(secondPlayer.getCard(i), slotCoordinates.get(SlotIndices.DeckSlot), elevationLevels[j-1],true));
                 //build the animation                                      get the card, and translate the card from deck to the proper card in hand position
                 AnimatorSet player0Animation = getTranslationAnimationSet(cards.get(slotIndices[i+SlotIndices.player0Offset]),slotCoordinates.get(SlotIndices.DeckSlot),slotCoordinates.get(slotIndices[i+SlotIndices.player0Offset]));
                 //if the card is of player0 THEN it should also be flipped when arrives in hand (FlipCardAnimationListener will handle it)
@@ -372,11 +383,12 @@ public class Briscola2PMatchFragment extends Fragment {
      */
     public AnimatorSet getInitializeBriscolaAnimatorSet(NeapolitanCard briscola){
         //put briscola on deck slot and update cards data
-        cards.put(SlotIndices.BriscolaSlot, positionCardOnScreen(briscola, (ImageView) slots.get(SlotIndices.DeckSlot), elevationLevels[0],true));
+        cards.put(SlotIndices.BriscolaSlot, positionCardOnScreen(briscola, slotCoordinates.get(SlotIndices.DeckSlot), elevationLevels[0],true));
         //move the briscola to the briscola slot position
         AnimatorSet initialize = getTranslationAnimationSet(cards.get(SlotIndices.BriscolaSlot),slotCoordinates.get(SlotIndices.DeckSlot),slotCoordinates.get(SlotIndices.BriscolaSlot));
         //flip it when arrives (using a listener)
         initialize.addListener(new FlipCardAnimationListener(cards.get(SlotIndices.BriscolaSlot),soundManager));
+        initialize.addListener(new FixBriscolaLayoutParams(cards.get(SlotIndices.BriscolaSlot)));
         //even if high-speed animations are selected, allow some time to let the player see what happens
         initialize.setStartDelay(SHORT_DELAY);
         return initialize;
@@ -396,7 +408,7 @@ public class Briscola2PMatchFragment extends Fragment {
         AnimatorSet putCardOnSurface = getTranslationAnimationSet(card,
                 pos,
                 slotCoordinates.get(destinationSlot)
-                );
+        );
         //update card data
         cards.put(destinationSlot,card);
         //if is card of PLAYER1, should be flipped (since cards in hand of player1 are covered)
@@ -493,24 +505,24 @@ public class Briscola2PMatchFragment extends Fragment {
         List<Animator> adjustCards = new ArrayList<>();
 
         //for all the cards in hand following the removed one
-                                    //+1 because when adjust is invoked, the card count in hand has been decreased
+        //+1 because when adjust is invoked, the card count in hand has been decreased
         for(int j = cardIndex+1; j < playerHandLength+1;j++){
             //update data about the imageView
             ImageView card = this.cards.remove(SlotIndices.getPlayerCardSlotIndex(j,currentPlayer));
             //get parameters of the imageView
-                RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) card.getLayoutParams();
-                Point pos = new Point(params.leftMargin, params.topMargin);
-                                                                      //the "previous" slot, so that the card can shift back
-                SlotIndices slot = SlotIndices.getPlayerCardSlotIndex(j - 1, currentPlayer);
-                //translate so that it is shifted back
-                adjustCards.add(getTranslationAnimationSet(
-                        card,
-                        pos,
-                        slotCoordinates.get(slot)
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) card.getLayoutParams();
+            Point pos = new Point(params.leftMargin, params.topMargin);
+            //the "previous" slot, so that the card can shift back
+            SlotIndices slot = SlotIndices.getPlayerCardSlotIndex(j - 1, currentPlayer);
+            //translate so that it is shifted back
+            adjustCards.add(getTranslationAnimationSet(
+                    card,
+                    pos,
+                    slotCoordinates.get(slot)
 
-                ));
-                //update view informations
-                this.cards.put(SlotIndices.getPlayerCardSlotIndex(j - 1, currentPlayer), card);
+            ));
+            //update view informations
+            this.cards.put(SlotIndices.getPlayerCardSlotIndex(j - 1, currentPlayer), card);
 
         }
         //schedule animation
@@ -536,11 +548,11 @@ public class Briscola2PMatchFragment extends Fragment {
         AnimatorSet cleanFirst = getTranslationAnimationSet(card0,
                 pos0,
                 slotCoordinates.get(SlotIndices.getPileSlotOfPlayer(winner))
-                );
+        );
         AnimatorSet cleanSecond = getTranslationAnimationSet(card1,
                 pos1,
                 slotCoordinates.get(SlotIndices.getPileSlotOfPlayer(winner))
-                );
+        );
         //play a sound based on who won when the animation start (via listener)
         cleanFirst.addListener(new CleanRoundAnimationListener((winner== Briscola2PFullMatchConfig.PLAYER0)?true:false,soundManager));
         //flip both cards (ASSUMPTION: Piles are covered)
@@ -601,79 +613,81 @@ public class Briscola2PMatchFragment extends Fragment {
      */
     public AnimatorSet drawCardsNewRound(List<Briscola2PHand> playersHands, int firstPlayerIndex, boolean lastDraw){
 
-            //prepare some data, first = the first playing in the round, second = the second ...
-            Briscola2PHand firstPlayer = playersHands.get(firstPlayerIndex);
-            Briscola2PHand secondPlayer = playersHands.get((firstPlayerIndex+1)%2);
-            AnimatorSet dealTwoCards = new AnimatorSet();
-            List<Animator> animators = new ArrayList<>();
-            SlotIndices[] slotIndices = SlotIndices.values();
-            int firstHandSize = firstPlayer.size();
-            int secondHandSize = secondPlayer.size();
-            //offset is used to correctly choose slot indices
-            int firstPlayerOffset, secondPlayerOffset;
-            if(firstPlayerIndex == Briscola2PFullMatchConfig.PLAYER0) { //correctly initialize offset
-                firstPlayerOffset = SlotIndices.player0Offset;
-                secondPlayerOffset = SlotIndices.player1Offset;
+        //prepare some data, first = the first playing in the round, second = the second ...
+        Briscola2PHand firstPlayer = playersHands.get(firstPlayerIndex);
+        Briscola2PHand secondPlayer = playersHands.get((firstPlayerIndex+1)%2);
+        AnimatorSet dealTwoCards = new AnimatorSet();
+        List<Animator> animators = new ArrayList<>();
+        SlotIndices[] slotIndices = SlotIndices.values();
+        int firstHandSize = firstPlayer.size();
+        int secondHandSize = secondPlayer.size();
+        //offset is used to correctly choose slot indices
+        int firstPlayerOffset, secondPlayerOffset;
+        if(firstPlayerIndex == Briscola2PFullMatchConfig.PLAYER0) { //correctly initialize offset
+            firstPlayerOffset = SlotIndices.player0Offset;
+            secondPlayerOffset = SlotIndices.player1Offset;
+        }
+        else {
+            firstPlayerOffset = SlotIndices.player1Offset;
+            secondPlayerOffset = SlotIndices.player0Offset;
+
+        }
+
+        //position the two cards on screen
+        ImageView cardSecond; //firstCard is positioned on deck
+        ImageView cardFirst = positionCardOnScreen(firstPlayer.getCard(firstHandSize-1),slotCoordinates.get(SlotIndices.DeckSlot), elevationLevels[2],true);
+        if(lastDraw) { //REMARK: if it is the last draw, the briscola SHOULD NOT be positioned, one only needs to update data
+            cardSecond = cards.remove(SlotIndices.BriscolaSlot);
+            //deck now is empty, show an empty slot
+            ((ImageView)slots.get(SlotIndices.DeckSlot)).setImageResource(R.drawable.card_slot_shape);
+        }
+        else { //if it is not the last draw, simply position the card on deck
+            cardSecond = positionCardOnScreen(secondPlayer.getCard(secondHandSize - 1), slotCoordinates.get(SlotIndices.DeckSlot), elevationLevels[1], true);
+        }
+        //drawn card is ALLWAYS positione as the last one in the list of cards available in hand
+        //hence take the slot at playerOffset + HandSize (minus 1 because HandSize is a list length, should be decremented to have 0,1,2 card indices)
+        SlotIndices first = slotIndices[firstHandSize+firstPlayerOffset-1];
+        SlotIndices second = slotIndices[secondHandSize+secondPlayerOffset-1];
+
+        //update view data
+        cards.put(first,cardFirst);
+        cards.put(second,cardSecond);
+        //properly translate the two cards so that they move to the correct player hand position
+        AnimatorSet playFirst = getTranslationAnimationSet(cards.get(slotIndices[firstHandSize+firstPlayerOffset-1]),slotCoordinates.get(SlotIndices.DeckSlot),slotCoordinates.get(slotIndices[firstHandSize+firstPlayerOffset-1]));
+        AnimatorSet playSecond;
+        if(!lastDraw) //if it is not the last draw, the translation starts from deck
+            playSecond = getTranslationAnimationSet(cards.get(slotIndices[secondHandSize+secondPlayerOffset-1]),slotCoordinates.get(SlotIndices.DeckSlot),slotCoordinates.get(slotIndices[secondHandSize+secondPlayerOffset-1]));
+        else { //else it starts from the briscola slot!
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) cardSecond.getLayoutParams();
+            Point pos = new Point(params.leftMargin,params.topMargin);
+            if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                playSecond = getTranslationAnimationSet(cards.get(firstPlayerIndex == Briscola2PMatchConfig.PLAYER0 ? SlotIndices.Player1Card2 : SlotIndices.Player0Card2), pos, slotCoordinates.get(firstPlayerIndex == Briscola2PMatchConfig.PLAYER0 ? SlotIndices.Player1Card2 : SlotIndices.Player0Card2));
+            }else
+                playSecond = getTranslationAnimationSet(cards.get(firstPlayerIndex == Briscola2PMatchConfig.PLAYER0 ? SlotIndices.Player1Card2 : SlotIndices.Player0Card2), pos, slotCoordinates.get(firstPlayerIndex == Briscola2PMatchConfig.PLAYER0 ? SlotIndices.Player1Card2 : SlotIndices.Player0Card2));
+
+        }//todo: osservazione strana: se parte da Deck, la parte verticale la briscola si muove correttamente .............. MISTERI
+
+        //player0 cards should have touch listeners, to let him play
+        putPlayer0CardsTouchListeners(playersHands,firstPlayerIndex);
+        if(firstPlayerIndex == Briscola2PFullMatchConfig.PLAYER0) { //if first player == PLAYER0
+            playFirst.addListener(new FlipCardAnimationListener(cardFirst, soundManager)); //show to PLAYER0 the drawn card
+            if(lastDraw){ //if it is also last draw, briscola is picked up by the other player, should be covered after being picked
+                playSecond.addListener(new FlipCardAnimationListener(cardSecond,soundManager));
             }
-            else {
-                firstPlayerOffset = SlotIndices.player1Offset;
-                secondPlayerOffset = SlotIndices.player0Offset;
-
+        }else { //if first player == PLAYER1
+            if(!lastDraw){ //if not last draw, secondPlayer is card of player0, should be flipped
+                playSecond.addListener(new FlipCardAnimationListener(cardSecond,soundManager)); //flip cards of player0
             }
+        }
 
-            //position the two cards on screen
-            ImageView cardSecond; //firstCard is positioned on deck
-            ImageView cardFirst = positionCardOnScreen(firstPlayer.getCard(firstHandSize-1),(ImageView) slots.get(SlotIndices.DeckSlot), elevationLevels[2],true);
-            if(lastDraw) { //REMARK: if it is the last draw, the briscola SHOULD NOT be positioned, one only needs to update data
-                cardSecond = cards.remove(SlotIndices.BriscolaSlot);
-                //deck now is empty, show an empty slot
-                ((ImageView)slots.get(SlotIndices.DeckSlot)).setImageResource(R.drawable.card_slot_shape);
-            }
-            else { //if it is not the last draw, simply position the card on deck
-                cardSecond = positionCardOnScreen(secondPlayer.getCard(secondHandSize - 1), (ImageView) slots.get(SlotIndices.DeckSlot), elevationLevels[1], true);
-            }
-            //drawn card is ALLWAYS positione as the last one in the list of cards available in hand
-            //hence take the slot at playerOffset + HandSize (minus 1 because HandSize is a list length, should be decremented to have 0,1,2 card indices)
-            SlotIndices first = slotIndices[firstHandSize+firstPlayerOffset-1];
-            SlotIndices second = slotIndices[secondHandSize+secondPlayerOffset-1];
+        //schedule animations
+        animators.add(playFirst);
+        animators.add(playSecond);
 
-            //update view data
-            cards.put(first,cardFirst);
-            cards.put(second,cardSecond);
-            //properly translate the two cards so that they move to the correct player hand position
-            AnimatorSet playFirst = getTranslationAnimationSet(cards.get(slotIndices[firstHandSize+firstPlayerOffset-1]),slotCoordinates.get(SlotIndices.DeckSlot),slotCoordinates.get(slotIndices[firstHandSize+firstPlayerOffset-1]));
-            AnimatorSet playSecond;
-            if(!lastDraw) //if it is not the last draw, the translation starts from deck
-                playSecond = getTranslationAnimationSet(cards.get(slotIndices[secondHandSize+secondPlayerOffset-1]),slotCoordinates.get(SlotIndices.DeckSlot),slotCoordinates.get(slotIndices[secondHandSize+secondPlayerOffset-1]));
-            else { //else it starts from the briscola slot!
-               // if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                    playSecond = getTranslationAnimationSet(cards.get(slotIndices[secondHandSize + secondPlayerOffset - 1]), slotCoordinates.get(SlotIndices.BriscolaSlot), slotCoordinates.get(firstPlayerIndex == Briscola2PMatchConfig.PLAYER0 ? SlotIndices.Player1Card2 : SlotIndices.Player0Card2));
-               // }else
-                //    playSecond = getTranslationAnimationSet(cards.get(slotIndices[secondHandSize + secondPlayerOffset - 1]), slotCoordinates.get(SlotIndices.DeckSlot), slotCoordinates.get(firstPlayerIndex == Briscola2PMatchConfig.PLAYER0 ? SlotIndices.Player1Card2 : SlotIndices.Player0Card2));
-
-            }//todo: osservazione strana: se parte da Deck, la parte verticale la briscola si muove correttamente .............. MISTERI
-
-            //player0 cards should have touch listeners, to let him play
-            putPlayer0CardsTouchListeners(playersHands,firstPlayerIndex);
-            if(firstPlayerIndex == Briscola2PFullMatchConfig.PLAYER0) { //if first player == PLAYER0
-                playFirst.addListener(new FlipCardAnimationListener(cardFirst, soundManager)); //show to PLAYER0 the drawn card
-                if(lastDraw){ //if it is also last draw, briscola is picked up by the other player, should be covered after being picked
-                    playSecond.addListener(new FlipCardAnimationListener(cardSecond,soundManager));
-                }
-            }else { //if first player == PLAYER1
-                if(!lastDraw){ //if not last draw, secondPlayer is card of player0, should be flipped
-                    playSecond.addListener(new FlipCardAnimationListener(cardSecond,soundManager)); //flip cards of player0
-                }
-            }
-
-            //schedule animations
-            animators.add(playFirst);
-            animators.add(playSecond);
-
-            dealTwoCards.playSequentially(animators);
-            //put some delay to let him see
-            dealTwoCards.setStartDelay(LONG_DELAY);
-            return dealTwoCards;
+        dealTwoCards.playSequentially(animators);
+        //put some delay to let him see
+        dealTwoCards.setStartDelay(LONG_DELAY);
+        return dealTwoCards;
 
     }
 
@@ -740,7 +754,7 @@ public class Briscola2PMatchFragment extends Fragment {
     }
 
     //helper method to position card on screen
-    private ImageView positionCardOnScreen(NeapolitanCard c, ImageView slotPosition, int elevation, boolean isCovered){
+    private ImageView positionCardOnScreen(NeapolitanCard c, Point initialPosition, int elevation, boolean isCovered){
         //get the image name
         String cardName = ImageNameBuilder.getFrenchCardImageName(c);
         //get image id
@@ -758,17 +772,7 @@ public class Briscola2PMatchFragment extends Fragment {
 
         //set layout params based on whether it is landscape/portrait
         //indeed, two scales are used in the two cases
-        TransitionManager.beginDelayedTransition(layout);
-        ConstraintSet constraints = new ConstraintSet();
-        constraints.clone(layout);
-        constraints.constrainWidth(card.getId(), ConstraintSet.WRAP_CONTENT);
-        constraints.constrainHeight(card.getId(), ConstraintSet.WRAP_CONTENT);
-        constraints.connect(card.getId(), ConstraintSet.LEFT,slotPosition.getId(),ConstraintSet.LEFT);
-        constraints.connect(card.getId(), ConstraintSet.RIGHT,slotPosition.getId(),ConstraintSet.RIGHT);
-        constraints.connect(card.getId(), ConstraintSet.BOTTOM,slotPosition.getId(),ConstraintSet.BOTTOM);
-        constraints.applyTo(layout);
-
-       /* RelativeLayout.LayoutParams params;
+        RelativeLayout.LayoutParams params;
         if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
             params = new RelativeLayout.LayoutParams(
                     (int) this.getResources().getDimension(R.dimen.card_width_landscape),
@@ -779,11 +783,11 @@ public class Briscola2PMatchFragment extends Fragment {
                     (int) this.getResources().getDimension(R.dimen.card_height));
         }
         params.leftMargin = initialPosition.x;
-        params.topMargin =  initialPosition.y;*/
+        params.topMargin =  initialPosition.y;
         card.setElevation(elevation);
 
         //add imageview to the layout
-        //layout.addView(card,params);
+        layout.addView(card,params);
 
         return card;
     }
@@ -804,7 +808,7 @@ public class Briscola2PMatchFragment extends Fragment {
     public void foundOnlinePlayer(){
         FragmentManager manager = getFragmentManager();
         //retrieve the dialog
-       WaitDialogFragment found =  (WaitDialogFragment) manager.findFragmentByTag(DIALOG_WAIT);
+        WaitDialogFragment found =  (WaitDialogFragment) manager.findFragmentByTag(DIALOG_WAIT);
         if(found != null){ //hide it, if present
             found.dismiss();
         }
@@ -818,12 +822,12 @@ public class Briscola2PMatchFragment extends Fragment {
      */
     public void manageError(String error, String message){
 
-            FragmentManager manager = getFragmentManager();
-            FatalOnlineErrorDialogFragment dialog = FatalOnlineErrorDialogFragment.newInstance(error,message, Briscola2PMatchActivity.ONLINE_ERROR);
-            dialog.setTargetFragment(Briscola2PMatchFragment.this, REQUEST_EXIT); //the error is fatal, should exit after
-            dialog.show(manager,DIALOG_ONLINE_ERROR);
+        FragmentManager manager = getFragmentManager();
+        FatalOnlineErrorDialogFragment dialog = FatalOnlineErrorDialogFragment.newInstance(error,message, Briscola2PMatchActivity.ONLINE_ERROR);
+        dialog.setTargetFragment(Briscola2PMatchFragment.this, REQUEST_EXIT); //the error is fatal, should exit after
+        dialog.show(manager,DIALOG_ONLINE_ERROR);
         //todo, usare l'errorCode per diversificare la gestione
-       //todo DEVI FARE QUESTO AL POSTO DEL DIALOG CHE HAI CANCELLATO
+        //todo DEVI FARE QUESTO AL POSTO DEL DIALOG CHE HAI CANCELLATO
 
         //ci sono due tipi di errori:
         // timeout,
@@ -834,17 +838,17 @@ public class Briscola2PMatchFragment extends Fragment {
 
 
 
-       // PER QUANTO RIGUARDA LE PARTITE INCOMINCIATE E LASCIATE IN ATTESA: nel callback di startMatch
-         //       PASSA la BriscolaAPI e una variabile "StoppedWaiting" che se è true implica
+        // PER QUANTO RIGUARDA LE PARTITE INCOMINCIATE E LASCIATE IN ATTESA: nel callback di startMatch
+        //       PASSA la BriscolaAPI e una variabile "StoppedWaiting" che se è true implica
         //        che fa una call invisibile a BriscolaAPI.closeMatch()
     }
 
 
-        /**
-         * Method that shows the user a dialog to save data about the match
-         *
-         * @param player0Points the player 0 points
-         */
+    /**
+     * Method that shows the user a dialog to save data about the match
+     *
+     * @param player0Points the player 0 points
+     */
     public void saveFinishedMatchRecordData(int player0Points){
         FragmentManager manager = getFragmentManager();
         SaveFinishedMatchRecordDialogFragment dialog = SaveFinishedMatchRecordDialogFragment.newInstance(player0Points,isOnline);
@@ -871,7 +875,15 @@ public class Briscola2PMatchFragment extends Fragment {
         translation.playTogether(translationX, translationY);
         //put a MoveCardAnimationListener for audio
         translation.addListener(new MoveCardAnimationListener(getSoundManager()));
+        if(origin.x == 365) {
+            Log.d("TAG", "Pesco briscola: origin - target = " + (target.x - origin.x));
+            Log.d("TAG","LE COORDINATE DELLA BRISCOLA ERANO: "+ origin.x + ", mentre target "+target.x);
+        }
+        else if(origin.x == 184) {
+            Log.d("TAG", "Pesco dal deck: origin - target = " + (target.x - origin.x) + "con target " + target.x);
+            Log.d("TAG","LE COORDINATE DEL DECK ERANO: "+ origin.x + ", mentre target "+target.x);
 
+        }
         return translation;
     }
 
@@ -885,9 +897,9 @@ public class Briscola2PMatchFragment extends Fragment {
         //since piles are covered, no need of info about the pile apart from whether they are empty or not
         //if they are not empty, convert the pile slot into the back of a card
         if(!pile0IsEmpty)
-        positionCardOnScreen(new NeapolitanCard(), (ImageView) slots.get(SlotIndices.Player0PileSlot),elevationLevels[elevationLevels.length-1],true);
+            positionCardOnScreen(new NeapolitanCard(), slotCoordinates.get(SlotIndices.Player0PileSlot),elevationLevels[elevationLevels.length-1],true);
         if(!pile1IsEmpty)
-        positionCardOnScreen(new NeapolitanCard(), (ImageView) slots.get(SlotIndices.Player1PileSlot),elevationLevels[elevationLevels.length-1],true);
+            positionCardOnScreen(new NeapolitanCard(), slotCoordinates.get(SlotIndices.Player1PileSlot),elevationLevels[elevationLevels.length-1],true);
     }
 
     /**
@@ -898,11 +910,11 @@ public class Briscola2PMatchFragment extends Fragment {
     public void loadSurface(List<NeapolitanCard> surfaceCards){
         int size = surfaceCards.size();
         if(size >= 1){ //if at least 1 card on surface, position the first card on SurfaceSlot0
-            ImageView firstCard = positionCardOnScreen(surfaceCards.get(0),(ImageView) slots.get(SlotIndices.SurfaceSlot0),elevationLevels[0],false);
+            ImageView firstCard = positionCardOnScreen(surfaceCards.get(0),slotCoordinates.get(SlotIndices.SurfaceSlot0),elevationLevels[0],false);
             cards.put(SlotIndices.SurfaceSlot0, firstCard);
         }
         if(size >= 2){ //if at least 2 cards on surface, position the second card on SurfaceSlot1
-            ImageView secondCard = positionCardOnScreen(surfaceCards.get(1),(ImageView) slots.get(SlotIndices.SurfaceSlot1),elevationLevels[0],false);
+            ImageView secondCard = positionCardOnScreen(surfaceCards.get(1),slotCoordinates.get(SlotIndices.SurfaceSlot1),elevationLevels[0],false);
             cards.put(SlotIndices.SurfaceSlot1, secondCard);
         }
     }
@@ -922,21 +934,21 @@ public class Briscola2PMatchFragment extends Fragment {
 
         switch(player0.size()){ //for all the cards in hand of player0, position the card, update card data in the view, set listener on that card so that it can be played
             case 3:
-                cards.put(SlotIndices.Player0Card2,positionCardOnScreen(player0.getCard(2), (ImageView) slots.get(SlotIndices.Player0Card2), elevationLevels[1],false));
+                cards.put(SlotIndices.Player0Card2,positionCardOnScreen(player0.getCard(2), slotCoordinates.get(SlotIndices.Player0Card2), elevationLevels[1],false));
                 cards.get(SlotIndices.Player0Card2).setOnClickListener(new CardAnimationListener(Briscola2PMatchFragment.this));
             case 2:
-                cards.put(SlotIndices.Player0Card1,positionCardOnScreen(player0.getCard(1), (ImageView) slots.get(SlotIndices.Player0Card1), elevationLevels[1],false));
+                cards.put(SlotIndices.Player0Card1,positionCardOnScreen(player0.getCard(1), slotCoordinates.get(SlotIndices.Player0Card1), elevationLevels[1],false));
                 cards.get(SlotIndices.Player0Card1).setOnClickListener(new CardAnimationListener(Briscola2PMatchFragment.this));
             case 1:
-                cards.put(SlotIndices.Player0Card0,positionCardOnScreen(player0.getCard(0), (ImageView) slots.get(SlotIndices.Player0Card0), elevationLevels[1],false));
+                cards.put(SlotIndices.Player0Card0,positionCardOnScreen(player0.getCard(0), slotCoordinates.get(SlotIndices.Player0Card0), elevationLevels[1],false));
                 cards.get(SlotIndices.Player0Card0).setOnClickListener(new CardAnimationListener(Briscola2PMatchFragment.this));
             default: break;
         }
 
         switch(player1.size()){ //for player1 instead just position cards and update data in the view
-            case 3:cards.put(SlotIndices.Player1Card2,positionCardOnScreen(player1.getCard(2), (ImageView) slots.get(SlotIndices.Player1Card2), elevationLevels[1],true));
-            case 2:cards.put(SlotIndices.Player1Card1,positionCardOnScreen(player1.getCard(1), (ImageView) slots.get(SlotIndices.Player1Card1), elevationLevels[1],true));
-            case 1:cards.put(SlotIndices.Player1Card0,positionCardOnScreen(player1.getCard(0), (ImageView) slots.get(SlotIndices.Player1Card0), elevationLevels[1],true));
+            case 3:cards.put(SlotIndices.Player1Card2,positionCardOnScreen(player1.getCard(2), slotCoordinates.get(SlotIndices.Player1Card2), elevationLevels[1],true));
+            case 2:cards.put(SlotIndices.Player1Card1,positionCardOnScreen(player1.getCard(1), slotCoordinates.get(SlotIndices.Player1Card1), elevationLevels[1],true));
+            case 1:cards.put(SlotIndices.Player1Card0,positionCardOnScreen(player1.getCard(0), slotCoordinates.get(SlotIndices.Player1Card0), elevationLevels[1],true));
             default: break;
         }
 
@@ -949,7 +961,7 @@ public class Briscola2PMatchFragment extends Fragment {
      */
     public void loadBriscolaIfNeeded(NeapolitanCard briscola){
         if(briscola != null) //birscola still on surface, not in players hands (if in hands, loadHands will take care of that)
-        cards.put(SlotIndices.BriscolaSlot,positionCardOnScreen(briscola,(ImageView) slots.get(SlotIndices.BriscolaSlot),elevationLevels[0],false));
+            cards.put(SlotIndices.BriscolaSlot,positionCardOnScreen(briscola,slotCoordinates.get(SlotIndices.BriscolaSlot),elevationLevels[0],false));
 
         if(briscola == null) //if last 2 cards have been drawn, show deck empty
             ((ImageView) slots.get(SlotIndices.DeckSlot)).setImageResource(R.drawable.card_slot_shape);
@@ -1036,7 +1048,7 @@ public class Briscola2PMatchFragment extends Fragment {
             case Briscola2PMatchActivity.START_NEW_ONLINE:  ((Briscola2PMatchActivity) getActivity()).startOnlineMatch(); break;
             //show saved matches
             case Briscola2PMatchActivity.LOAD_OLD_MATCH :
-               // if(loadConfig == null) throw new IllegalArgumentException();
+                // if(loadConfig == null) throw new IllegalArgumentException();
                 ((Briscola2PMatchActivity) getActivity()).showSavedMatches();break;
             //return to menu
             case Briscola2PMatchActivity.BACK_PRESSED: ((Briscola2PMatchActivity) getActivity()).startMenu(false); break;
