@@ -1,6 +1,6 @@
 package it.ma.polimi.briscola.view.fragments;
 
-import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMatchConfig;
+import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PFullMatchConfig;
 
 /**
  * Class that helds some indices that will be used by the view
@@ -112,13 +112,13 @@ public enum SlotIndices {
      */
     public static SlotIndices getPlayerCardSlotIndex(int cardIndex, int currentPlayer){
         switch(currentPlayer){
-            case Briscola2PMatchConfig.PLAYER0:
+            case Briscola2PFullMatchConfig.PLAYER0:
                 switch(cardIndex){
                     case 0: return SlotIndices.Player0Card0;
                     case 1:return SlotIndices.Player0Card1;
                     case 2:return SlotIndices.Player0Card2;
                 };
-            case Briscola2PMatchConfig.PLAYER1:
+            case Briscola2PFullMatchConfig.PLAYER1:
                 switch(cardIndex){
                     case 0: return SlotIndices.Player1Card0;
                     case 1:return SlotIndices.Player1Card1;
@@ -135,9 +135,9 @@ public enum SlotIndices {
      * @return the slot indices
      */
     public static SlotIndices getPileSlotOfPlayer(int player){
-        if(player == Briscola2PMatchConfig.PLAYER0)
+        if(player == Briscola2PFullMatchConfig.PLAYER0)
             return SlotIndices.Player0PileSlot;
-        else if(player == Briscola2PMatchConfig.PLAYER1)
+        else if(player == Briscola2PFullMatchConfig.PLAYER1)
             return SlotIndices.Player1PileSlot;
 
         throw new IllegalArgumentException();

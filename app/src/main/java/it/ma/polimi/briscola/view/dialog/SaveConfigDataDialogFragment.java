@@ -11,7 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import it.ma.polimi.briscola.R;
-import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMatchConfig;
+import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PFullMatchConfig;
 import it.ma.polimi.briscola.persistency.SQLiteRepositoryImpl;
 import it.ma.polimi.briscola.view.MatchMenuActivityActions;
 
@@ -22,7 +22,7 @@ import it.ma.polimi.briscola.view.MatchMenuActivityActions;
  */
 public class SaveConfigDataDialogFragment extends DialogFragment{
 
-    private Briscola2PMatchConfig config;
+    private Briscola2PFullMatchConfig config;
     private EditText configNameEditText;
     private int motivation;
     private Dialog dialog;
@@ -51,7 +51,7 @@ public class SaveConfigDataDialogFragment extends DialogFragment{
      * @param motivation the motivation
      * @return the save config data dialog fragment
      */
-    public static SaveConfigDataDialogFragment newInstance(Briscola2PMatchConfig config, int motivation){
+    public static SaveConfigDataDialogFragment newInstance(Briscola2PFullMatchConfig config, int motivation){
         //put parameters in the bundle
         Bundle args = new Bundle();
         args.putSerializable(ARG_CONFIG, config);
@@ -66,7 +66,7 @@ public class SaveConfigDataDialogFragment extends DialogFragment{
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
         //extract parameters from the arguments
-        config = (Briscola2PMatchConfig) getArguments().getSerializable(ARG_CONFIG);
+        config = (Briscola2PFullMatchConfig) getArguments().getSerializable(ARG_CONFIG);
         motivation = getArguments().getInt(ARG_MOTIVATION);
 
         //initialize the Dialog class to be returned, set parameters of the Dialog class

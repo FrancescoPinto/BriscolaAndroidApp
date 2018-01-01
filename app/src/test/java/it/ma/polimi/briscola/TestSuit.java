@@ -11,7 +11,7 @@ import org.junit.runners.Suite;
 
 @Suite.SuiteClasses({
         Briscola2PMatchNoGUIControllerTest.class,
-        Briscola2PMatchConfigTest.class,
+        Briscola2PFullMatchConfigTest.class,
         Briscola2PHandTest.class,
         Briscola2PPileTest.class,
         Briscola2PSurfaceTest.class,

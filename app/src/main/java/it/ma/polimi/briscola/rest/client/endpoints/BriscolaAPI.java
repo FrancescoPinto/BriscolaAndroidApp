@@ -14,7 +14,8 @@ import retrofit2.http.Query;
 import retrofit2.http.Url;
 
 /**
- * Created by utente on 09/12/17.
+ * Interface implementing a REST Client from annotations, using Retrofit (as suggested by Prof. De Bernardi via email we were allowed to use it).
+ * The signatures simply replicate the server-API structure, it is not necessary to explain them (see the available server API for an explaination)
  */
 
 public interface BriscolaAPI {
@@ -24,23 +25,10 @@ public interface BriscolaAPI {
         @GET
         Call<ResponseBody> getOpponentPlayedCard(@Url String url, @Header("Authorization") String credentials);
 
-    //TODO: attento, è proprio url a distinguere tra i due giocatori chi sia quello giusto! quindi due giocatori avranno due Url di gioco diversi
-
-    //todo, attento, devi mandare text/plain e dentro i due caratteri della carta, segui questa guida https://futurestud.io/tutorials/retrofit-2-how-to-send-plain-text-request-body
-
         @POST
         Call<ResponseBody> playCard(@Url String url, @Header("Authorization") String credentials, @Header("Content-Type") String type, @Body RequestBody playedCard);
 
-    /*
-    esempio di come dovrai usare playCard (attento, puoi fare anche l'enqueue con callback, che è DECISAMENTE MEGLIO
-    String body = "plain text request body";
-Call<String> call = service.getStringScalar(body);
-
-Response<String> response = call.execute();
-String value = response.body();
-     */
         @HTTP(method = "DELETE", hasBody = true)
         Call<ResponseBody> stopMatch(@Url String url, @Header("Authorization") String credentials, @Header("Content-Type") String type,
                                  @Body RequestBody motivation);
-
 }

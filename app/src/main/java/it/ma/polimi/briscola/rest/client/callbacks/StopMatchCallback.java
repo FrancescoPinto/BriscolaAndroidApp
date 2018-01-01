@@ -15,39 +15,33 @@ import retrofit2.Response;
 import static java.lang.Thread.sleep;
 
 /**
- * Created by utente on 10/12/17.
+ * Class implementing the callback to be called after a stop match request has been answered
  */
-
-//todo, eliminarlo? tanto non te ne frega se finisce bene o male lo stop?
 public class StopMatchCallback extends CallbackWithRetry<ResponseBody> {
 
-        public StopMatchCallback() {
+    /**
+     * Instantiates a new Stop match callback.
+     */
+    public StopMatchCallback() {
             super();
         }
 
 
         @Override
         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-            Log.d("TAG","STO CHIUDENDO");
             try {
-
-                    if(/*(controller.getMatchFragment().isVisible() &&*/ !call.isCanceled() && !shouldStop) {
-                    success = true;
-                    shouldStop = true;
-
-                    if (response.code() == 200) {
-                        Log.d("TAG", "Match Cancelled");
-                        //todo
-                        //  controller.endMatch();
+                //Could also occur while the fragment is not visible
+                if(/*(controller.getMatchFragment().isVisible() &&*/ !call.isCanceled() && !shouldStop) {
+                success = true;
+                shouldStop = true;
+                    if (response.code() == 200) { //HTTP 200, OK
+                        Log.d("TAG", "Match Cancelled"); //the human player is not concerned with the outcome
                     } else {
-                            JSONObject error = new JSONObject(response.errorBody().string());
-                            Log.d("TAG", "Error on Match Cancelled");
-                            Log.d("TAG", "STOPMATCHCALLBACK: " +error.getString("error") + " , you received " + error.getString("message"));
-
+                        //even though the error might be fatal, there's no need to handle it as fatal ... the match should allready be closed!
+                        JSONObject error = new JSONObject(response.errorBody().string()); //the human player is not concerned with the outcome
+                        Log.d("TAG", "STOPMATCHCALLBACK: error " +error.getString("error") + " , you received " + error.getString("message"));
                     }
-                    // }
-                    //}
-                    }
+                }
             } catch (IOException | JSONException e) {
                 e.printStackTrace();
             }

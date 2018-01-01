@@ -1,6 +1,6 @@
 package it.ma.polimi.briscola.controller;
 
-import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMatchConfig;
+import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PFullMatchConfig;
 import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PPile;
 import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PSurface;
 
@@ -12,7 +12,7 @@ import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PSurface;
  */
 
 public class Briscola2PMatchNoGUIController {
-    private Briscola2PMatchConfig config;
+    private Briscola2PFullMatchConfig config;
 
     /**
      * Instantiates a new Briscola 2 p match no gui controller. If this constructor is used, then should be initialized programmatically by invoking either startNewmatch or resumeMatch
@@ -27,14 +27,14 @@ public class Briscola2PMatchNoGUIController {
      * @param configuration the configuration, format as specified in the slides.
      */
     public Briscola2PMatchNoGUIController(String configuration){ //resume from saved configuration
-        config = new Briscola2PMatchConfig(configuration);
+        config = new Briscola2PFullMatchConfig(configuration);
     }
 
     /**
      * Start new match (initializes the deck, chooses first player, initializes player's hands and the briscola)
      */
     public void startNewMatch(){
-        config = new Briscola2PMatchConfig();
+        config = new Briscola2PFullMatchConfig();
         config.initializeNewDeck();
         config.initializeFirstPlayer();
         config.initializePlayersHands();
@@ -51,7 +51,7 @@ public class Briscola2PMatchNoGUIController {
      * @param config the configuration, format as specified in the slides
      */
     public void resumeMatch(String config){ //da un salvataggio
-        this.config = new Briscola2PMatchConfig(config);
+        this.config = new Briscola2PFullMatchConfig(config);
     }
     /**
      * Make a single move specified by an input.
@@ -61,7 +61,7 @@ public class Briscola2PMatchNoGUIController {
      * @return the string representing either the new configuration (if the match is not finished), the outcome of the match (if the match is finished), an error message (if a fatal error occurs)
      */
     private String makeMove(String configuration, int move){
-        config = new Briscola2PMatchConfig(configuration);
+        config = new Briscola2PFullMatchConfig(configuration);
 
         if(config.countCardsOnSurface() == 0) { //if the roud has just begun
             config.playCard(move); //play first card
@@ -79,9 +79,9 @@ public class Briscola2PMatchNoGUIController {
 
             if(config.arePlayersHandsEmpty() && config.isDeckEmpty()){ //if the match is finished, choose winner
                 switch(config.chooseMatchWinner()){
-                    case Briscola2PMatchConfig.PLAYER0: return "WINNER" + Briscola2PMatchConfig.PLAYER0 + config.computeScore(Briscola2PMatchConfig.PLAYER0);
-                    case Briscola2PMatchConfig.PLAYER1: return "WINNER" + Briscola2PMatchConfig.PLAYER1 + config.computeScore(Briscola2PMatchConfig.PLAYER1);
-                    case Briscola2PMatchConfig.DRAW: return "DRAW";
+                    case Briscola2PFullMatchConfig.PLAYER0: return "WINNER" + Briscola2PFullMatchConfig.PLAYER0 + config.computeScore(Briscola2PFullMatchConfig.PLAYER0);
+                    case Briscola2PFullMatchConfig.PLAYER1: return "WINNER" + Briscola2PFullMatchConfig.PLAYER1 + config.computeScore(Briscola2PFullMatchConfig.PLAYER1);
+                    case Briscola2PFullMatchConfig.DRAW: return "DRAW";
                     default: throw new RuntimeException("Error while computing the winner");
                 }
             }else if (!config.arePlayersHandsEmpty() && config.isDeckEmpty()){ //if the deck is empty, but players have cards in hand, return new config
@@ -122,7 +122,7 @@ public class Briscola2PMatchNoGUIController {
      *
      * @return the config
      */
-    public Briscola2PMatchConfig getConfig() {
+    public Briscola2PFullMatchConfig getConfig() {
         return config;
     }
 

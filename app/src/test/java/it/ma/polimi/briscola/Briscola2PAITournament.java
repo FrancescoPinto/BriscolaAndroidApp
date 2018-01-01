@@ -5,7 +5,7 @@ import org.junit.Test;
 import it.ma.polimi.briscola.controller.Briscola2PMatchNoGUIController;
 import it.ma.polimi.briscola.ai.Briscola2PAIDumbGreedyPlayer;
 import it.ma.polimi.briscola.ai.Briscola2PAIRandomPlayer;
-import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMatchConfig;
+import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PFullMatchConfig;
 
 import static junit.framework.Assert.assertTrue;
 
@@ -34,7 +34,7 @@ public class Briscola2PAITournament {
             int i = 0;
             while(i < 40){
 
-                Briscola2PMatchConfig cfg = new Briscola2PMatchConfig(config);
+                Briscola2PFullMatchConfig cfg = new Briscola2PFullMatchConfig(config);
                 if(cfg.getCurrentPlayer() == cfg.PLAYER0) {
                     move = randomPlayer.chooseMove(cfg,cfg.PLAYER0);
                     config = MoveTest.moveTest(config, "" + move);
@@ -64,7 +64,7 @@ public class Briscola2PAITournament {
             int i = 0;
             while(i < 40){
 
-                Briscola2PMatchConfig cfg = new Briscola2PMatchConfig(config);
+                Briscola2PFullMatchConfig cfg = new Briscola2PFullMatchConfig(config);
                 if(cfg.getCurrentPlayer() == cfg.PLAYER0) {
                     move = randomPlayer.chooseMove(cfg,cfg.PLAYER0);
                     config = MoveTest.moveTest(config, "" + move);
@@ -95,7 +95,7 @@ public class Briscola2PAITournament {
                 int i = 0;
                 while (i < 40) {
 
-                    Briscola2PMatchConfig cfg = new Briscola2PMatchConfig(config);
+                    Briscola2PFullMatchConfig cfg = new Briscola2PFullMatchConfig(config);
                     if (cfg.getCurrentPlayer() == cfg.PLAYER0) {
                         move = dumbGreedyPlayer.chooseMove(cfg, cfg.PLAYER0);
                         config = MoveTest.moveTest(config, "" + move);

@@ -1,7 +1,7 @@
 package it.ma.polimi.briscola.ai;
 
 import it.ma.polimi.briscola.model.briscola.BriscolaCardPointsAndRankingRules;
-import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMatchConfig;
+import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PFullMatchConfig;
 import it.ma.polimi.briscola.model.deck.NeapolitanCard;
 import it.ma.polimi.briscola.model.deck.NeapolitanCardSuit;
 
@@ -13,7 +13,7 @@ import it.ma.polimi.briscola.model.deck.NeapolitanCardSuit;
 public class Briscola2PAIDumbGreedyPlayer extends AbstractBriscola2PAIPlayer {
 
 
-    public int chooseMove(Briscola2PMatchConfig configuration, int playerIndex){
+    public int chooseMove(Briscola2PFullMatchConfig configuration, int playerIndex){
         config = configuration;
         myHand = config.getHand(playerIndex);
 

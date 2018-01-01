@@ -8,18 +8,16 @@ import android.support.v4.app.DialogFragment;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import it.ma.polimi.briscola.R;
-import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMatchConfig;
-import it.ma.polimi.briscola.persistency.SQLiteRepositoryImpl;
 import it.ma.polimi.briscola.view.MatchMenuActivityActions;
 
 /**
- * Created by utente on 27/12/17.
+ * Fragment representing a Fatal Online ErrorDialog. Tells the user that a fatal error occured, its motivation, and warns him/her that hence the match will be closed.
+ *
+ * @author Francesco Pinto
  */
-
 public class FatalOnlineErrorDialogFragment extends DialogFragment {
 
     private int motivation;
@@ -40,6 +38,14 @@ public class FatalOnlineErrorDialogFragment extends DialogFragment {
     EXTRA_MOTIVATION ="it.ma.polimi.briscola.warningexit.motivation";
 
 
+    /**
+     * Build a new instance of fatal online error dialog fragment given the parameters.
+     *
+     * @param error      the error that occurred
+     * @param message    the message explaining the motivation
+     * @param motivation the motivation the dialog has been invoked (i.e. an error occurred), REMARK: it is NOT the motivation of the error
+     * @return the fatal online error dialog fragment
+     */
     public static FatalOnlineErrorDialogFragment newInstance(String error, String message, int motivation){
         //put parameters in the bundle
         Bundle args = new Bundle();
@@ -70,14 +76,16 @@ public class FatalOnlineErrorDialogFragment extends DialogFragment {
         //retrieve widget references and initialize them (if required)
        Button okButton = (Button) dialog.findViewById(R.id.ok_error_button);
         TextView showedMessage = (TextView) dialog.findViewById(R.id.error_message_text);
+        //show the user the message
         if(message.equals("timeout"))
             showedMessage.setText(getString(R.string.game_terminated_timeout));
         else
             showedMessage.setText(getString(R.string.game_terminated_generic,message));
-
+        //set the onClickListener
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
           public void onClick(View v) {
+                //tell the activity that should stop the match
                sendResult(Activity.RESULT_OK, MatchMenuActivityActions.STOP_ONLINE, motivation);
                dialog.dismiss();
             }
@@ -90,7 +98,7 @@ public class FatalOnlineErrorDialogFragment extends DialogFragment {
     private void sendResult(int resultCode, MatchMenuActivityActions actionCode, int motivation) {
         if(getTargetFragment()==null)
             return;
-
+        //use an intent to return the action to be performed (with the motivation)
         Intent intent=new Intent();
         intent.putExtra(EXTRA_ACTION,actionCode);
         intent.putExtra(EXTRA_MOTIVATION,motivation);

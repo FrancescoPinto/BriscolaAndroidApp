@@ -1,6 +1,6 @@
 package it.ma.polimi.briscola.ai;
 
-import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMatchConfig;
+import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PFullMatchConfig;
 
 /**
  * Interface representing a Briscola AI Player for a 2 Players match
@@ -14,5 +14,5 @@ public interface Briscola2PAIPlayer {
      * @param config Object representing the match configuration
      * @return The choosen move, i.e. an integer among {0,1,2} representing the card to be played
      */
-    public int chooseMove(Briscola2PMatchConfig config, int playerIndex);
+    public int chooseMove(Briscola2PFullMatchConfig config, int playerIndex);
 }

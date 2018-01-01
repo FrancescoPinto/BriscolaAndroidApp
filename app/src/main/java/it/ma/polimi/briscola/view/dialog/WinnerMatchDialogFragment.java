@@ -15,7 +15,7 @@ import it.ma.polimi.briscola.R;
 import it.ma.polimi.briscola.audio.GameEvent;
 import it.ma.polimi.briscola.audio.SoundService;
 import it.ma.polimi.briscola.model.briscola.statistics.Briscola2PMatchRecord;
-import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMatchConfig;
+import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PFullMatchConfig;
 import it.ma.polimi.briscola.view.activities.MatchActivity;
 
 /**
@@ -83,7 +83,7 @@ public class WinnerMatchDialogFragment extends DialogFragment {
         SoundService soundManager = ((MatchActivity) getActivity()).getSoundManager();
 
         //based on the winner index, show different messages and play different end-match sounds
-        if(winnerPlayer == Briscola2PMatchConfig.PLAYER0) {
+        if(winnerPlayer == Briscola2PFullMatchConfig.PLAYER0) {
             congrats_or_ops.setText(R.string.congrats_you_won);
             messageTV.setText(getString(R.string.who_won_with,getString(R.string.you),score));
             congrats_or_ops.setBackgroundColor(Color.GREEN);
@@ -91,7 +91,7 @@ public class WinnerMatchDialogFragment extends DialogFragment {
             soundManager.playSoundForGameEvent(GameEvent.WinMatch);
 
         }
-        else if(winnerPlayer == Briscola2PMatchConfig.DRAW) {
+        else if(winnerPlayer == Briscola2PFullMatchConfig.DRAW) {
             congrats_or_ops.setText(R.string.draw);
             messageTV.setText(getString(R.string.none_won));
             congrats_or_ops.setBackgroundColor(Color.BLUE);
@@ -99,7 +99,7 @@ public class WinnerMatchDialogFragment extends DialogFragment {
             soundManager.playSoundForGameEvent(GameEvent.LoseMatch); //a draw is not a win ... if you don't win you lose, at least in some sense
 
         }
-        else if(winnerPlayer == Briscola2PMatchConfig.PLAYER1) {
+        else if(winnerPlayer == Briscola2PFullMatchConfig.PLAYER1) {
             congrats_or_ops.setText(R.string.you_lost);
             messageTV.setText(getString(R.string.who_won_with,getString(R.string.other_player), score));
             congrats_or_ops.setBackgroundColor(Color.RED);
@@ -114,7 +114,7 @@ public class WinnerMatchDialogFragment extends DialogFragment {
                 @Override
                 public void onClick(View v) {
                     //simpy close the dialog and send match data to the activity
-                    sendResult(Activity.RESULT_OK,(winnerPlayer== Briscola2PMatchConfig.PLAYER0)?score: Briscola2PMatchRecord.totPoints-score, isOnline);
+                    sendResult(Activity.RESULT_OK,(winnerPlayer== Briscola2PFullMatchConfig.PLAYER0)?score: Briscola2PMatchRecord.totPoints-score, isOnline);
                     dialog.dismiss();}
             }
         );

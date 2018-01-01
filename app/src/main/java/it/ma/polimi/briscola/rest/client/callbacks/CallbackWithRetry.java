@@ -3,7 +3,14 @@ package it.ma.polimi.briscola.rest.client.callbacks;
 import android.os.Handler;
 import android.util.Log;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+
+import it.ma.polimi.briscola.controller.ControllerWithServerResponseManager;
 import it.ma.polimi.briscola.controller.OnlineBriscola2PMatchController;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 
@@ -18,7 +25,7 @@ public abstract class CallbackWithRetry<T> implements Callback<T> {
     /**
      * The Controller.
      */
-    OnlineBriscola2PMatchController controller;
+    ControllerWithServerResponseManager controller;
     /**
      * The Success, whether the response status is success.
      */
@@ -62,6 +69,23 @@ public abstract class CallbackWithRetry<T> implements Callback<T> {
                                       },
                     (int) RETRY_DELAY);
 
+        }
+    }
+
+
+    /**
+     * In case a fatal error occurred, handle it. IMPORTANT REMARK: assuming the REST API won't change, the GUI is evolved enough to avoid EVERY non-fatal error
+     * The only fatal errors that should be managed are Timeout or the other player abandoning the match.
+     *
+     * @param error the error
+     */
+    void manageFatalError(ResponseBody error){
+        try {
+            //tell the controller to manage the error
+            JSONObject errorJSON = new JSONObject(error.string());
+            controller.manageError(errorJSON.getString("error"), errorJSON.getString("message"));
+        }catch(IOException|JSONException e){
+            e.printStackTrace();
         }
     }
 }

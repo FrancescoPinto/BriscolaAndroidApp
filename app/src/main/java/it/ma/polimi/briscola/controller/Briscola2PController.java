@@ -31,7 +31,7 @@ public interface Briscola2PController {
     /**
      * Gets current player index
      *
-     * @return either PLAYER0 for local player, PLAYER1 for AI/Remote, cfr. Briscola2PMatchController
+     * @return either PLAYER0 for local player, PLAYER1 for AI/Remote, cfr. OfflineBriscola2PMatchController
      */
     public int getCurrentPlayer();
 
@@ -59,7 +59,7 @@ public interface Briscola2PController {
     /**
      * Gets player hand size.
      *
-     * @param playerIndex the player index (can be either PLAYER0 or PLAYER1, see Briscola2PMatchConfig)
+     * @param playerIndex the player index (can be either PLAYER0 or PLAYER1, see Briscola2PFullMatchConfig)
      * @return the hand size
      */
     public int getHandSize(int playerIndex);

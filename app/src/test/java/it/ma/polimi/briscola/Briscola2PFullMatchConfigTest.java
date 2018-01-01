@@ -5,8 +5,8 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
+import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PFullMatchConfig;
 import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PHand;
-import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMatchConfig;
 import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PPile;
 import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PSurface;
 import it.ma.polimi.briscola.model.deck.NeapolitanCard;
@@ -19,7 +19,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * Class that contains Birscola2PMatchConfig tests. It is a quite long class, however, for each tested method it usually provides first the used data and convenience methods used for testing, then the test. Seldom, this convention is broken (not often, in order to avoid making the class more confusing)
  */
-public class Briscola2PMatchConfigTest {
+public class Briscola2PFullMatchConfigTest {
 
     //trivial setters and getters (mostly automatically generated) are not tested
 
@@ -27,8 +27,8 @@ public class Briscola2PMatchConfigTest {
 
      //Create easy config briscola 2 p match config. Is a convenience method for testing.
       //the briscola 2 p match config represented by "0C5S4G6S2C.6G7G.JCKG2B.1CKS3G.KC5C.4B1B"
-    private Briscola2PMatchConfig createEasyConfig(){
-        Briscola2PMatchConfig easyConfig = new Briscola2PMatchConfig();
+    private Briscola2PFullMatchConfig createEasyConfig(){
+        Briscola2PFullMatchConfig easyConfig = new Briscola2PFullMatchConfig();
         easyConfig.setCurrentPlayer(0);
         easyConfig.setBriscolaSuit("C");
         easyConfig.setDeck(new NeapolitanDeck("5S4G6S2C")); //todo prima quando hai sbagliato e gli hai infilato anche i primi due caratteri non ha fatto una piega, non va bene!
@@ -43,8 +43,8 @@ public class Briscola2PMatchConfigTest {
 
     //Create starting config briscola 2 p match config. Is a convenience method for testing.
      //returns the briscola 2 p match config represented by 0B5S4G6S2C5GKB7B6CHCHB1GKC5C4B1BHG7C6BJS6G7G4C3C7SJBHS2S3S4S1S2G3BJG5B..JCKG2B.1CKS3G..
-    private Briscola2PMatchConfig createStartingConfig(){
-        Briscola2PMatchConfig startingConfig = new Briscola2PMatchConfig();
+    private Briscola2PFullMatchConfig createStartingConfig(){
+        Briscola2PFullMatchConfig startingConfig = new Briscola2PFullMatchConfig();
         startingConfig.setCurrentPlayer(0);
         startingConfig.setBriscolaSuit("B");
         startingConfig.setDeck(new NeapolitanDeck("5S4G6S2C5GKB7B6CHCHB1GKC5C4B1BHG7C6BJS6G7G4C3C7SJBHS2S3S4S1S2G3BJG5B"));
@@ -112,7 +112,7 @@ public class Briscola2PMatchConfigTest {
      */
     @Test
     public void initializeNewDeck(){
-        Briscola2PMatchConfig config = new Briscola2PMatchConfig();
+        Briscola2PFullMatchConfig config = new Briscola2PFullMatchConfig();
         config.initializeNewDeck();
         NeapolitanDeck deck = config.getDeck();
         boolean containsAllCards = true; //check if the deck contains all cards
@@ -132,7 +132,7 @@ public class Briscola2PMatchConfigTest {
      */
     @Test
     public void initializeFirstPlayer(){
-        Briscola2PMatchConfig config = new Briscola2PMatchConfig();
+        Briscola2PFullMatchConfig config = new Briscola2PFullMatchConfig();
         for(int i = 0; i < 100; i++) { //repeating the test 100 times should ensure that at least once each of the possible values (PLAYER0, PLAYER1) is used in the test
             config.initializeFirstPlayer(); //initialize at random
             int currentPlayer = config.getCurrentPlayer();
@@ -146,7 +146,7 @@ public class Briscola2PMatchConfigTest {
     @Test
     public void initializePlayersHands(){
         //config is in the right state
-        Briscola2PMatchConfig config = new Briscola2PMatchConfig();
+        Briscola2PFullMatchConfig config = new Briscola2PFullMatchConfig();
 
         config.initializeNewDeck();
         NeapolitanDeck deck = config.getDeck();
@@ -170,7 +170,7 @@ public class Briscola2PMatchConfigTest {
 
         //config is in the wrong state
             //config's deck and current player not been initialized
-             config = new Briscola2PMatchConfig();
+             config = new Briscola2PFullMatchConfig();
             try{
                 config.initializePlayersHands();
             }catch(Exception e){
@@ -198,7 +198,7 @@ public class Briscola2PMatchConfigTest {
     @Test
     public void initializeBriscola(){
         //config is in the right state
-        Briscola2PMatchConfig config = new Briscola2PMatchConfig();
+        Briscola2PFullMatchConfig config = new Briscola2PFullMatchConfig();
 
         config.initializeNewDeck();
         NeapolitanDeck deck = config.getDeck();
@@ -211,7 +211,7 @@ public class Briscola2PMatchConfigTest {
 
         //config is in the wrong state
         //config's deck and player's hands not initialized
-        config = new Briscola2PMatchConfig();
+        config = new Briscola2PFullMatchConfig();
         try{
             config.initializeBriscola();
         }catch(Exception e){
@@ -248,10 +248,10 @@ public class Briscola2PMatchConfigTest {
 
     //convenience method
     private void testDrawCards(String beginConfig, String endConfig){
-        Briscola2PMatchConfig config1,config2;
-        config1 = new Briscola2PMatchConfig(beginConfig);
+        Briscola2PFullMatchConfig config1,config2;
+        config1 = new Briscola2PFullMatchConfig(beginConfig);
         config1.drawCardsNewRound();
-        config2 = new Briscola2PMatchConfig(endConfig);//check that in the following config cards have been appended to player's hands
+        config2 = new Briscola2PFullMatchConfig(endConfig);//check that in the following config cards have been appended to player's hands
         assertTrue(config1.getHand(config1.PLAYER0).getCard(2).equalTo(config2.getHand(config2.PLAYER0).getCard(2)));
         assertTrue(config1.getHand(config1.PLAYER1).getCard(2).equalTo(config2.getHand(config2.PLAYER1).getCard(2)));
     }
@@ -261,11 +261,11 @@ public class Briscola2PMatchConfigTest {
      */
     @Test
     public void drawCardsNewRound(){
-        Briscola2PMatchConfig config;
+        Briscola2PFullMatchConfig config;
 
         //test with empty deck
         for(int i = 34; i <= 39; i++){
-            config = new Briscola2PMatchConfig(fullMatchArray[i]);
+            config = new Briscola2PFullMatchConfig(fullMatchArray[i]);
             assertTrue(config.toString().equals(fullMatchArray[i])); //if deck is empty, after cards are drawn, no change in config
         }
 
@@ -315,7 +315,7 @@ public class Briscola2PMatchConfigTest {
 
     //convenience method that plays a card
     private void testPlayCard(int card, String configStart, String configEnd){
-        Briscola2PMatchConfig config =  new Briscola2PMatchConfig(configStart);
+        Briscola2PFullMatchConfig config =  new Briscola2PFullMatchConfig(configStart);
         config.playCard(card);
 
         assertTrue(config.getSurface().toString().equals(configEnd.split("\\.",6)[1]));
@@ -404,7 +404,7 @@ public class Briscola2PMatchConfigTest {
             0,1,0,1,0,1,0,0,1,1};
 
     private void testWinner(String configuration, int expectedWinner){
-        Briscola2PMatchConfig config = new Briscola2PMatchConfig(configuration);
+        Briscola2PFullMatchConfig config = new Briscola2PFullMatchConfig(configuration);
         int winner = config.chooseRoundWinner();
         assertTrue(winner == expectedWinner);
     }
@@ -427,7 +427,7 @@ public class Briscola2PMatchConfigTest {
 
     //convenience method
     private void testClearSurface(String configuration){
-        Briscola2PMatchConfig config = new Briscola2PMatchConfig(configuration);
+        Briscola2PFullMatchConfig config = new Briscola2PFullMatchConfig(configuration);
         int winner = config.chooseRoundWinner();
 
         String tempPileLoser = ""+ config.getPile((winner+1)%2);
@@ -455,7 +455,7 @@ public class Briscola2PMatchConfigTest {
         //wrong config
         //clearing empty surface
         try{
-            Briscola2PMatchConfig config = new Briscola2PMatchConfig(configRoundWinnerArray[0]);
+            Briscola2PFullMatchConfig config = new Briscola2PFullMatchConfig(configRoundWinnerArray[0]);
             //no matter who wins, I'll use the first player as winner
             config.clearSurface(1); //clearing the surface two times implies that the second time we attempt to clear the surface, it is empty (clear should not be called in that case)
             config.clearSurface(1);
@@ -466,7 +466,7 @@ public class Briscola2PMatchConfigTest {
 
         //clearing surface with one card
         try{
-            Briscola2PMatchConfig config = new Briscola2PMatchConfig(configRoundWinnerArray[0]);
+            Briscola2PFullMatchConfig config = new Briscola2PFullMatchConfig(configRoundWinnerArray[0]);
             //no matter who wins, I'll use the first player as winner
             config.clearSurface(1); //clear the surface, put a card on it, then attempt to clear it (with one card on surface -> illegal)
             config.playCard(0);
@@ -494,7 +494,7 @@ public class Briscola2PMatchConfigTest {
     };
 
     private void testComputeScore(String configuration, int expectedResult0, int expectedResult1){
-        Briscola2PMatchConfig config = new Briscola2PMatchConfig(configuration);
+        Briscola2PFullMatchConfig config = new Briscola2PFullMatchConfig(configuration);
         int winner = config.chooseRoundWinner();
         config.clearSurface(winner);
         assertTrue(config.computeScore(config.PLAYER0) == expectedResult0);
@@ -516,9 +516,9 @@ public class Briscola2PMatchConfigTest {
             testComputeScore(configRoundWinnerArray[i],scores2[i-10],scores1[i-10]);
         }
 
-        Briscola2PMatchConfig config;
+        Briscola2PFullMatchConfig config;
         for(int i = 0, j = 0; i < winnerArray.length; i++, j+=2){
-            config = new Briscola2PMatchConfig(winnerArray[i]);
+            config = new Briscola2PFullMatchConfig(winnerArray[i]);
 
             assertTrue(config.computeScore(config.PLAYER0) == scores3[j]);
             assertTrue(config.computeScore(config.PLAYER1) == scores3[j+1]);
@@ -535,7 +535,7 @@ public class Briscola2PMatchConfigTest {
     @Test
     public void toggleCurrentPlayer(){
         //right config state
-        Briscola2PMatchConfig config = new Briscola2PMatchConfig(configToggle1);
+        Briscola2PFullMatchConfig config = new Briscola2PFullMatchConfig(configToggle1);
         config.toggleCurrentPlayer();
         assertTrue(config.getCurrentPlayer() == Integer.parseInt(""+configToggle2.charAt(0)));
         config.toggleCurrentPlayer();
@@ -553,20 +553,20 @@ public class Briscola2PMatchConfigTest {
     @Test
     public void stringConstructorTest(){
         //for these tests we just use equalTo
-        Briscola2PMatchConfig config = new Briscola2PMatchConfig(easyConfig);
+        Briscola2PFullMatchConfig config = new Briscola2PFullMatchConfig(easyConfig);
         assertTrue(createEasyConfig().equalTo(config));
-        config = new Briscola2PMatchConfig(startingConfig);
+        config = new Briscola2PFullMatchConfig(startingConfig);
         assertTrue(createStartingConfig().equalTo(config));
 
         //for these tests we use string representation
         for(int i = 0; i < fullMatchArray.length; i++){
-            config = new Briscola2PMatchConfig(fullMatchArray[i]);
+            config = new Briscola2PFullMatchConfig(fullMatchArray[i]);
             assertTrue(config.toString().equals(fullMatchArray[i]));
         }
 
         //if the first token of the config has size smaller than 2 throw exception (does not specify briscola/currentPlayer)
         try{
-            config = new Briscola2PMatchConfig(".6G7G.JCKG2B.1CKS3G.KC5C.4B1B");
+            config = new Briscola2PFullMatchConfig(".6G7G.JCKG2B.1CKS3G.KC5C.4B1B");
         }catch(Exception e){
             assertTrue(e instanceof IllegalArgumentException);
         }
@@ -582,14 +582,14 @@ public class Briscola2PMatchConfigTest {
 
         assertTrue(easyConfig.equals(createEasyConfig().toString()));
         assertTrue(startingConfig.equals(createStartingConfig().toString()));
-        assertTrue(config1.equals(new Briscola2PMatchConfig(config1).toString()));
-        assertTrue(config2.equals(new Briscola2PMatchConfig(config2).toString()));
-        assertTrue(config3.equals(new Briscola2PMatchConfig(config3).toString()));
+        assertTrue(config1.equals(new Briscola2PFullMatchConfig(config1).toString()));
+        assertTrue(config2.equals(new Briscola2PFullMatchConfig(config2).toString()));
+        assertTrue(config3.equals(new Briscola2PFullMatchConfig(config3).toString()));
 
-        Briscola2PMatchConfig config;
+        Briscola2PFullMatchConfig config;
         //build with the string constructor (for simplicity) then check the input string is equal to the stringified config
         for(int i = 0; i < fullMatchArray.length; i++){
-            config = new Briscola2PMatchConfig(fullMatchArray[i]);
+            config = new Briscola2PFullMatchConfig(fullMatchArray[i]);
             assertTrue(config.toString().equals(fullMatchArray[i]));
         }
     }
@@ -599,22 +599,22 @@ public class Briscola2PMatchConfigTest {
      */
     @Test
     public void equalToTest(){
-        Briscola2PMatchConfig config1 = new Briscola2PMatchConfig(easyConfig);
-        Briscola2PMatchConfig config2 = new Briscola2PMatchConfig(easyConfig);
-        Briscola2PMatchConfig config3 = new Briscola2PMatchConfig(startingConfig);
-        Briscola2PMatchConfig config4 = new Briscola2PMatchConfig(startingConfig);
+        Briscola2PFullMatchConfig config1 = new Briscola2PFullMatchConfig(easyConfig);
+        Briscola2PFullMatchConfig config2 = new Briscola2PFullMatchConfig(easyConfig);
+        Briscola2PFullMatchConfig config3 = new Briscola2PFullMatchConfig(startingConfig);
+        Briscola2PFullMatchConfig config4 = new Briscola2PFullMatchConfig(startingConfig);
 
         assertTrue(config1.equalTo(config2));
         assertTrue(!config1.equalTo(config3));
         assertTrue(config3.equalTo(config4));
 
         //let's make more extensive testing for a full match
-        Briscola2PMatchConfig configA,configB;
+        Briscola2PFullMatchConfig configA,configB;
         for(int i = 0; i < fullMatchArray.length; i++){
             for(int j = i; j < fullMatchArray.length; j++)
             {
-                configA = new Briscola2PMatchConfig(fullMatchArray[i]);
-                configB = new Briscola2PMatchConfig(fullMatchArray[j]);
+                configA = new Briscola2PFullMatchConfig(fullMatchArray[i]);
+                configB = new Briscola2PFullMatchConfig(fullMatchArray[j]);
 
                 if(j == i) //if the same config, then should be true
                     assertTrue(configA.equalTo(configB));
@@ -624,10 +624,10 @@ public class Briscola2PMatchConfigTest {
         }
 
         /* used to discover a bug
-        configA = new Briscola2PMatchConfig(fullMatchArray[34]);
-        configB = new Briscola2PMatchConfig(fullMatchArray[38]);
+        configA = new Briscola2PFullMatchConfig(fullMatchArray[34]);
+        configB = new Briscola2PFullMatchConfig(fullMatchArray[38]);
         assertTrue(configA.getCurrentPlayer() == configB.getCurrentPlayer()) ;
-        assertTrue(configA.getBriscolaString().equals(configB.getBriscolaString()));
+        assertTrue(configA.getBriscolaSuit().equals(configB.getBriscolaSuit()));
         assertTrue(configA.getDeck().equalTo(configB.getDeck()));
         assertTrue(configA.getSurface().equalTo(configB.getSurface()));
         System.out.println(configA.getHand(configA.PLAYER0) + " " + configB.getHand(configA.PLAYER0));
@@ -644,7 +644,7 @@ public class Briscola2PMatchConfigTest {
      */
     @Test
     public void setCurrentPlayerTest(){
-        Briscola2PMatchConfig config = new Briscola2PMatchConfig(easyConfig);
+        Briscola2PFullMatchConfig config = new Briscola2PFullMatchConfig(easyConfig);
         config.setCurrentPlayer(config.PLAYER0);
         assertTrue(config.getCurrentPlayer() == config.PLAYER0);
         config.setCurrentPlayer(config.PLAYER1);
@@ -663,7 +663,7 @@ public class Briscola2PMatchConfigTest {
      */
     @Test
     public void setHandTest(){
-        Briscola2PMatchConfig config = new Briscola2PMatchConfig(easyConfig);
+        Briscola2PFullMatchConfig config = new Briscola2PFullMatchConfig(easyConfig);
         config.setHand(config.PLAYER0,"3B4G"); //REMARK: since exceptions on Hand size/format errors are handled internally to the hand class, the tests of hand (and of AbstractCardListWrapper are enough to check all possible hands)
         assertTrue(config.getHand(config.PLAYER0).equalTo(new Briscola2PHand("3B4G")));
         config.setHand(config.PLAYER1,"JSKC4B");
@@ -683,7 +683,7 @@ public class Briscola2PMatchConfigTest {
      */
     @Test
     public void setPileTest(){
-        Briscola2PMatchConfig config = new Briscola2PMatchConfig(easyConfig);//REMARK: since exceptions on Pile size/format errors are handled internally to the pile class, the tests of pile (and of AbstractCardListWrapper are enough to check all possible piles)
+        Briscola2PFullMatchConfig config = new Briscola2PFullMatchConfig(easyConfig);//REMARK: since exceptions on Pile size/format errors are handled internally to the pile class, the tests of pile (and of AbstractCardListWrapper are enough to check all possible piles)
         config.setPile(config.PLAYER0,"3B4G");
         assertTrue(config.getPile(config.PLAYER0).equalTo(new Briscola2PPile("3B4G")));
         config.setPile(config.PLAYER1,"JSKC4B");
@@ -718,16 +718,16 @@ public class Briscola2PMatchConfigTest {
     @Test
     public void chooseMatchWinner(){
         //good config status
-        Briscola2PMatchConfig config;
+        Briscola2PFullMatchConfig config;
         for(int i = 0; i < winnerArray.length; i++){
             System.out.println("Index "+i);
-            config = new Briscola2PMatchConfig(winnerArray[i]);
+            config = new Briscola2PFullMatchConfig(winnerArray[i]);
             assertTrue(config.chooseMatchWinner()==expectedWinnerMatch[i]);
         }
 
         //wrong config status
         try{
-            config = new Briscola2PMatchConfig("0G....HSJC3B7G5G1BJG6S.JB4B4SJS7S1GKBHB6B4C3C2B2GHG3G5C"); //not 120 points total
+            config = new Briscola2PFullMatchConfig("0G....HSJC3B7G5G1BJG6S.JB4B4SJS7S1GKBHB6B4C3C2B2GHG3G5C"); //not 120 points total
             config.chooseMatchWinner();
         }catch(Exception e){
             assertTrue(e instanceof IllegalStateException);

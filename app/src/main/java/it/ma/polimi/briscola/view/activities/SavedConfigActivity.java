@@ -10,13 +10,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import java.util.List;
 
 import it.ma.polimi.briscola.R;
-import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMatchConfig;
+import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PFullMatchConfig;
 import it.ma.polimi.briscola.persistency.SQLiteRepositoryImpl;
 
 /**
@@ -56,7 +55,7 @@ public class SavedConfigActivity extends AppCompatActivity {
     private void updateUI(){
 
         SQLiteRepositoryImpl repo = new SQLiteRepositoryImpl(this);
-        List<Briscola2PMatchConfig> savedConfig = repo.findAllMatchConfig();
+        List<Briscola2PFullMatchConfig> savedConfig = repo.findAllMatchConfig();
 
         if(savedConfig.isEmpty()) //if no items available in the list, tell the user
             noAvailable.setVisibility(View.VISIBLE);
@@ -74,14 +73,14 @@ public class SavedConfigActivity extends AppCompatActivity {
 
     //from now on, no extremely detailed documentation is provided (this is VERY STANDARD ANDROID CODE ... there is no need to explain it step by step)
     private class SavedConfigAdapter extends RecyclerView.Adapter<SavedConfig>{
-        private List<Briscola2PMatchConfig> savedConfigRows;
+        private List<Briscola2PFullMatchConfig> savedConfigRows;
 
         /**
          * Instantiates a new Saved Config adapter.
          *
          * @param savedConfigRows the saved config rows
          */
-        public SavedConfigAdapter(List<Briscola2PMatchConfig> savedConfigRows){
+        public SavedConfigAdapter(List<Briscola2PFullMatchConfig> savedConfigRows){
             this.savedConfigRows = savedConfigRows;
         }
 
@@ -95,7 +94,7 @@ public class SavedConfigActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(SavedConfig holder, int position){
-            Briscola2PMatchConfig data = savedConfigRows.get(position);
+            Briscola2PFullMatchConfig data = savedConfigRows.get(position);
             holder.bindSavedConfigRow(data, position);
         }
 
@@ -109,7 +108,7 @@ public class SavedConfigActivity extends AppCompatActivity {
     private class SavedConfig extends RecyclerView.ViewHolder /*implements View.OnClickListener*/{
 
         //the config data
-        Briscola2PMatchConfig data;
+        Briscola2PFullMatchConfig data;
 
         //widget references
         public TextView name, position;
@@ -158,7 +157,7 @@ public class SavedConfigActivity extends AppCompatActivity {
          * @param data     the data
          * @param position the position
          */
-        public void bindSavedConfigRow(Briscola2PMatchConfig data, int position){
+        public void bindSavedConfigRow(Briscola2PFullMatchConfig data, int position){
             this.data = data;
             name.setText(data.getName());
             this.position.setText(""+position);

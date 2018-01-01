@@ -1,7 +1,7 @@
 package it.ma.polimi.briscola.ai;
 
 import it.ma.polimi.briscola.model.briscola.BriscolaCardPointsAndRankingRules;
-import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMatchConfig;
+import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PFullMatchConfig;
 import it.ma.polimi.briscola.model.deck.NeapolitanCard;
 import it.ma.polimi.briscola.model.deck.NeapolitanCardSuit;
 
@@ -18,7 +18,7 @@ public class Briscola2PAISmarterGreedyPlayer  extends AbstractBriscola2PAIPlayer
     private static final float riskTrumpThreshold = 0.5f;
     private static final int trumpThresholdFirstCard = 4;
 
-    public int chooseMove(Briscola2PMatchConfig configuration,int playerIndex){
+    public int chooseMove(Briscola2PFullMatchConfig configuration, int playerIndex){
         config = configuration;
         myHand = config.getHand(playerIndex);
 

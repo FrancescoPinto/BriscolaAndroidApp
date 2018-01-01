@@ -3,7 +3,7 @@ package it.ma.polimi.briscola;
 import org.junit.Test;
 
 import it.ma.polimi.briscola.controller.Briscola2PMatchNoGUIController;
-import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMatchConfig;
+import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PFullMatchConfig;
 import it.ma.polimi.briscola.ai.Briscola2PAIRandomPlayer;
 
 import static junit.framework.Assert.assertTrue;
@@ -237,7 +237,7 @@ public class Briscola2PMatchNoGUIControllerTest {
             int move;
             for (int i = 0; i < 40; i++) {
                 System.out.println(config);
-                Briscola2PMatchConfig cfg = new Briscola2PMatchConfig(config);
+                Briscola2PFullMatchConfig cfg = new Briscola2PFullMatchConfig(config);
                 move = randomPlayer.chooseMove(cfg,cfg.PLAYER1);
                 System.out.println(move);
                 config = MoveTest.moveTest(config, "" + move);
@@ -252,7 +252,7 @@ public class Briscola2PMatchNoGUIControllerTest {
         int move;
         while(!config.equals("DRAW") && !config.substring(0, 7).equals("WINNER0") && !config.substring(0, 7).equals("WINNER1")){
             System.out.println(config);
-            Briscola2PMatchConfig cfg = new Briscola2PMatchConfig(config);
+            Briscola2PFullMatchConfig cfg = new Briscola2PFullMatchConfig(config);
             move = randomPlayer.chooseMove(cfg,cfg.PLAYER1);
             System.out.println(move);
             config = MoveTest.moveTest(config, "" + move);

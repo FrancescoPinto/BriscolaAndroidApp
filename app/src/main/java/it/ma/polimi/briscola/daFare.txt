@@ -20,8 +20,11 @@ ATTENZIONE: ho già messo la lingua italiana!
 - i match online non chiudono bene (se avii un'app, e avvi un match, e poi dici di non voler aspettare, e poi avvi un altro match
 questo PARTE anche se non ci sono altri giocatori, perché il server non ha chiuso il match
 ... C' E' DAVVERO QUALCOSA CHE NON VA
-   //todo IMPORTANTISSIMO: togliere il retained
+    --todo IMPORTANTISSIMO: la briscola ha ripreso ad andare nel posto sbagliato
    - togli il background scuro al menu?? o almeno fallo più chiaro ...
+   -- trasformare i dialog in "wrap content" così che il testo non sfori! (tipo Game terminated, motivation HA ... che starebbe per Ha abbandonato!)
+    -- inserire delle dimens decenti in caso di tablet (già basta quello)
+    -- aggiungere save button
     -       fare l'IA' avanzata
     - controllare l'online e debuggarlo
    // anima le cards delle schermate statiche e il menu di inizio match

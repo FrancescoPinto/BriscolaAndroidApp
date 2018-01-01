@@ -1,6 +1,6 @@
 package it.ma.polimi.briscola.view.activities;
 
-import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMatchConfig;
+import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PFullMatchConfig;
 import it.ma.polimi.briscola.view.fragments.Briscola2PMatchFragment;
 
 /**
@@ -58,7 +58,7 @@ public interface Briscola2PMatchActivity {
      *
      * @param config the configuration from which the match should be started
      */
-    public void loadOfflineMatch(Briscola2PMatchConfig config);
+    public void loadOfflineMatch(Briscola2PFullMatchConfig config);
 
 
     /**

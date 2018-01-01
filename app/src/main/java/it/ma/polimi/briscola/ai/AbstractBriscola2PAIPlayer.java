@@ -1,6 +1,5 @@
 package it.ma.polimi.briscola.ai;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -10,9 +9,8 @@ import java.util.Map;
 import java.util.Set;
 
 import it.ma.polimi.briscola.model.briscola.BriscolaCardPointsAndRankingRules;
+import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PFullMatchConfig;
 import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PHand;
-import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMatchConfig;
-import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PPile;
 import it.ma.polimi.briscola.model.deck.NeapolitanCard;
 import it.ma.polimi.briscola.model.deck.NeapolitanCardSuit;
 
@@ -22,7 +20,7 @@ import it.ma.polimi.briscola.model.deck.NeapolitanCardSuit;
 
 public abstract class AbstractBriscola2PAIPlayer implements Briscola2PAIPlayer {
     Briscola2PHand myHand;
-    Briscola2PMatchConfig config;
+    Briscola2PFullMatchConfig config;
     float suitProbabilities[] = new float[] {0f,0f,0f,0f};
     int batonsIndex = 0, cupsIndex = 1, goldsIndex = 2, swordsIndex = 3;
     final int cardsPerSuit = 10;
@@ -36,8 +34,8 @@ public abstract class AbstractBriscola2PAIPlayer implements Briscola2PAIPlayer {
     }
 
     public void computeSuitProbabilities(int playerIndex){
-        List<NeapolitanCard> cardsInPiles = new ArrayList(config.getPile(Briscola2PMatchConfig.PLAYER0).getCardList());
-        cardsInPiles.addAll(new ArrayList<NeapolitanCard>(config.getPile(Briscola2PMatchConfig.PLAYER1).getCardList()));
+        List<NeapolitanCard> cardsInPiles = new ArrayList(config.getPile(Briscola2PFullMatchConfig.PLAYER0).getCardList());
+        cardsInPiles.addAll(new ArrayList<NeapolitanCard>(config.getPile(Briscola2PFullMatchConfig.PLAYER1).getCardList()));
         cardsInPiles.addAll(new ArrayList<NeapolitanCard>(config.getHand(playerIndex).getCardList()));
 
         int batons = 0;
@@ -305,7 +303,7 @@ public abstract class AbstractBriscola2PAIPlayer implements Briscola2PAIPlayer {
         List<NeapolitanCard> briscolaInHand = new ArrayList<>();
 
         for (NeapolitanCard c : myHand.getHand()) {
-            if (c.getCardSuit().equals(config.getBriscolaString()))
+            if (c.getCardSuit().equals(config.getBriscolaSuit()))
                 briscolaInHand.add(c);
         }
         return briscolaInHand;
@@ -315,7 +313,7 @@ public abstract class AbstractBriscola2PAIPlayer implements Briscola2PAIPlayer {
         List<NeapolitanCard> nonBriscolaInHand = new ArrayList<>();
 
         for (NeapolitanCard c : myHand.getHand()) {
-            if (!c.getCardSuit().equals(config.getBriscolaString()))
+            if (!c.getCardSuit().equals(config.getBriscolaSuit()))
                 nonBriscolaInHand.add(c);
         }
         return nonBriscolaInHand;

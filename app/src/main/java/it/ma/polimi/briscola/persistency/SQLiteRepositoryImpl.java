@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.ma.polimi.briscola.model.briscola.statistics.Briscola2PMatchRecord;
-import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMatchConfig;
+import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PFullMatchConfig;
 
 /**
  * Class that handles SQLite databases within the app.
@@ -184,7 +184,7 @@ public class SQLiteRepositoryImpl extends SQLiteOpenHelper {
      * @param name   the name of the slot save
      * @return the briscola 2 p match config
      */
-    public Briscola2PMatchConfig saveMatchConfig(Briscola2PMatchConfig config, String name) {
+    public Briscola2PFullMatchConfig saveMatchConfig(Briscola2PFullMatchConfig config, String name) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -203,16 +203,16 @@ public class SQLiteRepositoryImpl extends SQLiteOpenHelper {
      *
      * @return the list containing all match configs
      */
-    public List<Briscola2PMatchConfig> findAllMatchConfig() {
+    public List<Briscola2PFullMatchConfig> findAllMatchConfig() {
         //find all query
         String selectQuery = "SELECT * FROM " + TABLE_CONFIG_SAVED;
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery,null);
-        List<Briscola2PMatchConfig> result = new ArrayList<>();
+        List<Briscola2PFullMatchConfig> result = new ArrayList<>();
         //fill result list
         if(cursor.moveToFirst()){
             do{                                     //extract constructor arguments
-                result.add(new Briscola2PMatchConfig(cursor.getString(2),cursor.getInt(0),cursor.getString(1)));
+                result.add(new Briscola2PFullMatchConfig(cursor.getString(2),cursor.getInt(0),cursor.getString(1)));
             } while(cursor.moveToNext());
         }
         //return results
@@ -225,7 +225,7 @@ public class SQLiteRepositoryImpl extends SQLiteOpenHelper {
      * @param id the id
      * @return the briscola 2 p match config, null if no match is found
      */
-    public Briscola2PMatchConfig findMatchConfigByID(int id) {
+    public Briscola2PFullMatchConfig findMatchConfigByID(int id) {
         SQLiteDatabase db = this.getWritableDatabase();
         String[] ids = {""+id}; //query parameter
         //perform query
@@ -233,7 +233,7 @@ public class SQLiteRepositoryImpl extends SQLiteOpenHelper {
         //get result
         if(result.moveToFirst()){
             do{                                 //extract constructor arguments
-                return new Briscola2PMatchConfig(result.getString(2),result.getInt(0), result.getString(1));
+                return new Briscola2PFullMatchConfig(result.getString(2),result.getInt(0), result.getString(1));
             } while(result.moveToNext());
         }
         //if no match, return null
@@ -258,7 +258,7 @@ public class SQLiteRepositoryImpl extends SQLiteOpenHelper {
      * @param name   the name
      * @return the int
      */
-    public int updateMatchConfig(Briscola2PMatchConfig config, String name) {
+    public int updateMatchConfig(Briscola2PFullMatchConfig config, String name) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();

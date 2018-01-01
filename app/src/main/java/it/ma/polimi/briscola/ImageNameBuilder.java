@@ -5,20 +5,26 @@ import it.ma.polimi.briscola.model.deck.NeapolitanCardNumbers;
 import it.ma.polimi.briscola.model.deck.NeapolitanCardSuit;
 
 /**
- * Created by utente on 03/12/17.
+ * Class that performs a mapping between the assets names and the model names of the cards
  */
-
 public class ImageNameBuilder {
 
 
-        public static String getFrenchCardImageName(NeapolitanCard nc){
+    /**
+     * Get french card image name string from neapolitan card.
+     *
+     * @param nc the neapolitan card
+     * @return the string representing the name of the french card image
+     */
+    public static String getFrenchCardImageName(NeapolitanCard nc){
             NeapolitanCardSuit ns = nc.getCardSuitEnum();
             NeapolitanCardNumbers nn = nc.getCardNumberEnum();
 
-            if(ns == null && ns == null){ //unknown card value
+            if(ns == null && ns == null){ //unknown card value, used for online matches when the PLAYER1 suit/number of the card is unknown
                 return "default_card_background";
             }
             String fns = "", fnn = "";
+            //perform the mapping, following the convention specified below (images are named after this convention)
             switch(ns){
                 case BATONS: fns+="c"; break;
                 case GOLDS: fns+="s"; break;

@@ -8,8 +8,8 @@ import java.util.Map;
 
 import it.ma.polimi.briscola.R;
 import it.ma.polimi.briscola.controller.Briscola2PController;
+import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PFullMatchConfig;
 import it.ma.polimi.briscola.view.fragments.SlotIndices;
-import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMatchConfig;
 import it.ma.polimi.briscola.view.fragments.Briscola2PMatchFragment;
 
 /**
@@ -40,10 +40,10 @@ public class CardAnimationListener implements View.OnClickListener {
         //while animations take some time to be executed ... then isPlaying() is true only when the user on the GUI a status that means he can play a card
 
         //if can play (synchronized with the view), and is your turn, choose what to do based on the number of cards on surface
-        if(controller.isPlaying() && controller.countCardsOnSurface() == 0 && controller.getCurrentPlayer() == Briscola2PMatchConfig.PLAYER0) {
+        if(controller.isPlaying() && controller.countCardsOnSurface() == 0 && controller.getCurrentPlayer() == Briscola2PFullMatchConfig.PLAYER0) {
             controller.playFirstCard(getPlayerCardIndex(view));//.start();
             view.setOnClickListener(null); //disable the listener on this card
-        }else if(controller.isPlaying() && controller.countCardsOnSurface() == 1 && controller.getCurrentPlayer() == Briscola2PMatchConfig.PLAYER0){
+        }else if(controller.isPlaying() && controller.countCardsOnSurface() == 1 && controller.getCurrentPlayer() == Briscola2PFullMatchConfig.PLAYER0){
             controller.playSecondCard(getPlayerCardIndex(view));//.start();
             view.setOnClickListener(null); //disable the listener on this card
         }else if(!controller.isPlaying()){ //if the user can't play, tell him via a toast

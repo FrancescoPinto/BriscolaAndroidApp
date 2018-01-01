@@ -1,7 +1,5 @@
 package it.ma.polimi.briscola.view.activities;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.media.AudioManager;
@@ -23,7 +21,7 @@ import android.widget.Toast;
 import it.ma.polimi.briscola.BriscolaApplication;
 import it.ma.polimi.briscola.R;
 import it.ma.polimi.briscola.audio.SoundService;
-import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMatchConfig;
+import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PFullMatchConfig;
 import it.ma.polimi.briscola.persistency.SettingsManager;
 import it.ma.polimi.briscola.view.fragments.Briscola2PMatchFragment;
 import it.ma.polimi.briscola.view.fragments.MenuFragment;
@@ -128,18 +126,19 @@ public class MatchActivity extends AppCompatActivity implements Briscola2PMatchA
     @Override
     protected void onResume(){
         super.onResume();
+        // since the drawer calls activities and not fragments, they should NOT be selected (as they would by default) when the drawer is opened again
         unCheckAllMenuItems(menu);
-
 
     }
 
 
+    //helper method, uncheks all items in menu and its submenus
     private void unCheckAllMenuItems( Menu menu) {
         int size = menu.size();
         for (int i = 0; i < size; i++) {
             final MenuItem item = menu.getItem(i);
             if(item.hasSubMenu()) {
-                // Un check sub menu items
+                // recursively uncheck sub menu items
                 unCheckAllMenuItems(item.getSubMenu());
             } else {
                 item.setChecked(false);
@@ -280,7 +279,7 @@ public class MatchActivity extends AppCompatActivity implements Briscola2PMatchA
                 .commit();
     }
     @Override
-    public void loadOfflineMatch(Briscola2PMatchConfig config){
+    public void loadOfflineMatch(Briscola2PFullMatchConfig config){
         if(config == null) throw new IllegalArgumentException(); //shouldn't be called with no config to be loaded!
         //prepare fragment
         Briscola2PMatchFragment fragment = Briscola2PMatchFragment.newInstance(config, settingsManager.getDifficultyPreference());
@@ -328,7 +327,7 @@ public class MatchActivity extends AppCompatActivity implements Briscola2PMatchA
             // Make sure the request was successful
 
                 Bundle bundle = data.getExtras();
-                Briscola2PMatchConfig config = (Briscola2PMatchConfig) bundle.getSerializable(SavedConfigActivity.EXTRA_LOAD_CONFIG);
+                Briscola2PFullMatchConfig config = (Briscola2PFullMatchConfig) bundle.getSerializable(SavedConfigActivity.EXTRA_LOAD_CONFIG);
 
                 Briscola2PMatchFragment match = getMatchesFragments();
                 if(match != null){ //questa diramazione è diventata ridondante dopo il refactor del codice, la mantengo nel caso in cui cambiassi idea dopo
@@ -353,16 +352,6 @@ public class MatchActivity extends AppCompatActivity implements Briscola2PMatchA
     {
         super.onConfigurationChanged(newConfig);
         drawerToggle.onConfigurationChanged(newConfig);  //correctly handle drawer
-        // Checks the orientation of the screen
-      //  if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-        //   SoundService soundManager = ((BriscolaApplication) getApplicationContext()).getSoundManager();
-        //    if(soundManager != null && soundManager.getMusicStatus())
-       //        soundManager.resumeBgMusic();
-       // } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
-       //     SoundService soundManager = ((BriscolaApplication) getApplicationContext()).getSoundManager();
-       //     if(soundManager != null && soundManager.getMusicStatus())
-       //         soundManager.resumeBgMusic();
-       // }
 
     }
 

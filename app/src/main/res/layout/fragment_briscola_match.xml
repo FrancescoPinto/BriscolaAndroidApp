@@ -64,14 +64,14 @@
         android:layout_alignParentStart="true">
 
 
-
         <ImageView
             android:id="@+id/briscolaSlot"
             android:layout_width="75dp"
             android:layout_height="110dp"
-            app:srcCompat="@drawable/card_slot_shape"
             android:layout_alignParentTop="true"
-            android:layout_toStartOf="@+id/deckSlot" />
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft = "8dp"
+            app:srcCompat="@drawable/card_slot_shape" />
 
         <ImageView
             android:id="@+id/deckSlot"
