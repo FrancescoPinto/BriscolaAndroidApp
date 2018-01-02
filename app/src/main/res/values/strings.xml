@@ -63,7 +63,7 @@
     <string name="warning_should_save">Save the current match.</string>
     <string name="do_not_save">Don\'t Save</string>
     <string name="load">Load</string>
-    <string name="type_config_name">Type Save Slot name</string>
+    <string name="type_config_name">Type save name</string>
     <string name="mandatory_type_config_name">You MUST type Slot Save Name to Save</string>
     <string name="delete">Delete</string>
     <string name="interrupt_match_no_save">This action will interrupt the current match. Do you want to continue?</string>

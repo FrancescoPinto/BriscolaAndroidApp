@@ -30,7 +30,7 @@ public class RESTClient {
             roomName = "Group01",
             contentTypePlainText = "text/plain";
     private static final String BASE_URL = "http://mobile17.ifmledit.org/api/";
-    private String url;
+    private String url; //returned by the server
 
     // callback instances
     private OpponentPlayedCardCallback opponentPlayedCardCallback;
@@ -41,7 +41,7 @@ public class RESTClient {
     //the class to be called to make HTTP requests
     private BriscolaAPI briscolaAPI;
 
-    //t
+    //a controller implementing methods of a Server Response Manager
     private ControllerWithServerResponseManager controller;
 
     /**
@@ -58,6 +58,7 @@ public class RESTClient {
      * Opponent played card call.
      */
     public void opponentPlayedCardCall(){
+        //send it, and set the callback on the request
         opponentPlayedCardCallback = new OpponentPlayedCardCallback(controller);
         briscolaAPI.getOpponentPlayedCard(url, authHeader).enqueue(opponentPlayedCardCallback);
     }
@@ -68,16 +69,18 @@ public class RESTClient {
      * @param context the context
      */
     public void startMatchCall(Context context){
+        //send it, and set the callback on the request
         startMatchCallback = new StartMatchCallback(controller, context);
         briscolaAPI.startMatch(authHeader, roomName).enqueue(startMatchCallback);
     }
 
     /**
-     * Stop waiting.
+     * Stop waiting for a match to start
      *
      * @param stop the stop
      */
     public void stopWaiting(boolean stop){
+        //update the startMatchCallback status, telling it to stop waiting (so that it can handle the stop correctly)
         startMatchCallback.stopWaiting(stop);
     }
 
@@ -87,9 +90,10 @@ public class RESTClient {
      * @param plainText the plain text
      */
     public void postCard(String plainText){
-        RequestBody body =
-                RequestBody.create(MediaType.parse("text/plain"), plainText);
+        //prepare the message
+        RequestBody body = RequestBody.create(MediaType.parse("text/plain"), plainText);
         playCardCallback = new PlayCardCallback(controller);
+        //send it, and set the callback on the request
         briscolaAPI.playCard(url, authHeader,contentTypePlainText, body).enqueue(playCardCallback);
 
     }
@@ -101,26 +105,24 @@ public class RESTClient {
      */
     public void stopMatchCall(Context context) {
         stopMatchCallback = new StopMatchCallback();
-        RequestBody body =
-                RequestBody.create(MediaType.parse("text/plain"), context.getString(R.string.terminated));
+        //prepare the message
+        RequestBody body = RequestBody.create(MediaType.parse("text/plain"), context.getString(R.string.terminated));
+        //send it, and set the callback on the request
         briscolaAPI.stopMatch(url, authHeader, contentTypePlainText, body).enqueue(stopMatchCallback);
     }
 
     /**
-     * Initialize client.
+     * Initialize client (i.e. initialize BriscolaAPI using Retrofit and OkHttpClient).
      */
     public void initializeClient(){
 
         OkHttpClient okHttpClient = new OkHttpClient().newBuilder()
-                .connectTimeout(30, TimeUnit.SECONDS)
+                .connectTimeout(30, TimeUnit.SECONDS) //as specified in the server specification, use 30s timeout
                 .readTimeout(30, TimeUnit.SECONDS)
                 .writeTimeout(30, TimeUnit.SECONDS)
                 .build();
 
-        Gson gson = new GsonBuilder()
-                .setLenient()
-                .create();
-
+        //initialize retrofit rest api
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 // .addConverterFactory(GsonConverterFactory.create(gson))
@@ -132,9 +134,9 @@ public class RESTClient {
     }
 
     /**
-     * Force match end.
+     * Force match end (interrupt it)
      *
-     * @param context the context
+     * @param context the context, to retrieve string data
      */
     public void forceMatchEnd(Context context){
         stopMatchCallback = new StopMatchCallback();
@@ -150,7 +152,7 @@ public class RESTClient {
     /**
      * Set url.
      *
-     * @param url the url
+     * @param url the url returned by the server
      */
     public void setUrl(String url){
         this.url = url;

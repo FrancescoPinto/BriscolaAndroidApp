@@ -9,7 +9,7 @@ import it.ma.polimi.briscola.model.deck.NeapolitanCard;
 import it.ma.polimi.briscola.model.deck.NeapolitanCardSuit;
 
 /**
- * Created by utente on 31/12/17.
+ * Abstract class implementing common methods a Briscola2PMatchConfig should have, and providing some common attributes.
  */
 
 public abstract class AbstractBriscola2PMatchConfig implements Briscola2PMatchConfig, Serializable{
@@ -38,24 +38,24 @@ public abstract class AbstractBriscola2PMatchConfig implements Briscola2PMatchCo
         this.piles.add(new Briscola2PPile("")); // pile1
     }*/
 
+    @Override
     public int countCardsOnSurface(){
         return surface.size();
     }
 
+    @Override
     public int getCurrentPlayer() {
         return currentPlayer;
     }
 
+    @Override
     public void setCurrentPlayer(int currentPlayer) {
         if(currentPlayer == PLAYER0 || currentPlayer == PLAYER1)
             this.currentPlayer = currentPlayer;
         else throw new IllegalArgumentException(wrongCurrentPlayer);
     }
 
-    /**
-     * Toggle current player.
-     * @throws IllegalStateException if the currentPlayer has not been initialized
-     */
+   @Override
     public void toggleCurrentPlayer(){
         if(currentPlayer != null && (currentPlayer == PLAYER1||currentPlayer == PLAYER0))
             this.currentPlayer = (currentPlayer+1)%2; //remember: player0 = 0 and player1 = 1, hence (player0+1)%2 = 1 and (player1 + 1)%2 = 0
@@ -63,12 +63,7 @@ public abstract class AbstractBriscola2PMatchConfig implements Briscola2PMatchCo
             throw new IllegalStateException(noCurrentPlayerInitialized);
     }
 
-    /**
-     * Clear surface. Clears the surface and appends the cards on the surface to the pile of the winner.
-     *
-     * @param winner the winner index, is either the public final int PLAYER0 or PLAYER1 provided by this class
-     * @throws IllegalStateException if the surface is not completely filled
-     */
+   @Override
     public List<NeapolitanCard> clearSurface(int winner){
         if(surface.size() != surface.getMaxNumCardsAllowedInList())
             throw new IllegalStateException(surfaceNotFilled);
@@ -78,6 +73,7 @@ public abstract class AbstractBriscola2PMatchConfig implements Briscola2PMatchCo
         return cardsOnSurface;
     }
 
+    @Override
     public Briscola2PSurface getSurface() {
         return surface;
     }
@@ -85,15 +81,12 @@ public abstract class AbstractBriscola2PMatchConfig implements Briscola2PMatchCo
 
 
 
+    @Override
     public void setSurface(Briscola2PSurface surface) {
         this.surface = surface;
     }
-    /**
-     * Choose round winner int, should be called at the end of the round, after clearSurface has been called.
-     *
-     * @return the int representing the round winner (either PLAYER0 or PLAYER1)
-     * @throws IllegalStateException if the surface is not filled (round is not finished), or if the surface is in an inconsistent state (i.e. does not satisfy any of the round winner evaluation rules)
-     */
+
+    @Override
     public int chooseRoundWinner(){
         String briscolaSuit = String.valueOf(this.briscolaSuit);
         if(surface.size() != 2) //if round is not finished, throw exception
@@ -144,12 +137,7 @@ public abstract class AbstractBriscola2PMatchConfig implements Briscola2PMatchCo
         throw new IllegalStateException(inconsistentSurfaceForRound);
     }
 
-    /**
-     * Compute score examining the piles of the specified player (this class does not enforce the match end, since it could be called during the match, for instance, to show the current points of each player on the GUI)
-     *
-     * @param player the player index, should be either PLAYER0 or PLAYER1 provided by this class
-     * @return the int representing the score, computed summing the point values of the cards in the player's pile
-     */
+    @Override
     public int computeScore(int player){
         List<NeapolitanCard> pile = piles.get(player).getCardList();
         int score = 0;
@@ -161,12 +149,7 @@ public abstract class AbstractBriscola2PMatchConfig implements Briscola2PMatchCo
         return score;
     }
 
-    /**
-     * Choose match winner, should be called after the end of the whole match.
-     *
-     * @return the int representing the player who won the match (PLAYER0,PLAYER1 or DRAW in case of draw)
-     * @throws IllegalStateException if all 120 points are not in the player's piles
-     */
+   @Override
     public int  chooseMatchWinner(){
         int score0 = computeScore(PLAYER0),
                 score1 = computeScore(PLAYER1);
@@ -188,23 +171,12 @@ public abstract class AbstractBriscola2PMatchConfig implements Briscola2PMatchCo
         return totalPilesSize/2 + 1; //first turn -> empty piles, second turn -> 2 cards in piles etc.
     }
 
-    /**
-     * Set pile of the i-th player from String
-     *
-     * @param i    the player's index, should be either the public final int PLAYER0 or PLAYER1 provided by this class
-     * @param pile String representing the pile, format as specified in the slides
-     */
+    @Override
     public void setPile(int i, String pile){
         setPile(i, new Briscola2PPile(pile));
     }
 
-    /**
-     * Set pile of the i-th player from Briscola2PPile
-     *
-     * @param i    the player's index, should be either the public final int PLAYER0 or PLAYER1 provided by this class
-     * @param pile the pile represented as a Briscola2PPile object
-     * @throws IllegalArgumentException if invalid index is specified
-     */
+    @Override
     public void setPile(int i, Briscola2PPile pile){
         if(i == PLAYER0 || i == PLAYER1)
             this.piles.add(i,pile);
@@ -212,31 +184,20 @@ public abstract class AbstractBriscola2PMatchConfig implements Briscola2PMatchCo
 
     }
 
-    /**
-     * Gets pile of the i-th player
-     *
-     * @param i the player index, should be the public final int PLAYER0 or PLAYER1 provided by this class
-     * @return the pile
-     */
+    @Override
     public Briscola2PPile getPile(int i) {
         return piles.get(i);
     }
 
 
-    /**
-     * Gets briscola suit.
-     *
-     * @return the briscola suit, among NeapolitanCardSuit enum values
-     */
+
+    @Override
     public String getBriscolaSuit() {
         return briscolaSuit;
     }
 
-    /**
-     * Sets briscola suit.
-     *
-     * @param briscolaSuit the briscola suit, should be among NeapolitanCardSuit enum values
-     */
+
+    @Override
     public void setBriscolaSuit(String briscolaSuit) {
 
         this.briscolaSuit = NeapolitanCardSuit.getCardSuit(briscolaSuit).getSuit(); //the invocation of getCardSuit performs the validity check of the input argument

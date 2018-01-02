@@ -17,7 +17,7 @@ public class UniformProbabilityShuffler implements Shuffler{
     public Deck shuffleDeck(Deck deck){
         int randomNum;
         List<Card> cards = (List<Card>) deck.getCardList();
-        Collections.shuffle(cards);
+        Collections.shuffle(cards); //uniform probability shuffling allready implemented by Collections ... reuse it!
         /*for(int i = 1; i < cards.size();i++) { //Starting from the beginning of the deck, choose the i-th card
             //randomNum = ThreadLocalRandom.current().nextInt(0, cards.size()); //Choose a card at random
             //Swap the card chosen at random and the i-th card

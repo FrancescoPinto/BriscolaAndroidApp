@@ -9,6 +9,7 @@ import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
 
 import it.ma.polimi.briscola.audio.SoundService;
 
@@ -53,7 +54,10 @@ public class BriscolaApplication extends Application {
         public void onActivityStarted(Activity activity) {
             if (numStarted == 0 && soundManager != null) {
                  // app went to foreground
-                playAudio();
+               // soundManager.loadMusic();
+                soundManager.resumeBgMusic();
+                Log.d("TAG","Chiamo resume e load da Started");
+
             }
             numStarted++;
         }
@@ -63,7 +67,8 @@ public class BriscolaApplication extends Application {
             numStarted--;
             if (numStarted == 0 && soundManager != null) {
             // app went to background
-                cleanAudio();
+                soundManager.pauseBgMusic();
+                Log.d("TAG","Chiamo pause da Stopped");
             }
         }
 
@@ -151,6 +156,8 @@ public class BriscolaApplication extends Application {
                 //retrieve the reference to the service
                 soundManager = ((SoundService.ServiceBinder) binder).getService();
                 soundManager.resumeBgMusic(); //resume playing background music
+                Log.d("TAG","Chiamo resume da ServiceConnected");
+
             }
 
             @Override

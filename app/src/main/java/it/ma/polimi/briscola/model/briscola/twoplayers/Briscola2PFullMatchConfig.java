@@ -12,7 +12,7 @@ import it.ma.polimi.briscola.model.deck.NeapolitanDeck;
 import it.ma.polimi.briscola.model.deck.UniformProbabilityShuffler;
 
 /**
- * Class that represents a Briscola 2 Players Match Configuration and provides methods to manipulate it. This class provides basic and complex (based on the game rules) operations that can be performed on the configuration, however DOES NOT HANDLE THE MATCH EXECUTION FLOW. The execution flow is handled by another class (a match controller). The methods provided by this class simplify the management of the execution flow, implementing the allowed configuration changes. (If client code needs to violate them, it can directly modify the configuration using setters and getters; NOT RECOMMENDED)
+ * Class that represents a Briscola 2 Players Match Configuration and provides methods to manipulate it. It is an "omniscient" class (knows everything that occurs in a match). This class provides basic and complex (based on the game rules) operations that can be performed on the configuration, however DOES NOT HANDLE THE MATCH EXECUTION FLOW. The execution flow is handled by another class (a match controller). The methods provided by this class simplify the management of the execution flow, implementing the allowed configuration changes. (If client code needs to violate them, it can directly modify the configuration using setters and getters; NOT RECOMMENDED)
  *
  * @author Francesco Pinto
  */
@@ -27,33 +27,6 @@ public class Briscola2PFullMatchConfig extends AbstractBriscola2PMatchConfig imp
     public List<Briscola2PHand> getHands() {
         return hands;
     }
-
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    @Override
-    public void playCard(String card) {
-        //by convention, the offline controller accepts only Integer arguments
-        throw new IllegalArgumentException();
-    }
-    /**
-     * Play card. Removes the i-th card from the hand of the current player and puts it onto the surface.
-     *
-     * @param i the index of the card to be played (should be either CARD1,CARD2 or CARD3 of the public final ints provided by the Briscola2PHand class)
-     */
-    @Override
-    public void playCard(Integer i) {
-        NeapolitanCard cardToPlay = hands.get(currentPlayer).removeCard(i);
-        surface.appendCard(cardToPlay); //la carta del primo giocatore è sempre in 0
-    }
-
-
 
     /**
      * Instantiates a new empty Briscola 2 Players Match Configuration. Before the configuration can be used, it must be brought programmatically to a consistent state by using the class' initialization methods, called in proper order.
@@ -96,17 +69,34 @@ public class Briscola2PFullMatchConfig extends AbstractBriscola2PMatchConfig imp
         this.piles.add(new Briscola2PPile(tokens[5])); // pile1
     }
 
+    /**
+     * Instantiates a new Briscola 2 p full match config.
+     *
+     * @param configuration the configuration
+     * @param id            the id
+     * @param name          the name
+     */
     public Briscola2PFullMatchConfig(String configuration, int id, String name){
         this(configuration);
         this.id = id;
         this.name = name;
     }
 
+    /**
+     * Gets name.
+     *
+     * @return the name
+     */
     public String getName() {
         return name;
     }
 
 
+    /**
+     * Sets name.
+     *
+     * @param name the name
+     */
     public void setName(String name) {
         this.name = name;
     }
@@ -159,7 +149,6 @@ public class Briscola2PFullMatchConfig extends AbstractBriscola2PMatchConfig imp
     }
 
 
-
     /**
      * Gets hand of the i-th player.
      *
@@ -171,10 +160,35 @@ public class Briscola2PFullMatchConfig extends AbstractBriscola2PMatchConfig imp
     }
 
 
+    /**
+     * Gets id.
+     *
+     * @return the id
+     */
+    public int getId() {
+        return id;
+    }
 
-    //---------------------------------------------------------------
-    //Convenience methods, thought to make the life easier for game controllers
-    //---------------------------------------------------------------
+    /**
+     * Sets id.
+     *
+     * @param id the id
+     */
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    @Override
+    public void playCard(String card) {
+        //by convention, the offline controller accepts only Integer arguments
+        throw new IllegalArgumentException();
+    }
+
+    @Override
+    public void playCard(Integer i) {
+        NeapolitanCard cardToPlay = hands.get(currentPlayer).removeCard(i);
+        surface.appendCard(cardToPlay); //la carta del primo giocatore è sempre in 0
+    }
 
 
     /**
@@ -201,6 +215,7 @@ public class Briscola2PFullMatchConfig extends AbstractBriscola2PMatchConfig imp
 
     /**
      * Initialize players hands. To be called after initializeNewDeck and initializeFirstPlayer. Alternates a card draw from the deck for first and second player of the first round. Each player draws 3 cards.
+     *
      * @throws IllegalStateException if either the deck is not filled with 40 cards or the current player has not been initialized
      */
     public void initializePlayersHands(){
@@ -227,6 +242,7 @@ public class Briscola2PFullMatchConfig extends AbstractBriscola2PMatchConfig imp
 
     /**
      * Initialize briscola. To be called after initializePlayersHands. Draws the briscola from the top of the deck, and puts it to the bottom.
+     *
      * @throws IllegalStateException if the deck does not contain 34 cards
      */
     public void initializeBriscola(){
@@ -239,9 +255,7 @@ public class Briscola2PFullMatchConfig extends AbstractBriscola2PMatchConfig imp
     }
 
 
-    /**
-     * Draw cards for the new round. Should be called at the beginning of the round, after the current player has been set. If the deck is empty, the configuration is unaffected.
-     */
+    @Override
     public List<NeapolitanCard> drawCardsNewRound(){
         if(deck.isEmpty()) //if deck is empty, don't do anything.
             return null;
@@ -308,12 +322,12 @@ public class Briscola2PFullMatchConfig extends AbstractBriscola2PMatchConfig imp
 
     }
 
-    public int getNumberTurnsElapsed(){
-        int totalPilesSize = piles.get(PLAYER0).size() + piles.get(PLAYER1).size();
-        return totalPilesSize/2 + 1; //first turn -> empty piles, second turn -> 2 cards in piles etc.
 
-    }
-
+    /**
+     * Infer the briscola, if it is still in deck.
+     *
+     * @return the neapolitan card representing the briscola
+     */
     public NeapolitanCard inferBriscolaIfInDeck(){
         if(deck.size() >= 2)
             return deck.getCard(deck.size()-1);

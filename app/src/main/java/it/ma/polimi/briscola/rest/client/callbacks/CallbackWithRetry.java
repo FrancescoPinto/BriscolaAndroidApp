@@ -40,8 +40,10 @@ public abstract class CallbackWithRetry<T> implements Callback<T> {
             Log.d("TAG", "onFailure = " + t.getMessage() + t.getCause());
             if (shouldStop) //if should stop
                 call.cancel(); //stop retrying
-            else
+            else {
                 retry(call); //else, retry
+                Log.d("TAG","Retrying " + this.getClass().getName());
+            }
     }
 
     /**
@@ -62,8 +64,7 @@ public abstract class CallbackWithRetry<T> implements Callback<T> {
                         //avoid to retry if the response has been a success -> might lead to undesirable state
             new Handler().postDelayed(new Runnable() {
                                           @Override
-                                          public void run() {
-                                              if (!shouldStop) //if still shouldn't stop, retry
+                                          public void run() {if (!shouldStop) //if still shouldn't stop, retry
                                                   call.clone().enqueue(CallbackWithRetry.this);
                                           }
                                       },

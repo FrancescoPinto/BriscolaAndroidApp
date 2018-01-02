@@ -113,11 +113,7 @@ public class MatchActivity extends AppCompatActivity implements Briscola2PMatchA
         }else if (wasPlayingOfflineMatchFragment == null && wasPlayingOnlineMatchFragment == null) {
             // create the fragment and data the first time
             startMenu(false);
-        } //todo, qui ci potrebbe essere un bug legato ai menu ...
-        //}else if(wasPlayingOnlineMatchFragment==null){
-            // create the fragment and data the first time
-        //    startMenu(false);
-        //}
+        }
         //if there was a match running, restart the match
 
 
@@ -148,7 +144,7 @@ public class MatchActivity extends AppCompatActivity implements Briscola2PMatchA
 
     @Override
     protected void onDestroy() {
-        ((BriscolaApplication) getApplication()).cleanAudio(); //perform cleaning for audio resources
+       // ((BriscolaApplication) getApplication()).cleanAudio(); //perform cleaning for audio resources
         super.onDestroy();
     }
 
@@ -216,7 +212,7 @@ public class MatchActivity extends AppCompatActivity implements Briscola2PMatchA
             hideOverlayMenu();
             menu.setIsOverlay(false);//if there is an overlay, priority to overlay closure rather than closing the match
         }else if(match!=null) { //if there is a match
-                match.handleMatchInterrupt(BACK_PRESSED); //handle the interrupt (i.e. tell user "hey, you're going to stop the match!"
+                match.handleMatchInterrupt(BACK_PRESSED); //handle the interrupt (i.e. tell user "hey, you're going to stop the match!")
 
         }else{
             if(!backButtonPressedOnce) { //warn the user if it is the first time he presses the back button

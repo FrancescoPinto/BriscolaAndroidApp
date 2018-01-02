@@ -171,7 +171,7 @@ public class SettingsActivity extends AppCompatActivity{
         int id = item.getItemId();
         if (id == android.R.id.home){
             onBackPressed();
-            return true; //todo, è qui che si scatena il problema del chekced ... ma se metti false la musica non parte
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }

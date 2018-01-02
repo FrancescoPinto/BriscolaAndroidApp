@@ -10,7 +10,7 @@ import it.ma.polimi.briscola.view.fragments.Briscola2PMatchFragment;
  */
 public interface Briscola2PMatchActivity {
     /**
-     * These constans represent motivations for same actions. They are used to take decisions along chains of interactions.
+     * These constants represent motivations for same actions. They are used to take decisions along chains of interactions.
      * They are: EXIT_BUTTON.
      */
     public static final int EXIT_BUTTON = 0, /**

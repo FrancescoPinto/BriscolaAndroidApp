@@ -14,9 +14,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.UUID;
 
 import it.ma.polimi.briscola.persistency.SettingsManager;
 
@@ -42,8 +44,12 @@ public class SoundService extends Service{
     private boolean soundEnabled; //whether sound/music are enabled
     private boolean musicEnabled;
 
+    private boolean loadedSound, loadedMusic; //whether sound/music have been loaded (to prevent getting in Illegal states)
+
     private MediaPlayer backgroundPlayer;
     private SettingsManager settings;
+
+    private UUID serviceID = UUID.randomUUID();
 
     @Override
     public IBinder onBind(Intent arg0){return binder;}
@@ -61,7 +67,8 @@ public class SoundService extends Service{
         soundEnabled = settings.getSoundPreference();
         musicEnabled =settings.getMusicPreference();
 
-    ;
+        Log.d("TAG","Creato SERVICE ID:"+serviceID);
+
         this.context = this;
 
         loadIfNeeded();
@@ -73,6 +80,8 @@ public class SoundService extends Service{
     public void onDestroy() {
         unloadMusic();
         stopSelf();
+        Log.d("TAG","Distrutto SERVICE ID:"+serviceID);
+
         super.onDestroy();
     }
 
@@ -142,6 +151,7 @@ public class SoundService extends Service{
         loadEventSound(context, GameEvent.WinMatch, "353546__maxmakessounds__success.wav");
         loadEventSound(context, GameEvent.LoseMatch, "371451__cabled-mess__lose-funny-retro-video-game.wav");
 
+        loadedSound = true;
 
     }
 
@@ -177,6 +187,7 @@ public class SoundService extends Service{
             backgroundPlayer.setLooping(true);
             backgroundPlayer.setVolume(DEFAULT_MUSIC_VOLUME, DEFAULT_MUSIC_VOLUME);
             backgroundPlayer.prepare();
+            loadedMusic = true;
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -189,6 +200,8 @@ public class SoundService extends Service{
     public void pauseBgMusic() {
         if (musicEnabled) {
             backgroundPlayer.pause();
+            Log.d("TAG","Paused SERVICE ID:"+serviceID);
+
         }
     }
 
@@ -198,6 +211,8 @@ public class SoundService extends Service{
     public void resumeBgMusic() {
         if (musicEnabled) {
             backgroundPlayer.start();
+            Log.d("TAG","Resumed SERVICE ID:"+serviceID);
+
         }
     }
 
@@ -205,14 +220,22 @@ public class SoundService extends Service{
      * Unload music.
      */
     public void unloadMusic() {
-        backgroundPlayer.stop();
-        backgroundPlayer.release();
+        if(loadedMusic) {
+            backgroundPlayer.stop();
+            backgroundPlayer.release();
+            Log.d("TAG","Unloaded SERVICE ID:"+serviceID);
+
+            loadedMusic = false;
+        }
     }
 
     private void unloadSounds() {
-        soundPool.release();
-        soundPool = null;
-        soundsMap.clear();
+        if(loadedSound) {
+            soundPool.release();
+            soundPool = null;
+            soundsMap.clear();
+            loadedSound = false;
+        }
     }
 
     /**

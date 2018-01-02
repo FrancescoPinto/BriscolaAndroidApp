@@ -101,7 +101,7 @@ public class OnlineBriscola2PMatchController extends AbstractBriscola2PControlle
         //initialize the variables and config with received data
         restClient.setUrl(url);
         this.matchStarted = true;
-        config = new Briscola2PMinimalMatchConfig(url, lastCard, cards, Boolean.valueOf(yourTurn));
+        config = new Briscola2PMinimalMatchConfig(lastCard, cards, Boolean.valueOf(yourTurn));
         //tell the player the match opponent has been found
         matchFragment.foundOnlinePlayer();
         //start the initialization animation sequence

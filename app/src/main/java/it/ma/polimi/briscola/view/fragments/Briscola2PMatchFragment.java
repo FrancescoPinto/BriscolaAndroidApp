@@ -279,10 +279,14 @@ public class Briscola2PMatchFragment extends Fragment {
                                 }
                 }
 
+
+
                 if(!isRetained) { //if is not a retained fragment
-                    if (!isResume)  //and a new match (not loaded from saved)
+                    if (!isResume) {  //and a new match (not loaded from saved)
                         controller.startNewMatch();
-                    else {
+                        ImageView deck = (ImageView) slots.get(SlotIndices.DeckSlot);
+                        deck.setImageResource(ImageMetadata.getCardBackID(getActivity().getApplicationContext()));
+                    }else {
                         //initialize the controller to resume the match from saved config
                         controller = new OfflineBriscola2PMatchController(
                                 (Briscola2PFullMatchConfig) getArguments().getSerializable(MATCH_CONFIG),
@@ -753,22 +757,12 @@ public class Briscola2PMatchFragment extends Fragment {
                         i.setImageResource(resID);
                     } else { //is not covered
                         String cardName = cardTag[0];
-                        //if(cardViewPreference == SettingsManager.FRENCH && newCardViewPreference == SettingsManager.MINIMAL_FRENCH)
-                        //    cardName = ImageMetadata.fromFrenchToMinimalFrench(getResources().getResourceEntryName(Integer.valueOf(cardTag[0])));
-                       // else if(cardViewPreference == SettingsManager.MINIMAL_FRENCH && newCardViewPreference == SettingsManager.FRENCH)
-                        //    cardName = ImageMetadata.fromMinimalFrenchToFrench(getResources().getResourceEntryName(Integer.valueOf(cardTag[0])));
-                       // if(cardName.equals(""))
-                       //     throw new IllegalArgumentException();
-                        //get image id
-                        //int resID = getResources().getIdentifier(cardName, "drawable", activity.getPackageName());
-
                         int resID = ImageMetadata.getCardIDWithCurrentPreference(getActivity().getApplicationContext(),cardName);
-
                         i.setImageResource(resID);
-                        i.setTag(cardName + ";" + cardTag[1]); //update resID, put the isCovered value back to its place
+                        i.setTag(cardName + ";" + cardTag[1]); //update cardName, put the isCovered value back to its place
                     }
                 }
-                cardViewPreference = newCardViewPreference;
+                cardViewPreference = newCardViewPreference; //update the "saved" preference
             }
         }
 
@@ -782,7 +776,6 @@ public class Briscola2PMatchFragment extends Fragment {
         super.onDetach();
     }
 
-    //todo DA FARE: METTERE I DIALOG ALL'ONLINE'
     /**
      * Display match winner by using a dialog
      *
@@ -810,10 +803,8 @@ public class Briscola2PMatchFragment extends Fragment {
         //get name of the image representing the card (based on the preference)
         String cardName = ImageMetadata.getCardName(getActivity().getApplicationContext(),c);;
 
-
         //get image id
         int resID = getResources().getIdentifier(cardName, "drawable", activity.getPackageName());
-
 
         //build new image
         ImageView card = new ImageView(activity);
@@ -880,21 +871,6 @@ public class Briscola2PMatchFragment extends Fragment {
         FatalOnlineErrorDialogFragment dialog = FatalOnlineErrorDialogFragment.newInstance(error,message, Briscola2PMatchActivity.ONLINE_ERROR);
         dialog.setTargetFragment(Briscola2PMatchFragment.this, REQUEST_EXIT); //the error is fatal, should exit after
         dialog.show(manager,DIALOG_ONLINE_ERROR);
-        //todo, usare l'errorCode per diversificare la gestione
-        //todo DEVI FARE QUESTO AL POSTO DEL DIALOG CHE HAI CANCELLATO
-
-        //ci sono due tipi di errori:
-        // timeout,
-        // il giocatore abbandona PRIMA della fine del match,
-        // il giocatore abbandona ALLA fine del match
-
-        //i primi due casi vanno gestiti CHIUDENDO IL MATCH dopo il dialog, l'altro invece va gestito con una exit normale
-
-
-
-        // PER QUANTO RIGUARDA LE PARTITE INCOMINCIATE E LASCIATE IN ATTESA: nel callback di startMatch
-        //       PASSA la BriscolaAPI e una variabile "StoppedWaiting" che se è true implica
-        //        che fa una call invisibile a BriscolaAPI.closeMatch()
     }
 
 

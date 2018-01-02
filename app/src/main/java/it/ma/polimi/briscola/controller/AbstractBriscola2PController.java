@@ -70,7 +70,7 @@ public abstract class AbstractBriscola2PController implements Briscola2PControll
      * Perform the same operations at a GUI level by first building the animations (the structure of the animations is internally handled by the fragment to keep this class decoupled from the fragment)
      *then setting listeners on those animations (if needed), scheduling their execution and starting them
      */
-    public void startInitializationAnimationSequence(){
+    void startInitializationAnimationSequence(){
         AnimatorSet initializationSequence = new AnimatorSet();
         AnimatorSet dealFirstHand = matchFragment.getDealFirstHandAnimatorSet(config.getCurrentPlayer(), config.getHands());
         AnimatorSet initializeBriscola = matchFragment.getInitializeBriscolaAnimatorSet(config.getBriscola());
@@ -99,7 +99,7 @@ public abstract class AbstractBriscola2PController implements Briscola2PControll
      * @param firstCard the first card to be played, should be either a String (passed from RESTClient callbacks) or an Integer (as usual)
      * @return the animator set representing the first card being played in the turn
      */
-    public AnimatorSet generatePlayFirstCard(Object firstCard){
+    AnimatorSet generatePlayFirstCard(Object firstCard){
 
         AnimatorSet playCard;
          //String if it is passed from Server, Integer if it is handled internally
@@ -137,7 +137,7 @@ public abstract class AbstractBriscola2PController implements Briscola2PControll
      *
      * @param secondCard the second card to be played
      */
-    public void generateAndRunPlaySecondCard(Object secondCard){
+    void generateAndRunPlaySecondCard(Object secondCard){
         AnimatorSet playCard;
         //String if it is passed from Server, Integer if it is handled internally
         //in any case,perform the play with the config, then get the animation from the match fragment
