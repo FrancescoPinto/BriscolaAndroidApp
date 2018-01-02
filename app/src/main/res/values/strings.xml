@@ -52,7 +52,7 @@
     <string name="velocity_fast">Fast</string>
     <string name="velocity_veryfast">Very Fast</string>
     <string name="change_settings_warning">Changing difficulty will only affect newly started matches!</string>
-    <string name="waiting_for_match_to_start">Waiting for match to start</string>
+    <string name="waiting_for_match_to_start">Waiting ...</string>
     <string name="sure_leave">Are you sure you want to leave?</string>
     <string name = "yes">Yes</string>
     <string name="no">No</string>
@@ -60,7 +60,7 @@
     <string name="terminated">Match terminated successfully</string>
     <string name = "other_player">Other player</string>
     <string name = "game_menu">Game Screen</string>
-    <string name="warning_should_save">Performing this operation will interrupt the current match. Do you want to save?</string>
+    <string name="warning_should_save">Save the current match.</string>
     <string name="do_not_save">Don\'t Save</string>
     <string name="load">Load</string>
     <string name="type_config_name">Type Save Slot name</string>
@@ -88,7 +88,10 @@
     <string name="record_player_name">Player: %1$s </string>
     <string name="error_match_close_warn">The match will close</string>
     <string name="exit">Exit</string>
-    <string name="game_terminated_timeout">Game Terminated due to Timeout</string>
-    <string name="game_terminated_generic">Game Terminated due to %1$s</string>
+    <string name="game_terminated_timeout">Game Terminated \n Message: Timeout</string>
+    <string name="game_terminated_generic">Game Terminated \n Message: %1$s</string>
     <string name="you">You</string>
+    <string name = "french">French</string>
+    <string name = "minimal_french">Minimal</string>
+
 </resources>

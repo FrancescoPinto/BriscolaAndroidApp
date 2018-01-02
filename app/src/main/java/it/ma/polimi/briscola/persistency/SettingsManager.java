@@ -37,6 +37,8 @@ public class SettingsManager {
     VELOCITY_VERY_FAST = 2;
     private static final String VELOCITY_SETTINGS = "it.ma.polimi.briscola.velocity.int";
 
+    public static final int FRENCH = 0, MINIMAL_FRENCH = 1;
+    private static final String CARD_VIEW_SETTINGS = "it.ma.polimi.briscola.cardview.int";
 
     private static final String SOUNDS_PREF_KEY = "it.ma.polimi.briscola.sounds.boolean";
     private static final String MUSIC_PREF_KEY = "it.ma.polimi.briscola.music.boolean";
@@ -88,6 +90,25 @@ public class SettingsManager {
     public  void setVelocityPreference( int newValue){
         write(VELOCITY_SETTINGS, newValue);
     }
+
+    /**
+     * Get velocity preference int.
+     *
+     * @return the int
+     */
+    public  int getCardViewPreference(){
+        return read(CARD_VIEW_SETTINGS, FRENCH);
+    }
+
+    /**
+     * Set velocity preference.
+     *
+     * @param newValue the new value
+     */
+    public  void setCardViewPreference( int newValue){
+        write(CARD_VIEW_SETTINGS, newValue);
+    }
+
 
     //helper method
     private  int read( String id, int defaultValue){

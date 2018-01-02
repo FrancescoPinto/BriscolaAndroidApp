@@ -238,8 +238,8 @@ public class MatchActivity extends AppCompatActivity implements Briscola2PMatchA
             //create fragment instance
             MenuFragment fragment = MenuFragment.newInstance(false); //false = not overlay
             fragmentManager.beginTransaction()
+                    .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
                     .replace(R.id.fragment_container, fragment, menuFragmentTag) //replace, no overlay
-                    .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
                     .commit();
         }else { //put the menu in overlay over the current fragment
 
@@ -254,8 +254,8 @@ public class MatchActivity extends AppCompatActivity implements Briscola2PMatchA
             newFragment = MenuFragment.newInstance(true); //true = overlay
 
             fragmentManager.beginTransaction()
+                    .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
                     .add(R.id.fragment_container, newFragment, menuFragmentTag) //add it, overlay
-                    .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
                     .commit();
         }
     }
@@ -263,18 +263,20 @@ public class MatchActivity extends AppCompatActivity implements Briscola2PMatchA
     @Override
     public void startOfflineMatch(){
         //prepare fragment
-        Briscola2PMatchFragment fragment = Briscola2PMatchFragment.newInstance(false,settingsManager.getDifficultyPreference());
+        Briscola2PMatchFragment fragment = Briscola2PMatchFragment.newInstance(false,settingsManager.getDifficultyPreference(), settingsManager.getCardViewPreference());
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
+                .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
                 .replace(R.id.fragment_container, fragment, offlineMatchTag)
                 .commit();
     }
     @Override
     public void startOnlineMatch(){
         //prepare fragment
-        Briscola2PMatchFragment fragment = Briscola2PMatchFragment.newInstance(true,0);
+        Briscola2PMatchFragment fragment = Briscola2PMatchFragment.newInstance(true,0, settingsManager.getCardViewPreference());
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
+                .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
                 .replace(R.id.fragment_container, fragment, onlineMatchTag)
                 .commit();
     }
@@ -282,9 +284,10 @@ public class MatchActivity extends AppCompatActivity implements Briscola2PMatchA
     public void loadOfflineMatch(Briscola2PFullMatchConfig config){
         if(config == null) throw new IllegalArgumentException(); //shouldn't be called with no config to be loaded!
         //prepare fragment
-        Briscola2PMatchFragment fragment = Briscola2PMatchFragment.newInstance(config, settingsManager.getDifficultyPreference());
+        Briscola2PMatchFragment fragment = Briscola2PMatchFragment.newInstance(config, settingsManager.getDifficultyPreference(),settingsManager.getCardViewPreference());
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
+                .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
                 .replace(R.id.fragment_container, fragment, offlineMatchTag)
                 .commitAllowingStateLoss(); //because this is invoked when the matchMenuActivity is in background ... avoids IllegalStateException
     }
@@ -315,7 +318,9 @@ public class MatchActivity extends AppCompatActivity implements Briscola2PMatchA
     public void hideOverlayMenu(){
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment oldFragment = fragmentManager.findFragmentByTag(menuFragmentTag);
-        fragmentManager.beginTransaction().remove(oldFragment).commit(); //removes the overlay menu
+        fragmentManager.beginTransaction()
+                .setCustomAnimations(R.anim.fade_in,R.anim.fade_out)
+                .remove(oldFragment).commit(); //removes the overlay menu
 
     }
 

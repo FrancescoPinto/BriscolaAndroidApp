@@ -26,6 +26,7 @@ public class MoveCardAnimationListener implements Animator.AnimatorListener {
 
     @Override
     public void onAnimationStart(Animator animator) {
+        if(soundManager != null)
         soundManager.playSoundForGameEvent(GameEvent.MoveCard);
     }
 

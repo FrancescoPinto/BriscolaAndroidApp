@@ -49,7 +49,10 @@ public abstract class AbstractBriscola2PController implements Briscola2PControll
     }
 
     @Override
-    public int getTurnsElapsed(){
+    public Integer getTurnsElapsed(){
+        if(config == null) //if config hasn't been allready initialized
+            return null;
+
         return config.getNumberTurnsElapsed();
     }
 

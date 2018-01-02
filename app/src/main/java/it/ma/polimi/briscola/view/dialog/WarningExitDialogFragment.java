@@ -71,6 +71,7 @@ public class WarningExitDialogFragment extends DialogFragment {
         dialog.setCanceledOnTouchOutside(false);
         dialog.setContentView(R.layout.dialog_alert_interrupt_match_no_save);
 
+
         //retrieve widget references and initialize them (if required)
         Button yesButton = (Button) dialog.findViewById(R.id.yes_continue);
         yesButton.setOnClickListener(new View.OnClickListener() {

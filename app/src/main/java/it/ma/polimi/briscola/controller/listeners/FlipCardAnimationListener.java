@@ -1,9 +1,10 @@
 package it.ma.polimi.briscola.controller.listeners;
 
 import android.animation.Animator;
+import android.content.Context;
 import android.widget.ImageView;
 
-import it.ma.polimi.briscola.R;
+import it.ma.polimi.briscola.ImageMetadata;
 import it.ma.polimi.briscola.audio.GameEvent;
 import it.ma.polimi.briscola.audio.SoundService;
 
@@ -16,6 +17,7 @@ public class FlipCardAnimationListener implements Animator.AnimatorListener {
 
     private final ImageView card;
     private final SoundService soundManager;
+    private final Context context;
 
     /**
      * Instantiates a new Flip card animation listener.
@@ -23,10 +25,11 @@ public class FlipCardAnimationListener implements Animator.AnimatorListener {
      * @param card         the card
      * @param soundManager the sound manager, in order to play the flip sound
      */
-    public FlipCardAnimationListener(ImageView card, SoundService soundManager){
+    public FlipCardAnimationListener(ImageView card, SoundService soundManager, Context context){
         super();
         this.card = card;
         this.soundManager = soundManager;
+        this.context = context;
     }
 
     @Override
@@ -37,13 +40,15 @@ public class FlipCardAnimationListener implements Animator.AnimatorListener {
     public void onAnimationEnd(Animator animator) {
         String[] cardTag = ((String) card.getTag()).split(";"); //extract the tag (contains info about whether the card is covered and the uncovered card image id)
         if (Boolean.valueOf(cardTag[1])) {//is covered
-            card.setImageResource(Integer.valueOf(cardTag[0])); //flip the card setting the image resource to the uncovered image id
+            card.setImageResource(ImageMetadata.getCardIDWithCurrentPreference(context, cardTag[0])); //flip the card setting the image resource to the uncovered image id
             card.setTag(cardTag[0] + ";" + false); //false = card is no more covered
         } else { //is not covered
-            card.setImageResource(R.drawable.default_card_background); // show card back
+            card.setImageResource(ImageMetadata.getCardBackID(context)); // show card back
             card.setTag(cardTag[0] + ";" + true); //true = card is covered now
 
         }
+
+        if(soundManager != null)
         soundManager.playSoundForGameEvent(GameEvent.FlipCard); //play sound
     }
 

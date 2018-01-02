@@ -6,8 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background_shape"
-    android:orientation="horizontal"
-    >
+    android:orientation="horizontal">
 
     <RelativeLayout
         android:id="@+id/relativeLayout2"
@@ -20,8 +19,8 @@
 
         <ImageView
             android:id="@+id/player1PileSlot"
-            android:layout_width="61dp"
-            android:layout_height="90dp"
+            android:layout_width="@dimen/card_width_landscape"
+            android:layout_height="@dimen/card_height_landscape"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:layout_marginStart="7dp"
@@ -29,8 +28,8 @@
 
         <ImageView
             android:id="@+id/player1Card0Slot"
-            android:layout_width="61dp"
-            android:layout_height="90dp"
+            android:layout_width="@dimen/card_width_landscape"
+            android:layout_height="@dimen/card_height_landscape"
             android:layout_alignParentEnd="true"
             android:layout_alignParentTop="true"
             android:layout_marginEnd="14dp"
@@ -38,8 +37,8 @@
 
         <ImageView
             android:id="@+id/player1Card1Slot"
-            android:layout_width="61dp"
-            android:layout_height="90dp"
+            android:layout_width="@dimen/card_width_landscape"
+            android:layout_height="@dimen/card_height_landscape"
             android:layout_alignParentTop="true"
             android:layout_marginEnd="11dp"
             android:layout_toStartOf="@+id/player1Card0Slot"
@@ -47,59 +46,60 @@
 
         <ImageView
             android:id="@+id/player1Card2Slot"
-            android:layout_width="61dp"
-            android:layout_height="90dp"
+            android:layout_width="@dimen/card_width_landscape"
+            android:layout_height="@dimen/card_height_landscape"
             android:layout_alignParentTop="true"
             android:layout_marginRight="11dp"
             android:layout_toStartOf="@+id/player1Card1Slot"
             app:srcCompat="@drawable/card_slot_shape" />
+
     </RelativeLayout>
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/relativeLayout3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
-        android:layout_alignParentStart="true">
+        android:orientation="horizontal">
 
 
         <ImageView
             android:id="@+id/briscolaSlot"
-            android:layout_width="61dp"
-            android:layout_height="90dp"
-            android:layout_marginStart="8dp"
-            app:layout_constraintStart_toEndOf="@+id/deckSlot"
+            android:layout_width="@dimen/card_width_landscape"
+            android:layout_height="@dimen/card_height_landscape"
+            android:layout_marginStart="76dp"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/card_slot_shape" />
 
         <ImageView
             android:id="@+id/deckSlot"
-            android:layout_width="61dp"
-            android:layout_height="90dp"
-            android:layout_marginStart="70dp"
-            app:layout_constraintStart_toStartOf="parent"
+            android:layout_width="@dimen/card_width_landscape"
+            android:layout_height="@dimen/card_height_landscape"
+            android:layout_marginStart="8dp"
+            app:layout_constraintStart_toEndOf="@+id/briscolaSlot"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/default_card_background" />
 
         <ImageView
             android:id="@+id/surfaceSlot0"
-            android:layout_width="61dp"
-            android:layout_height="90dp"
-            android:layout_marginStart="32dp"
+            android:layout_width="@dimen/card_width_landscape"
+            android:layout_height="@dimen/card_height_landscape"
+            android:layout_marginStart="24dp"
             android:adjustViewBounds="false"
-            app:layout_constraintStart_toEndOf="@+id/briscolaSlot"
+            app:layout_constraintStart_toEndOf="@+id/deckSlot"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/card_slot_shape" />
 
         <ImageView
             android:id="@+id/surfaceSlot1"
-            android:layout_width="61dp"
-            android:layout_height="90dp"
+            android:layout_width="@dimen/card_width_landscape"
+            android:layout_height="@dimen/card_height_landscape"
             android:layout_marginStart="16dp"
-            app:srcCompat="@drawable/card_slot_shape"
+            app:layout_constraintStart_toEndOf="@+id/surfaceSlot0"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/surfaceSlot0" />
+            app:srcCompat="@drawable/card_slot_shape" />
 
     </android.support.constraint.ConstraintLayout>
 
@@ -107,24 +107,24 @@
         android:id="@+id/relativeLayout1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="15dp"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true">
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="15dp"
+        android:orientation="horizontal">
 
         <ImageView
             android:id="@+id/player0PileSlot"
-            android:layout_width="61dp"
-            android:layout_height="90dp"
-            android:layout_marginStart="9dp"
-            app:srcCompat="@drawable/card_slot_shape"
+            android:layout_width="@dimen/card_width_landscape"
+            android:layout_height="@dimen/card_height_landscape"
+            android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:layout_alignParentStart="true" />
+            android:layout_marginStart="9dp"
+            app:srcCompat="@drawable/card_slot_shape" />
 
         <ImageView
             android:id="@+id/player0Card0Slot"
-            android:layout_width="61dp"
-            android:layout_height="90dp"
+            android:layout_width="@dimen/card_width_landscape"
+            android:layout_height="@dimen/card_height_landscape"
             android:layout_alignParentEnd="true"
             android:layout_alignParentTop="true"
             android:layout_marginEnd="14dp"
@@ -132,8 +132,8 @@
 
         <ImageView
             android:id="@+id/player0Card1Slot"
-            android:layout_width="61dp"
-            android:layout_height="90dp"
+            android:layout_width="@dimen/card_width_landscape"
+            android:layout_height="@dimen/card_height_landscape"
             android:layout_alignParentTop="true"
             android:layout_marginEnd="11dp"
             android:layout_toStartOf="@+id/player0Card0Slot"
@@ -141,60 +141,72 @@
 
         <ImageView
             android:id="@+id/player0Card2Slot"
-            android:layout_width="61dp"
-            android:layout_height="90dp"
-            android:layout_marginRight="11dp"
-            app:srcCompat="@drawable/card_slot_shape"
-            android:layout_marginEnd="10dp"
+            android:layout_width="@dimen/card_width_landscape"
+            android:layout_height="@dimen/card_height_landscape"
             android:layout_alignParentTop="true"
-            android:layout_toStartOf="@+id/player0Card1Slot" />
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="11dp"
+            android:layout_toStartOf="@+id/player0Card1Slot"
+            app:srcCompat="@drawable/card_slot_shape" />
 
     </RelativeLayout>
 
     <TextView
         android:id="@+id/player0Turn"
+        style="@style/OverBluText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="15dp"
         android:alpha="0"
         android:background="@drawable/card_slot_shape"
         android:padding="8dp"
         android:text="@string/player0_turn"
-        tools:alpha="1"
-        android:layout_centerVertical="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="15dp" />
+        tools:alpha="1" />
 
     <Button
         android:id="@+id/exit_button"
-        android:layout_width="46dp"
-        android:layout_height="46dp"
-        android:background="@drawable/round_button"
-        android:text="EXIT"
-        android:layout_alignTop="@+id/menu_button"
+        android:layout_width="@dimen/small_button"
+        android:layout_height="@dimen/small_button"
         android:layout_alignStart="@+id/turn_displayer"
-        android:layout_marginStart="47dp" />
+        android:layout_alignTop="@+id/menu_button"
+        android:layout_marginStart="47dp"
+        android:background="@drawable/round_button"
+        android:text="@string/exit" />
+
+    <Button
+        android:id="@+id/save_button_match"
+        android:layout_width="@dimen/small_button"
+        android:layout_height="@dimen/small_button"
+        android:layout_alignTop="@+id/menu_button"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@+id/menu_button"
+        android:background="@drawable/round_button"
+        android:text="@string/save" />
 
     <Button
         android:id="@+id/menu_button"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:background="@drawable/round_button"
-        android:text="@string/menu_button"
-        android:layout_marginStart="10dp"
+        android:layout_width="@dimen/big_button"
+        android:layout_height="@dimen/big_button"
         android:layout_alignBottom="@+id/relativeLayout1"
-        android:layout_toEndOf="@+id/exit_button" />
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@+id/exit_button"
+        android:background="@drawable/round_button"
+        android:text="@string/menu_button" />
 
     <TextView
         android:id="@+id/turn_displayer"
+        style="@style/OverBluText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/relativeLayout3"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="21dp"
         android:layout_marginStart="119dp"
         android:background="@drawable/card_slot_shape"
         android:padding="8dp"
-        android:text="@string/waiting_for_match_to_start"
-        android:layout_marginBottom="21dp"
-        android:layout_above="@+id/relativeLayout3"
-        android:layout_alignParentStart="true" />
+        android:text="@string/waiting_for_match_to_start" />
 
 
 </RelativeLayout>

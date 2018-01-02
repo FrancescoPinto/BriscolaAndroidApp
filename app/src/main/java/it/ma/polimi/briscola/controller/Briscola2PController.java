@@ -81,5 +81,5 @@ public interface Briscola2PController {
      *
      * @return the current turn
      */
-    public int getTurnsElapsed();
+    public Integer getTurnsElapsed();
 }

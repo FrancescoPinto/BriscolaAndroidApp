@@ -13,7 +13,7 @@ import android.os.IBinder;
 import it.ma.polimi.briscola.audio.SoundService;
 
 /**
- * Created by utente on 21/12/17.
+ * Class extending Application, mainly used to manage the SoundService and to detect when the app goes to background
  */
 public class BriscolaApplication extends Application {
     //number representing the number of activities started (see Google I/O about Firebase)

@@ -13,6 +13,7 @@ import android.widget.Toast;
 import it.ma.polimi.briscola.BriscolaApplication;
 import it.ma.polimi.briscola.R;
 import it.ma.polimi.briscola.audio.SoundService;
+import it.ma.polimi.briscola.controller.listeners.CardViewRadioGroupListener;
 import it.ma.polimi.briscola.controller.listeners.DifficultyRadioGroupListener;
 import it.ma.polimi.briscola.controller.listeners.VelocityRadioGroupListener;
 import it.ma.polimi.briscola.persistency.SettingsManager;
@@ -30,6 +31,8 @@ public class SettingsActivity extends AppCompatActivity{
     private RadioButton easy, medium, hard, veryHard;
     private RadioGroup velocityRadioGroup;
     private RadioButton normal, fast, veryFast;
+    private RadioGroup cardViewRadioGroup;
+    private RadioButton french, minimalFrench;
     private SoundService soundManager;
 
     @Override
@@ -47,12 +50,18 @@ public class SettingsActivity extends AppCompatActivity{
         medium = (RadioButton) findViewById(R.id.difficutly_intermediate);
         hard = (RadioButton) findViewById(R.id.difficulty_hard);
         //veryHard = (RadioButton) findViewById(R.id.difficulty_very_hard); //todo, se ho tempo per fare un altro livello di difficoltà
+
         audio = (Switch) findViewById(R.id.toggle_audio_switch);
         sfx = (Switch) findViewById(R.id.toggle_sfx_switch);
+
         velocityRadioGroup = (RadioGroup) findViewById(R.id.velocity_radio_group);
         normal = (RadioButton) findViewById(R.id.velocity_normal);
         fast = (RadioButton) findViewById(R.id.velocity_fast);
         veryFast = (RadioButton) findViewById(R.id.velocity_very_fast);
+
+        cardViewRadioGroup = (RadioGroup) findViewById(R.id.card_view_radio_group);
+        french = (RadioButton) findViewById(R.id.french);
+        minimalFrench = (RadioButton) findViewById(R.id.minimal_french);
 
         //initialize the toggles/radiogroups interface based on the saved settings
         SettingsManager settingsManager = new SettingsManager(getApplicationContext());
@@ -103,6 +112,26 @@ public class SettingsActivity extends AppCompatActivity{
         }
         //set listener
         velocityRadioGroup.setOnCheckedChangeListener(new VelocityRadioGroupListener(this));
+
+        //initialize the toggles/radiogroups interface based on the saved settings
+        switch(settingsManager.getCardViewPreference()){
+            case SettingsManager.FRENCH:french.setChecked(true);break;
+            case SettingsManager.MINIMAL_FRENCH:minimalFrench.setChecked(true);break;
+            default: french.setChecked(true);
+
+        }
+        //set tags containing the velocity id in the radiobuttons
+        for (int i = 0; i < cardViewRadioGroup.getChildCount(); i++) {
+            View view = cardViewRadioGroup.getChildAt(i);
+            RadioButton radioButton = (RadioButton) view;
+            switch(i){
+                case SettingsManager.FRENCH: radioButton.setTag(SettingsManager.FRENCH); break;
+                case SettingsManager.MINIMAL_FRENCH: radioButton.setTag(SettingsManager.MINIMAL_FRENCH);break;
+                default: radioButton.setTag(SettingsManager.FRENCH);
+            }
+        }
+        //set listener
+        cardViewRadioGroup.setOnCheckedChangeListener(new CardViewRadioGroupListener(this));
 
         //warn the user that changing the difficulty will only affect next match
         Toast.makeText(this,R.string.change_settings_warning,Toast.LENGTH_LONG).show();

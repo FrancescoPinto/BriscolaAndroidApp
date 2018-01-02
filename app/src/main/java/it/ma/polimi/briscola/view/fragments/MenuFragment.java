@@ -1,6 +1,7 @@
 package it.ma.polimi.briscola.view.fragments;
 
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,6 +56,12 @@ public class MenuFragment extends Fragment {
         // init the view
         View mainView = inflater.inflate(R.layout.fragment_main_menu, container, false);
         activity = (Briscola2PMatchActivity) getActivity();
+
+        //if is overlay, slightly cover the free space using a light transparent background
+        if(isOverlay) {
+            ConstraintLayout cl = (ConstraintLayout) mainView.findViewById(R.id.menu_constraint_layout);
+            cl.setBackgroundResource(android.R.drawable.screen_background_light_transparent);
+        }
 
         startOfflineMatch = (ImageButton) mainView.findViewById(R.id.start_offline_match);
         startOfflineMatch.setOnClickListener(new View.OnClickListener() {

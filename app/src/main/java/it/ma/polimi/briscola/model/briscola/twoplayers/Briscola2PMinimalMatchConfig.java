@@ -175,4 +175,10 @@ public class Briscola2PMinimalMatchConfig extends AbstractBriscola2PMatchConfig 
     }
 
 
+    public NeapolitanCard inferBriscolaIfInDeck(){
+        if(getNumberTurnsElapsed() < 18)
+            return getBriscola();
+        else
+            return null; //briscola is in players hands
+    }
 }

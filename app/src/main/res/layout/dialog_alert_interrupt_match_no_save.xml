@@ -23,7 +23,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:background="@color/blueLight"
+                android:background="@color/colorPrimary"
                 android:gravity="center_horizontal"
                 android:padding="8dp"
                 android:text="@string/interrupt_match_no_save"

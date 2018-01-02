@@ -11,24 +11,16 @@ import it.ma.polimi.briscola.persistency.SettingsManager;
  *
  * @author Francesco Pinto
  */
-public class VelocityRadioGroupListener implements RadioGroup.OnCheckedChangeListener {
+public class VelocityRadioGroupListener extends RadioGroupCheckedChangeListener {
 
-
-      private final Activity activity;
-      public VelocityRadioGroupListener(Activity activity) {
-          this.activity = activity;
+     public VelocityRadioGroupListener(Activity activity) {
+          super(activity);
       }
 
     @Override
-    public void onCheckedChanged(RadioGroup group, int checkedId) {
-        // This will get the radiobutton that has changed in its check state
-        RadioButton checkedRadioButton = (RadioButton) group.findViewById(checkedId);
-        boolean isChecked = checkedRadioButton.isChecked();
-        // If the radiobutton that has changed in check state is now checked...
-        if (isChecked) {
-            int tag = (Integer) checkedRadioButton.getTag(); //retrieve the velocity id
-            new SettingsManager(activity).setVelocityPreference(tag); //save
-        }
-    }
+    public void saveSetting(int tag){
+        new SettingsManager(activity).setVelocityPreference(tag); //save
+    };
+
 }
 

@@ -30,9 +30,12 @@ public class CleanRoundAnimationListener implements Animator.AnimatorListener {
     @Override
     public void onAnimationStart(Animator animator) {
         if(player0Won){ //if player0 won
-            soundManager.playSoundForGameEvent(GameEvent.WinRound); //cheers
-        }else
-            soundManager.playSoundForGameEvent(GameEvent.LoseRound); //buuuuu
+            if(soundManager != null)
+                soundManager.playSoundForGameEvent(GameEvent.WinRound); //cheers
+        }else {
+            if (soundManager != null)
+                soundManager.playSoundForGameEvent(GameEvent.LoseRound); //buuuuu
+        }
 
     }
 

@@ -31,9 +31,14 @@ public interface Briscola2PMatchActivity {
      */
     ONLINE_ERROR = 5;
     /**
+     * JUST_SAVE.
+     */
+    public static final int JUST_SAVE = 6;
+    /**
      * NO_MOTIVATION.
      */
     public static final int NO_MOTIVATION = -1;
+
 
 
     /**

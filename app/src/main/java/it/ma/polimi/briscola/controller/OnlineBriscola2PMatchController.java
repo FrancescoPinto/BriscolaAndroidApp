@@ -6,6 +6,7 @@ import android.content.Context;
 import java.util.List;
 
 import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PFullMatchConfig;
+import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMatchConfig;
 import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PMinimalMatchConfig;
 import it.ma.polimi.briscola.model.deck.NeapolitanCard;
 import it.ma.polimi.briscola.rest.client.RESTClient;
@@ -171,10 +172,10 @@ public class OnlineBriscola2PMatchController extends AbstractBriscola2PControlle
     public void resumeMatch(){
 
         //reload all the widgets in the interface
-        matchFragment.loadPiles(config.getPile(Briscola2PFullMatchConfig.PLAYER0).isEmpty(),config.getPile(Briscola2PFullMatchConfig.PLAYER1).isEmpty());
+        matchFragment.loadPiles(config.getPile(Briscola2PMatchConfig.PLAYER0).isEmpty(),config.getPile(Briscola2PFullMatchConfig.PLAYER1).isEmpty());
         matchFragment.loadSurface(config.getSurface().getCardList()); //questi li si può fare subito dato che sono molto semplici
         matchFragment.loadHands(config.getHands());
-        matchFragment.loadBriscolaIfNeeded(config.getBriscola());
+        matchFragment.loadBriscolaIfNeeded(((Briscola2PMinimalMatchConfig)config).inferBriscolaIfInDeck());
         matchFragment.loadCurrentPlayer(config.getCurrentPlayer());
 
         //restClient.setUrl(((Briscola2PMinimalMatchConfig) config).getMatchURL());

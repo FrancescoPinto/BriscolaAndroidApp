@@ -14,6 +14,7 @@ import it.ma.polimi.briscola.R;
 import it.ma.polimi.briscola.model.briscola.twoplayers.Briscola2PFullMatchConfig;
 import it.ma.polimi.briscola.persistency.SQLiteRepositoryImpl;
 import it.ma.polimi.briscola.view.MatchMenuActivityActions;
+import it.ma.polimi.briscola.view.activities.Briscola2PMatchActivity;
 
 /**
  * Fragment representing a Save Configuration Dialog. Asks the user whether he/she wants to save the data.
@@ -91,7 +92,11 @@ public class SaveConfigDataDialogFragment extends DialogFragment{
                     SQLiteRepositoryImpl repo = new SQLiteRepositoryImpl(getActivity());
                     repo.saveMatchConfig(config, configNameEditText.getText().toString());
                     //tell the hosting activity that should stop the offline match
-                    sendResult(Activity.RESULT_OK, MatchMenuActivityActions.STOP_OFFLINE, motivation);
+                    if(motivation == Briscola2PMatchActivity.NO_MOTIVATION){
+                        sendResult(Activity.RESULT_OK, MatchMenuActivityActions.DO_NOTHING, motivation);
+                    }else {
+                        sendResult(Activity.RESULT_OK, MatchMenuActivityActions.STOP_OFFLINE, motivation);
+                    }
                     dialog.dismiss();
                 }
             }
