@@ -15,16 +15,45 @@ import it.ma.polimi.briscola.model.deck.NeapolitanCard;
 import it.ma.polimi.briscola.model.deck.NeapolitanCardSuit;
 
 /**
- * Created by utente on 07/11/17.
+ * Abstract class implementing common methods that a concrete AI could need
  */
-
 public abstract class AbstractBriscola2PAIPlayer implements Briscola2PAIPlayer {
+    /**
+     * The My hand.
+     */
     Briscola2PHand myHand;
+    /**
+     * The Config.
+     */
     Briscola2PFullMatchConfig config;
+    /**
+     * The Suit probabilities.
+     */
     float suitProbabilities[] = new float[] {0f,0f,0f,0f};
-    int batonsIndex = 0, cupsIndex = 1, goldsIndex = 2, swordsIndex = 3;
+    /**
+     * The Batons index.
+     */
+    int batonsIndex = 0, /**
+     * The Cups index.
+     */
+    cupsIndex = 1, /**
+     * The Golds index.
+     */
+    goldsIndex = 2, /**
+     * The Swords index.
+     */
+    swordsIndex = 3;
+    /**
+     * The Cards per suit.
+     */
     final int cardsPerSuit = 10;
 
+    /**
+     * Find card position in hand.
+     *
+     * @param c the card
+     * @return the int representing the card position
+     */
     public int findCardPositionInHand(NeapolitanCard c) {
         for (int i = 0; i < myHand.size(); i++)
             if (myHand.getCard(i).equalTo(c))
@@ -33,6 +62,11 @@ public abstract class AbstractBriscola2PAIPlayer implements Briscola2PAIPlayer {
         throw new IllegalArgumentException("The argument is not contained in hand");
     }
 
+    /**
+     * Compute suit probabilities (probability that the suit is in the adversary hand or in deck)
+     *
+     * @param playerIndex the player index
+     */
     public void computeSuitProbabilities(int playerIndex){
         List<NeapolitanCard> cardsInPiles = new ArrayList(config.getPile(Briscola2PFullMatchConfig.PLAYER0).getCardList());
         cardsInPiles.addAll(new ArrayList<NeapolitanCard>(config.getPile(Briscola2PFullMatchConfig.PLAYER1).getCardList()));
@@ -59,6 +93,11 @@ public abstract class AbstractBriscola2PAIPlayer implements Briscola2PAIPlayer {
 
     }
 
+    /**
+     * Get the minimum probability among the probabilities that adversary (or in deck) have card of suit that is also in my hand
+     *
+     * @return the neapolitan card suit i have in hand and corresponding to the minimum probability
+     */
     public NeapolitanCardSuit getMinAdversaryProbabilitySuitInMyHand(){
         Map<NeapolitanCardSuit, Float> probabilitiesInHand = new HashMap<>();
         for(NeapolitanCardSuit suit: getCardSuitInMyHand()){
@@ -81,6 +120,12 @@ public abstract class AbstractBriscola2PAIPlayer implements Briscola2PAIPlayer {
         return null;
     }
 
+    /**
+     * Get the probability that adversary (or deck) has a trump card.
+     *
+     * @param trumpSuit the trump suit
+     * @return the probability
+     */
     public float getAdversaryProbabilityTrump(NeapolitanCardSuit trumpSuit){
         float probability;
         switch(trumpSuit){
@@ -93,6 +138,11 @@ public abstract class AbstractBriscola2PAIPlayer implements Briscola2PAIPlayer {
         return probability;
     }
 
+    /**
+     * Get the set of card suits i have in my hand.
+     *
+     * @return the set of card suits
+     */
     public Set<NeapolitanCardSuit> getCardSuitInMyHand(){
         Set<NeapolitanCardSuit> cardSuitsInHand = new HashSet<>();
         for(NeapolitanCard c: myHand.getCardList()){
@@ -100,7 +150,14 @@ public abstract class AbstractBriscola2PAIPlayer implements Briscola2PAIPlayer {
         }
         return cardSuitsInHand;
     }
-    //prende carta a miglior punteggio, a parità di punteggio prende quella con peggior rank
+
+    /**
+     * Gets best point valued card in list passed as argument
+     *
+     * @param cards the list of cards
+     * @return the best point valued card in list
+     */
+//prende carta a miglior punteggio, a parità di punteggio prende quella con peggior rank
     public NeapolitanCard getBestPointValuedCard(List<NeapolitanCard> cards) { //a pari pointvalue butto quella con rank peggiore (più grande)
 
         if (cards.isEmpty())
@@ -119,7 +176,13 @@ public abstract class AbstractBriscola2PAIPlayer implements Briscola2PAIPlayer {
         }
     }
 
-    //prende carta con miglior rank, a parità di rank le carte sono equivalenti
+    /**
+     * Gets best ranked card in list
+     *
+     * @param cards the cards list
+     * @return the best ranked card in list
+     */
+//prende carta con miglior rank, a parità di rank le carte sono equivalenti
     public NeapolitanCard getBestRankedCard(List<NeapolitanCard> cards) {
         if (cards.isEmpty())
             return null;
@@ -134,7 +197,13 @@ public abstract class AbstractBriscola2PAIPlayer implements Briscola2PAIPlayer {
     }
 
 
-    //prende carta con peggior rank
+    /**
+     * Gets worst ranked card in list
+     *
+     * @param cards the cards list
+     * @return the worst ranked card in list
+     */
+//prende carta con peggior rank
     public NeapolitanCard getWorstRankedCard(List<NeapolitanCard> cards) {
         if (cards.isEmpty())
             return null;
@@ -148,8 +217,14 @@ public abstract class AbstractBriscola2PAIPlayer implements Briscola2PAIPlayer {
         }
     }
 
+    /**
+     * Get zero valued worst ranked card in hand not of suit passed as an argument.
+     *
+     * @param suit the suit
+     * @return the zero valued worst ranked card in hand not of suit
+     */
     public NeapolitanCard getZeroValuedWorstRankedCardNotOfSuit(NeapolitanCardSuit suit){
-        List<NeapolitanCard> cards = getCardsNotOfSuitInHand(suit); //non briscola!
+        List<NeapolitanCard> cards = getCardsNotOfSuitInHand(suit);
         if(cards.isEmpty())
             return null;
 
@@ -166,6 +241,14 @@ public abstract class AbstractBriscola2PAIPlayer implements Briscola2PAIPlayer {
 
     }
 
+    /**
+     * Get card  in hand with minimum rank same seed passed as argument to win against card passed as argument, with threshold that limits the max value of the card.
+     *
+     * @param card         the card
+     * @param suit         the suit
+     * @param maxThreshold the max threshold
+     * @return the result
+     */
     public NeapolitanCard getMinimumRankSameSeedToWinWithThreshold(NeapolitanCard card, NeapolitanCardSuit suit, int maxThreshold){
         List<NeapolitanCard> cards = getCardsOfSuitInHand(suit);
         if(cards.isEmpty())
@@ -180,6 +263,13 @@ public abstract class AbstractBriscola2PAIPlayer implements Briscola2PAIPlayer {
 
     }
 
+    /**
+     * Get card  in hand with minimum point value not trump with threshold that limits the max value of the card.
+     *
+     * @param trumpSuit    the trump suit
+     * @param maxThreshold the max threshold
+     * @return the result
+     */
     public NeapolitanCard getMinimumPointValueNotTrumpWithThreshold(NeapolitanCardSuit trumpSuit, int maxThreshold){
         List<NeapolitanCard> cards = getCardsNotOfSuitInHand(trumpSuit);
         if(cards.isEmpty())
@@ -193,6 +283,13 @@ public abstract class AbstractBriscola2PAIPlayer implements Briscola2PAIPlayer {
         return getWorstPointValuedCard(satisfyingThreshold);
     }
 
+    /**
+     * Get cards satisfying point value max threshold as list.
+     *
+     * @param cards        the cards
+     * @param maxThreshold the max threshold
+     * @return the list
+     */
     public List<NeapolitanCard> getCardsSatisfyingPointThreshold(List<NeapolitanCard> cards, int maxThreshold){
         List<NeapolitanCard> satisfyingThreshold = new ArrayList<>();
         for(NeapolitanCard c: cards){
@@ -202,6 +299,12 @@ public abstract class AbstractBriscola2PAIPlayer implements Briscola2PAIPlayer {
         return satisfyingThreshold;
     }
 
+    /**
+     * Get worst point valued card witihn the list of neapolitan cards passed by argument.
+     *
+     * @param cards the cards
+     * @return the result
+     */
     public NeapolitanCard getWorstPointValuedCard(List<NeapolitanCard> cards){
         NeapolitanCard worstCard = cards.get(0);
         for(NeapolitanCard c:cards)
@@ -214,6 +317,13 @@ public abstract class AbstractBriscola2PAIPlayer implements Briscola2PAIPlayer {
         return worstCard;
     }
 
+    /**
+     * Get worst ranked card in list but better ranked than card passed by argument.
+     *
+     * @param list the list
+     * @param card the card
+     * @return the neapolitan card
+     */
     public NeapolitanCard getWorstRankedButBetterRankedThan(List<NeapolitanCard> list, NeapolitanCard card){
         List<NeapolitanCard> betterRanked = new ArrayList<>();
         for(NeapolitanCard c: list){
@@ -227,11 +337,44 @@ public abstract class AbstractBriscola2PAIPlayer implements Briscola2PAIPlayer {
         return getWorstRankedCard(betterRanked);
     }
 
+    /**
+     * Get worst ranked card in list but better ranked than card passed by argument with same suit.
+     *
+     * @param list the list
+     * @param card the card
+     * @return the worst ranked but better ranked than with same suit
+     */
+    public NeapolitanCard getWorstRankedButBetterRankedThanWithSameSuit(List<NeapolitanCard> list, NeapolitanCard card) {
+
+        List<NeapolitanCard> sameSuit = new ArrayList<>();
+        for(NeapolitanCard c: list){
+            if(c.getCardSuitEnum() == card.getCardSuitEnum())
+                sameSuit.add(c);
+        }
+
+        if(sameSuit.isEmpty())
+            return null;
+
+        return getWorstRankedButBetterRankedThan(sameSuit,card);
+    }
+
+    /**
+     * Get best ranked card in hand of suit passed by argument
+     *
+     * @param suit the suit
+     * @return the result
+     */
     public NeapolitanCard getBestRankedCardOfSuit(NeapolitanCardSuit suit){
         List<NeapolitanCard> cards = getCardsOfSuitInHand(suit);
         return getBestRankedCard(cards);
     }
 
+    /**
+     * Get best point valued card in hand of suit passed by argument
+     *
+     * @param suit the suit
+     * @return the result
+     */
     public NeapolitanCard getBestPointValuedCardOfSuit(NeapolitanCardSuit suit){
         List<NeapolitanCard> cards = getCardsOfSuitInHand(suit);
         return getBestPointValuedCard(cards);
@@ -239,7 +382,12 @@ public abstract class AbstractBriscola2PAIPlayer implements Briscola2PAIPlayer {
     }
 
 
-
+    /**
+     * Get list of cards in hand of suit passed by argument.
+     *
+     * @param suit the suit
+     * @return the list
+     */
     public List<NeapolitanCard> getCardsOfSuitInHand(NeapolitanCardSuit suit){
         List<NeapolitanCard> cards = new ArrayList<>();
         for (NeapolitanCard c : myHand.getCardList()) {
@@ -249,6 +397,12 @@ public abstract class AbstractBriscola2PAIPlayer implements Briscola2PAIPlayer {
         return cards;
     }
 
+    /**
+     * Get list of cards in hand not of suit passed by argument.
+     *
+     * @param suit the suit
+     * @return the list
+     */
     public List<NeapolitanCard> getCardsNotOfSuitInHand(NeapolitanCardSuit suit){
         List<NeapolitanCard> cards = new ArrayList<>();
         for (NeapolitanCard c : myHand.getCardList()) {
@@ -258,6 +412,13 @@ public abstract class AbstractBriscola2PAIPlayer implements Briscola2PAIPlayer {
         return cards;
     }
 
+    /**
+     * Gets best ranked card of suit in hand better ranked than card passed by argument, same suit passed by argument
+     *
+     * @param enemyCard the enemy card
+     * @param suit      the suit
+     * @return the result
+     */
     public NeapolitanCard getBestRankedCardOfSuitInHandBetterRankedThan(NeapolitanCard enemyCard, NeapolitanCardSuit suit) { //prende la migliore briscola dalla mano che ha rank migliore della carta nemica passata con argomento
         NeapolitanCard bestOfSuit = getBestRankedCardOfSuit(suit);
         if(bestOfSuit != null){
@@ -270,6 +431,13 @@ public abstract class AbstractBriscola2PAIPlayer implements Briscola2PAIPlayer {
 
     }
 
+
+    /**
+     * Get worst ranked card in hand with same points and suit of card in hand passed as an argument.
+     *
+     * @param card the card in hand to be used for comparison
+     * @return the neapolitan card worst than the card passed as an argument (same points and suit)
+     */
     public NeapolitanCard getWorstRankedCardInHandWithSamePointsAndSuitOfCardInHand(NeapolitanCard card){
         NeapolitanCard worstRanked = card;
         for(NeapolitanCard c: myHand.getCardList()){
@@ -281,6 +449,11 @@ public abstract class AbstractBriscola2PAIPlayer implements Briscola2PAIPlayer {
         return worstRanked;
     }
 
+    /**
+     * Get worst point valued card in hand.
+     *
+     * @return the neapolitan card with worst point value in my hand
+     */
     public NeapolitanCard getWorstPointValuedCardInHand(){
         if(myHand.isEmpty()){
             throw new IllegalStateException("Empty hand");
@@ -298,261 +471,3 @@ public abstract class AbstractBriscola2PAIPlayer implements Briscola2PAIPlayer {
 
 
 }
-  /*
-    public List<NeapolitanCard> getBriscolasInHand() {
-        List<NeapolitanCard> briscolaInHand = new ArrayList<>();
-
-        for (NeapolitanCard c : myHand.getHand()) {
-            if (c.getCardSuit().equals(config.getBriscolaSuit()))
-                briscolaInHand.add(c);
-        }
-        return briscolaInHand;
-    }
-
-    public List<NeapolitanCard> getNonBriscolasInHand() {
-        List<NeapolitanCard> nonBriscolaInHand = new ArrayList<>();
-
-        for (NeapolitanCard c : myHand.getHand()) {
-            if (!c.getCardSuit().equals(config.getBriscolaSuit()))
-                nonBriscolaInHand.add(c);
-        }
-        return nonBriscolaInHand;
-    }
-    */
-/*
-    public NeapolitanCard getWorstPointValuedCardInHand(){ //la carta con punteggio peggiore (indipendente da se briscola o meno), a parità butto quella con rank peggiore
-        NeapolitanCard worstCard = myHand.getHand().get(0);
-        for(NeapolitanCard c:myHand.getHand())
-            if (BriscolaCardPointsAndRankingRules.getPointValue(c.getCardNumber()) < BriscolaCardPointsAndRankingRules.getPointValue(worstCard.getCardNumber()))
-                worstCard = c;
-            else if (BriscolaCardPointsAndRankingRules.getPointValue(c.getCardNumber()) == BriscolaCardPointsAndRankingRules.getPointValue(worstCard.getCardNumber()) && //a parità di value torna rank peggiore
-                    BriscolaCardPointsAndRankingRules.getRank(c.getCardNumber()) > BriscolaCardPointsAndRankingRules.getRank(worstCard.getCardNumber()))
-                worstCard = c;
-
-        return worstCard;
-
-        //todo l'implementazione qui sotto è utile nel caso in cui tu voglia fare una scelta speciale tra briscole e non briscole nel ritorno del valore, considerala per il cardCounter! ma per il Dumb è troppo articolata
-        /*NeapolitanCard worstBriscola = getWorstBriscolaInHand();
-        NeapolitanCard worstNonBriscola = getWorstNonBriscolaCardInHand();
-
-        //QUI scelgo di buttare quella con MINIMO punteggio, indipendentemente da se è briscola o meno //todo, vale quanto su detto, questa non per forza è una scelta ottima
-        if(worstNonBriscola != null && worstBriscola != null) {
-            if (BriscolaCardPointsAndRankingRules.getPointValue(worstNonBriscola.getCardNumber()) > BriscolaCardPointsAndRankingRules.getPointValue(worstBriscola.getCardNumber()))
-                return worstNonBriscola;
-            else if (BriscolaCardPointsAndRankingRules.getPointValue(worstNonBriscola.getCardNumber()) == BriscolaCardPointsAndRankingRules.getPointValue(worstBriscola.getCardNumber()) && //a parità di value torna rank peggiore
-                    BriscolaCardPointsAndRankingRules.getRank(worstNonBriscola.getCardNumber()) > BriscolaCardPointsAndRankingRules.getRank(worstBriscola.getCardNumber()))
-                return worstNonBriscola;
-            else
-                return worstBriscola;
-        }
-        else if(worstBriscola != null)
-            return worstBriscola;
-        else if(worstNonBriscola != null)
-            return worstNonBriscola;
-        else
-            throw new IllegalStateException();
-            */
-   /* }
-
-    public NeapolitanCard getWorstPointValuedBriscolaCardInHand() { //a parità di punti, quella con peggior rank viene buttata
-
-        List<NeapolitanCard> briscolaInHand = getBriscolasInHand();
-
-        if (briscolaInHand.isEmpty())
-            return null;
-        else {
-            NeapolitanCard worstCard = briscolaInHand.get(0);
-            for (NeapolitanCard c : briscolaInHand) {
-                if (BriscolaCardPointsAndRankingRules.getPointValue(worstCard.getCardNumber()) > BriscolaCardPointsAndRankingRules.getPointValue(c.getCardNumber()))
-                    worstCard = c;
-                else if(BriscolaCardPointsAndRankingRules.getPointValue(worstCard.getCardNumber()) == BriscolaCardPointsAndRankingRules.getPointValue(c.getCardNumber()) &&
-                        BriscolaCardPointsAndRankingRules.getRank(worstCard.getCardNumber()) < BriscolaCardPointsAndRankingRules.getRank(c.getCardNumber()))
-                    worstCard = c;
-            }
-
-            return worstCard;
-        }
-    }
-
-
-
-    public List<NeapolitanCard> getSameSuitInHand(NeapolitanCard card){
-        List<NeapolitanCard> sameSuitInHand = new ArrayList<>();
-
-        for(NeapolitanCard c : myHand.getHand())
-        {
-            if(c.getCardSuit().equals(card.getCardSuit()))
-                sameSuitInHand.add(c);
-        }
-        return sameSuitInHand;
-    }
-    public NeapolitanCard getBestBriscolaBetterRankedThan(NeapolitanCard enemyCard) { //prende la migliore briscola dalla mano che ha rank migliore della carta nemica passata con argomento
-        //Todo potresti semplificare entrambi prendendo prima la migliore/peggiore briscola dalla mano e poi comparandolo con la carta nemica!
-
-
-        if (briscolaInHand.isEmpty())
-            return null;
-        else {
-            NeapolitanCard maxCard = enemyCard;
-            for (NeapolitanCard c : briscolaInHand) {
-                if (BriscolaCardPointsAndRankingRules.getRank(maxCard.getCardNumber()) > BriscolaCardPointsAndRankingRules.getRank(c.getCardNumber()))
-                    maxCard = c;
-            }
-            if (maxCard == enemyCard)   //se non hai una briscola migliore (ma hai delle briscole)
-                return null;
-            else
-                return maxCard;
-        }
-    }
-
-    public NeapolitanCard getBestSameSuitBetterRankedThan(NeapolitanCard enemyCard){
-
-
-        List<NeapolitanCard>  sameSuitInHand = getSameSuitInHand(enemyCard);
-
-        if (sameSuitInHand.isEmpty())
-            return null;
-        else {
-            NeapolitanCard maxCard = enemyCard;
-            for (NeapolitanCard c : sameSuitInHand) {
-                if (BriscolaCardPointsAndRankingRules.getRank(maxCard.getCardNumber()) > BriscolaCardPointsAndRankingRules.getRank(c.getCardNumber()))
-                    maxCard = c;
-            }
-            if (maxCard == enemyCard)   //se non hai una briscola migliore (ma hai delle briscole)
-                return null;
-            else
-                return maxCard;
-        }
-    }
-
-    public NeapolitanCard getWorstBriscolaBetterThan(NeapolitanCard enemyCard){ //prende la peggiore briscola dalla mano che ha rank migliore della carta nemica passata con argomento
-
-        List<NeapolitanCard> briscolaInHand = getBriscolasInHand();
-
-
-        if(briscolaInHand.isEmpty())
-            return null;
-        else {
-            NeapolitanCard minBetterCard = enemyCard;
-            for (NeapolitanCard c : briscolaInHand) {
-                if (minBetterCard != enemyCard) {
-                    if (BriscolaCardPointsAndRankingRules.getRank(minBetterCard.getCardNumber()) < BriscolaCardPointsAndRankingRules.getRank(c.getCardNumber()) &&
-                            BriscolaCardPointsAndRankingRules.getRank(enemyCard.getCardNumber()) > BriscolaCardPointsAndRankingRules.getRank(c.getCardNumber()))
-                        minBetterCard = c;
-                }
-            }
-
-
-            if(minBetterCard == enemyCard)   //se non hai una briscola migliore (ma hai delle briscole)
-                return null;
-            else
-                return minBetterCard;
-        }
-
-
-    } //todo ATTENTO questo non puoi semplificarlo (perché la worst briscola se è peggiore di enemy non implica che tu non abbia in mano una briscola migliore di enemy ma "minima"
-
-    public NeapolitanCard getWorstRankedNonBriscolaCardInHand(){
-        List<NeapolitanCard> nonBriscolaInHand = getNonBriscolasInHand();
-
-        if(nonBriscolaInHand.isEmpty())
-            return null;
-        else {
-            NeapolitanCard worstCard = nonBriscolaInHand.get(0);
-            for (NeapolitanCard c : nonBriscolaInHand) {
-                if (BriscolaCardPointsAndRankingRules.getRank(worstCard.getCardNumber()) < BriscolaCardPointsAndRankingRules.getRank(c.getCardNumber()))
-                    worstCard = c;
-            }
-
-            return worstCard;
-        }
-    }
-
-    public NeapolitanCard getBestRankedBriscolaInHand(){
-        List<NeapolitanCard> briscolaInHand = getNonBriscolasInHand();
-
-        if(briscolaInHand.isEmpty())
-            return null;
-        else {
-            NeapolitanCard worstCard = briscolaInHand.get(0);
-            for (NeapolitanCard c : briscolaInHand) {
-                if (BriscolaCardPointsAndRankingRules.getRank(worstCard.getCardNumber()) > BriscolaCardPointsAndRankingRules.getRank(c.getCardNumber()))
-                    worstCard = c;
-            }
-
-            return worstCard;
-        }
-    }
-
-    public NeapolitanCard getWorstRankedBriscolaInHand(){
-        List<NeapolitanCard> briscolaInHand = getBriscolasInHand();
-
-        if(briscolaInHand.isEmpty())
-            return null;
-        else {
-            NeapolitanCard worstCard = briscolaInHand.get(0);
-            for (NeapolitanCard c : briscolaInHand) {
-                if (BriscolaCardPointsAndRankingRules.getRank(worstCard.getCardNumber()) < BriscolaCardPointsAndRankingRules.getRank(c.getCardNumber()))
-                    worstCard = c;
-            }
-
-            return worstCard;
-        }
-    }
-
-
-    public NeapolitanCard getWorstRankedCardInHand(){
-        NeapolitanCard worstBriscola = getWorstBriscolaInHand();
-        NeapolitanCard worstNonBriscola = getWorstNonBriscolaCardInHand();
-        //todo un algoritmo intelligente baserebbe la scelta tra chi è peggiore anche su aspetti probabilistici
-        //todo un algoritmo intelligente baserebbe la sua scelta anche sul rank (magari può convenire giocare una carta con rank peggiore ma briscola, soprattutto se ci sono alte probabilità che dopo ...)
-        //todo un algoritmo intelligente potrebbe anche decidere di giocare la briscola qualora la carta non briscola sia di alto punteggio, e quindi regaleresti punti!
-        //QUI euristicamente decido di non giocare la briscola se c'è qualcosa non briscola
-        if(worstNonBriscola != null)
-            return worstNonBriscola;
-        else if(worstBriscola != null)
-            return worstBriscola;
-        else
-            throw new IllegalStateException();
-    }
-
-
-    public NeapolitanCard getWorstPointValuedNonBriscolaCardInHand() { //a parità di punti, quella con peggior rank viene buttata
-
-        List<NeapolitanCard> nonBriscolaInHand = getNonBriscolasInHand();
-
-        if (nonBriscolaInHand.isEmpty())
-            return null;
-        else {
-            NeapolitanCard worstCard = nonBriscolaInHand.get(0);
-            for (NeapolitanCard c : nonBriscolaInHand) {
-                if (BriscolaCardPointsAndRankingRules.getPointValue(worstCard.getCardNumber()) > BriscolaCardPointsAndRankingRules.getPointValue(c.getCardNumber()))
-                    worstCard = c;
-                else if(BriscolaCardPointsAndRankingRules.getPointValue(worstCard.getCardNumber()) == BriscolaCardPointsAndRankingRules.getPointValue(c.getCardNumber()) &&
-                        BriscolaCardPointsAndRankingRules.getRank(worstCard.getCardNumber()) < BriscolaCardPointsAndRankingRules.getRank(c.getCardNumber()))
-                    worstCard = c;
-            }
-
-            return worstCard;
-        }
-    }
-
-    public NeapolitanCard getBestPointValuedBriscolaCardInHand() { //a parità di punti, quella con peggior rank viene buttata
-
-        List<NeapolitanCard> briscolaInHand = getBriscolasInHand();
-
-        if (briscolaInHand.isEmpty())
-            return null;
-        else {
-            NeapolitanCard bestCard = briscolaInHand.get(0);
-            for (NeapolitanCard c : briscolaInHand) {
-                if (BriscolaCardPointsAndRankingRules.getPointValue(bestCard.getCardNumber()) < BriscolaCardPointsAndRankingRules.getPointValue(c.getCardNumber()))
-                    bestCard = c;
-                else if(BriscolaCardPointsAndRankingRules.getPointValue(bestCard.getCardNumber()) == BriscolaCardPointsAndRankingRules.getPointValue(c.getCardNumber()) &&
-                        BriscolaCardPointsAndRankingRules.getRank(bestCard.getCardNumber()) < BriscolaCardPointsAndRankingRules.getRank(c.getCardNumber())) //todo, questa cosa non ha senso se ti limiti a considerare solo le briscole ... (ma lo ha se consideri anche le non briscole)
-                    bestCard = c;
-            }
-
-            return bestCard;
-        }
-    }*/
