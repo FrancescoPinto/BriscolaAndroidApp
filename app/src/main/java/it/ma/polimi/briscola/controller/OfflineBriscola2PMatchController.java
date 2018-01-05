@@ -2,6 +2,7 @@ package it.ma.polimi.briscola.controller;
 
 import android.animation.Animator;
 import android.content.Context;
+import android.util.Log;
 
 import java.util.List;
 
@@ -105,6 +106,9 @@ public class OfflineBriscola2PMatchController extends AbstractBriscola2PControll
 
     @Override
     public void resumeMatch(){
+        //in case the rotation of the screen occurs in a particular moment, the config might be locked in the 2-cards on surface status, not allowing the game to proceed.
+        if(config.countCardsOnSurface() == 2)
+            closeTurnInConfiguration();
         //load all the needed widgets in the interface in order to resume the match
         matchFragment.loadPiles(config.getPile(Briscola2PMatchConfig.PLAYER0).isEmpty(),config.getPile(Briscola2PFullMatchConfig.PLAYER1).isEmpty());
         matchFragment.loadSurface(config.getSurface().getCardList());
@@ -113,8 +117,10 @@ public class OfflineBriscola2PMatchController extends AbstractBriscola2PControll
         matchFragment.loadCurrentPlayer(config.getCurrentPlayer());
         //if it was the AI turn, let it play
         if(config.getCurrentPlayer() == Briscola2PFullMatchConfig.PLAYER1){
-            playFirstCard(player1.chooseMove((Briscola2PFullMatchConfig) config,Briscola2PMatchConfig.PLAYER1));
+        //    playFirstCard(player1.chooseMove((Briscola2PFullMatchConfig) config,Briscola2PMatchConfig.PLAYER1));
         }
+
+        Log.d("TAG",config.toString());
     }
 
 

@@ -161,7 +161,7 @@ public class Briscola2PMatchFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         //initialize view
-        View mainView = inflater.inflate(R.layout.fragment_briscola_match, container, false); //todo, refactor del nome
+        View mainView = inflater.inflate(R.layout.fragment_briscola_match, container, false);
 
         //get data
         activity = (MatchActivity) this.getActivity();
@@ -410,7 +410,7 @@ public class Briscola2PMatchFragment extends Fragment {
 
         AnimatorSet playCard = new AnimatorSet();
         //remove card from hand (imageview)
-        ImageView card = cards.remove(SlotIndices.getPlayerCardSlotIndex(cardIndex,currentPlayer)); //todo, qui ho modificato
+        ImageView card = cards.remove(SlotIndices.getPlayerCardSlotIndex(cardIndex,currentPlayer));
         //extract layout params
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) card.getLayoutParams();
         Point pos = new Point(params.leftMargin,params.topMargin);

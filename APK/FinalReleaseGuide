@@ -1,0 +1,40 @@
+Here are some observations and info about the work that has been done for the final release.
+The final release has been tested multiple times on different real devices and emulators:
+Real Devices:
+- Samsung Galaxy S7 (Nougat)
+- Samsung Galaxy Tab S2 (Nougat)
+    (even though no specific code has been written to handle tablet, since I followed some guidelines (e.g. using values-xlarge) the app is enjoyable also on tablets)
+Emulators:
+- Nexus 5X with API 25 and API 26
+- Nexus 10 with API 22
+- Nexus One with API 22
+THE CODE EXECUTES CORRECTLY AND WITH NO (DETECTED) BUG, if any problem occurs, please, contact me.
+
+Most of what has been delivered with the previous release has been left unchanged. The only changes regard the MatchConfig
+(that has been generalized to handle partial configurations, e.g. to handle server data).
+
+Regarding the extras:
+1) Graphics and sounds:
+    - The game has background music and sound fx (can be toggled), they have all been obtained using free resources available via web
+    - Hope the graphical elements and animations look nice
+2) Using a server:
+    - It is possible to play online matches human vs. remote
+3) AI for H-C games:
+    - A random AI is available
+    - A pure greedy AI is available (is the DumbGreedy)
+    - A slightly better than greedy AI, obtained optimizing the pure greedy AI with some heuristics (is the SmartGreedy)
+4) Configurability:
+    - The app is available both in italian and english (see values and values-it-rIT folders)
+    - It is possible to use two different decks
+    - It is possible to toggle music/sound fx
+    - It is possible to choose among 3 levels of difficulty (random, dumbGreedy, smartGreedy)
+    - It is possible to choose among 3 different velocity levels for animations (REMARK: Very fast has been a perfect way to save time while testing!)
+    - It is possible to save an offline match at any time, and load it (and delete the save, if desired)
+    - Some statistics are available (list of data about all the played matches, counters about played matches)
+
+- Javadoc documentation for all the written Java code is avilable in the Javadoc folder.
+- As suggested by the Big Nerd Ranch Guide for Android development, I put drawable resources only for xxhdpi in order to reduce
+    the size of the final .apk (as the manual says, the OS will handle downscaling of images if necessary without introducing artifacts)
+- For the Configurability part, I've added only one more deck to play with. Of course it was possible to add more decks to play with. However,
+    I already had difficulties finding (free) image assets for the Minimal Deck (yes, the cards are ugly, but I had no choice because
+    I'm not an artist so I couldn't draw them by myself...).
