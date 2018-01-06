@@ -115,12 +115,7 @@ public class OfflineBriscola2PMatchController extends AbstractBriscola2PControll
         matchFragment.loadHands(config.getHands());
         matchFragment.loadBriscolaIfNeeded(((Briscola2PFullMatchConfig)config).inferBriscolaIfInDeck());
         matchFragment.loadCurrentPlayer(config.getCurrentPlayer());
-        //if it was the AI turn, let it play
-        if(config.getCurrentPlayer() == Briscola2PFullMatchConfig.PLAYER1){
-        //    playFirstCard(player1.chooseMove((Briscola2PFullMatchConfig) config,Briscola2PMatchConfig.PLAYER1));
-        }
 
-        Log.d("TAG",config.toString());
     }
 
 

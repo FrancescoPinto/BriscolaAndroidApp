@@ -228,99 +228,20 @@ public abstract class AbstractBriscola2PController implements Briscola2PControll
         return hidePlayer0andCleanSurface;
     }
 
+    //helper method, used in case the screen rotation occurs while the 2 cards are on surface, and they have not yet been processed
     void closeTurnInConfiguration(){
         int roundWinner = config.chooseRoundWinner(); //choose round winner
         config.clearSurface(roundWinner); //clear surface at configuration level
         config.setCurrentPlayer(roundWinner); //choose next round first player at configuration level
 
-
         if(config.getNumberTurnsElapsed() == Briscola2PMatchConfig.FINISHED){ //if the match is finished, choose winner
-            /*stopMatch();
-            switch(config.chooseMatchWinner()){
-                case Briscola2PMatchConfig.PLAYER0: matchFragment.displayMatchWinner(Briscola2PFullMatchConfig.PLAYER0, config.computeScore(Briscola2PMatchConfig.PLAYER0)); break;
-                case Briscola2PMatchConfig.PLAYER1: matchFragment.displayMatchWinner(Briscola2PFullMatchConfig.PLAYER1, config.computeScore(Briscola2PMatchConfig.PLAYER1)); break;
-                case Briscola2PMatchConfig.DRAW: matchFragment.displayMatchWinner(Briscola2PFullMatchConfig.DRAW, config.computeScore(Briscola2PMatchConfig.PLAYER0)); break;
-                default: throw new RuntimeException("Error while computing the winner");
-            }*/
+            //end match is handled automatically by other methods
         }else if (config.getNumberTurnsElapsed()== 19 || config.getNumberTurnsElapsed() == 20){ //if the deck is empty, but players have cards in hand,don't do anything (equivalently, turns 19 and 20: no cards to draw)
-            //matchFragment.putPlayer0CardsTouchListeners(config.getHands(),config.getCurrentPlayer());
-          //   if(config.getCurrentPlayer() == config.PLAYER1){
-           //     callPlayer1(animators);
-          //  }  else{
-                //enable player0 to play
-          //      AnimatorSet displayIsPlayer0Turn = matchFragment.displayIsPlayer0Turn(config.getCurrentPlayer());
-          //      animators.add(displayIsPlayer0Turn);                    }
+            //no need to draw cards
         }else if(config.getNumberTurnsElapsed() <= 18){ //if deck is not empty, draw cards new round (equivalently, turns <= 18)
-            //since the Server API doesn't give info on the deck, count turns played to know whether lastDraw
-            //boolean lastDraw = false;
-           // if(config.getNumberTurnsElapsed() == 18) // 20th turn (1card -> 0 card, no draw at turn start), 19th turn (2cards->1card, no draw), 18 turn (3cards->2cards, last draw)
-            //    lastDraw = true;
             //draw cards at config level
             config.drawCardsNewRound();
-        //    AnimatorSet drawCards = matchFragment.drawCardsNewRound(config.getHands(), config.getCurrentPlayer(), lastDraw); //TODO, sistemare come calcolare il lastdraw in base al comportamento dell'api del prof
-         //   animators.add(drawCards);
-        //    if (config.getCurrentPlayer() == config.PLAYER1) {
-                //if next turn PLAYER1 is first, then let him play
-         //       callPlayer1(animators);
-        //    } else {
-          //      AnimatorSet displayIsPlayer0Turn = matchFragment.displayIsPlayer0Turn(config.getCurrentPlayer());
-         //       animators.add(displayIsPlayer0Turn);
-           // }
         }
-
-
-        //a listener that handles the end of the surface cleaning operations
-      /*  cleanSurface.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animator) {}
-            @Override
-            public void onAnimationEnd(Animator animator) {
-                AnimatorSet closeTurnAnimation = new AnimatorSet();
-                List<Animator> animators = new ArrayList<Animator>();
-
-                if(config.getNumberTurnsElapsed() == Briscola2PMatchConfig.FINISHED){ //if the match is finished, choose winner
-                    stopMatch();
-                    switch(config.chooseMatchWinner()){
-                        case Briscola2PMatchConfig.PLAYER0: matchFragment.displayMatchWinner(Briscola2PFullMatchConfig.PLAYER0, config.computeScore(Briscola2PMatchConfig.PLAYER0)); break;
-                        case Briscola2PMatchConfig.PLAYER1: matchFragment.displayMatchWinner(Briscola2PFullMatchConfig.PLAYER1, config.computeScore(Briscola2PMatchConfig.PLAYER1)); break;
-                        case Briscola2PMatchConfig.DRAW: matchFragment.displayMatchWinner(Briscola2PFullMatchConfig.DRAW, config.computeScore(Briscola2PMatchConfig.PLAYER0)); break;
-                        default: throw new RuntimeException("Error while computing the winner");
-                    }
-                }else if (config.getNumberTurnsElapsed()== 19 || config.getNumberTurnsElapsed() == 20){ //if the deck is empty, but players have cards in hand,don't do anything (equivalently, turns 19 and 20: no cards to draw)
-                    matchFragment.putPlayer0CardsTouchListeners(config.getHands(),config.getCurrentPlayer());
-                    if(config.getCurrentPlayer() == config.PLAYER1){
-                        callPlayer1(animators);
-                    }  else{
-                        //enable player0 to play
-                        AnimatorSet displayIsPlayer0Turn = matchFragment.displayIsPlayer0Turn(config.getCurrentPlayer());
-                        animators.add(displayIsPlayer0Turn);                    }
-                }else if(config.getNumberTurnsElapsed() <= 18){ //if deck is not empty, draw cards new round (equivalently, turns <= 18)
-                    //since the Server API doesn't give info on the deck, count turns played to know whether lastDraw
-                    boolean lastDraw = false;
-                    if(config.getNumberTurnsElapsed() == 18) // 20th turn (1card -> 0 card, no draw at turn start), 19th turn (2cards->1card, no draw), 18 turn (3cards->2cards, last draw)
-                        lastDraw = true;
-                    //draw cards at config level
-                    config.drawCardsNewRound();
-                    AnimatorSet drawCards = matchFragment.drawCardsNewRound(config.getHands(), config.getCurrentPlayer(), lastDraw); //TODO, sistemare come calcolare il lastdraw in base al comportamento dell'api del prof
-                    animators.add(drawCards);
-                    if (config.getCurrentPlayer() == config.PLAYER1) {
-                        //if next turn PLAYER1 is first, then let him play
-                        callPlayer1(animators);
-                    } else {
-                        AnimatorSet displayIsPlayer0Turn = matchFragment.displayIsPlayer0Turn(config.getCurrentPlayer());
-                        animators.add(displayIsPlayer0Turn);
-                    }
-                }
-                //schedule animations
-                closeTurnAnimation.playSequentially(animators);
-                //play animation
-                closeTurnAnimation.start();
-            }
-            @Override
-            public void onAnimationCancel(Animator animator) {}
-            @Override
-            public void onAnimationRepeat(Animator animator) {}
-        });*/
 
     }
 
