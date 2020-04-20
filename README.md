@@ -1,11 +1,9 @@
-Group01 - Android project
+# Briscola Android App
+Birscola Android App developed for the Mobile Development Course (2017-2018) at Polimi
 
 Members:
 
-M1
 First Name: Francesco
 Last Name: Pinto
-Person number: 10455934
-Student number: 883436
 GitLab username: FrancescoPinto
 Email: francesco1.pinto@mail.polimi.it
